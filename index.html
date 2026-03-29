@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saudi Arabic Daily Sentences</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f5f0;--surface:#fff;--border:#e5e1d8;--border-med:#ccc8bc;
+  --text:#1c1a15;--muted:#7a7669;--faint:#b3ae9f;
+  --accent:#b85c1e;--accent-bg:#fdf0e6;
+  --red:#922020;--red-bg:#faeae5;
+  --r:10px;--rlg:14px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── HEADER ── */
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:50;flex-wrap:wrap}
+.hd-title{font-family:'Lora',serif;font-size:17px;font-weight:600;letter-spacing:-.2px}
+.hd-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.hd-btns{display:flex;gap:8px;align-items:center;flex-shrink:0}
+.btn-primary{display:flex;align-items:center;gap:7px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);padding:8px 16px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s,transform .1s;white-space:nowrap}
+.btn-primary:hover{opacity:.88}
+.btn-primary:active{transform:scale(.97)}
+.btn-outline{display:flex;align-items:center;gap:6px;background:none;color:var(--muted);border:1px solid var(--border-med);border-radius:var(--r);padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-outline:hover{background:var(--surface);color:var(--text);border-color:var(--border-med)}
+
+/* ── TOOLBAR ── */
+.container{max-width:1120px;margin:0 auto;padding:1.5rem}
+.toolbar{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:.9rem}
+.fb{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 13px;font-size:12.5px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap}
+.fb:hover{border-color:var(--border-med);color:var(--text)}
+.fb.active{background:var(--text);color:#fff;border-color:var(--text)}
+.search-wrap{margin-left:auto;position:relative}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--faint);pointer-events:none}
+.search{border:1px solid var(--border);border-radius:var(--r);padding:7px 12px 7px 32px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);width:210px;outline:none;transition:border-color .15s}
+.search:focus{border-color:var(--border-med)}
+.search::placeholder{color:var(--faint)}
+.stats{font-size:12px;color:var(--faint);margin-bottom:.85rem}
+.hint{font-size:11px;color:var(--faint);margin-bottom:.85rem}
+
+/* ── GRID ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:10px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:1rem 1.1rem;cursor:pointer;transition:border-color .15s,box-shadow .15s;position:relative}
+.card:hover{border-color:var(--border-med);box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.card.flipped{border-color:#9ec8f0;background:#f4f9ff}
+
+/* card action buttons (edit / delete) */
+.card-actions{position:absolute;top:8px;right:8px;display:flex;gap:4px;opacity:0;transition:opacity .15s}
+.card:hover .card-actions{opacity:1}
+.icon-btn{background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--faint);transition:color .15s,background .15s}
+.icon-btn:hover.edit{color:#4e7ab8;background:#edf2fb}
+.icon-btn:hover.del{color:var(--red);background:var(--red-bg)}
+.icon-btn svg{width:13px;height:13px}
+
+.card-num{font-size:10.5px;font-weight:500;color:var(--faint);margin-bottom:5px;display:flex;align-items:center;gap:6px;padding-right:50px}
+
+.tag-badges{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:7px}
+.tag-badge{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;font-weight:500}
+.arabic{font-size:21px;direction:rtl;text-align:right;color:var(--text);margin-bottom:4px;line-height:1.45}
+.pronun{font-size:12.5px;color:var(--muted);font-style:italic;margin-bottom:5px}
+.meaning{font-size:13.5px;color:var(--text);border-top:1px solid var(--border);padding-top:8px;margin-top:4px;line-height:1.5}
+.flip-hint{font-size:10.5px;color:var(--faint);margin-top:7px}
+.empty{text-align:center;padding:3rem 1rem;color:var(--faint);font-size:14px}
+
+/* ── MODAL SHARED ── */
+.backdrop{display:none;position:fixed;inset:0;background:rgba(28,26,20,.45);z-index:200;align-items:center;justify-content:center;padding:1rem}
+.backdrop.open{display:flex}
+.modal{background:var(--surface);border-radius:var(--rlg);padding:1.75rem;width:100%;max-width:480px;box-shadow:0 10px 40px rgba(0,0,0,.16);animation:pop .18s ease;max-height:90vh;overflow-y:auto}
+@keyframes pop{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-title{font-family:'Lora',serif;font-size:17px;font-weight:600;margin-bottom:1.25rem}
+.fgg{margin-bottom:1rem}
+.fgg label{display:block;font-size:11.5px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.fgg input,.fgg textarea,.fgg select{width:100%;border:1px solid var(--border);border-radius:var(--r);padding:9px 12px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.fgg input:focus,.fgg textarea:focus,.fgg select:focus{border-color:var(--accent)}
+.fgg .ar-in{direction:rtl;font-size:20px;text-align:right}
+.fgg textarea{resize:vertical;min-height:70px;line-height:1.5}
+.err{font-size:12px;color:var(--red);margin-top:4px;display:none}
+.modal-actions{display:flex;gap:8px;margin-top:1.4rem;justify-content:flex-end;align-items:center}
+.modal-actions-left{margin-right:auto}
+.btn-cancel{background:none;border:1px solid var(--border);border-radius:var(--r);padding:8px 18px;font-size:13.5px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted);transition:background .15s}
+.btn-cancel:hover{background:var(--bg)}
+.btn-save{background:var(--accent);border:none;border-radius:var(--r);padding:8px 22px;font-size:13.5px;font-family:'DM Sans',sans-serif;font-weight:500;color:#fff;cursor:pointer;transition:opacity .15s}
+.btn-save:hover{opacity:.88}
+.btn-danger{background:none;border:1px solid var(--red);border-radius:var(--r);padding:8px 14px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--red);cursor:pointer;transition:background .15s}
+.btn-danger:hover{background:var(--red-bg)}
+
+/* tag selector inside modal — multi-select */
+.tag-select-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tag-opt{border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12.5px;cursor:pointer;background:var(--surface);color:var(--muted);transition:all .15s;white-space:nowrap;user-select:none}
+.tag-opt:hover{border-color:var(--border-med);color:var(--text)}
+.tag-opt.selected{color:#fff;border-color:transparent}
+.tag-opt.add-tag-btn{border-style:dashed;color:var(--accent);border-color:var(--accent)}
+.tag-opt.add-tag-btn:hover{background:var(--accent-bg)}
+.tag-select-hint{font-size:11px;color:var(--faint);margin-top:6px}
+
+/* manage tags modal */
+.tags-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
+.tag-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--r);background:var(--bg)}
+.tag-item-swatch{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+.tag-item-name{flex:1;font-size:13.5px}
+.tag-item-count{font-size:12px;color:var(--faint);margin-right:4px}
+.tag-item-del{background:none;border:none;cursor:pointer;color:var(--faint);padding:3px;border-radius:5px;display:flex;transition:color .15s,background .15s}
+.tag-item-del:hover{color:var(--red);background:var(--red-bg)}
+.tag-item-del svg{width:12px;height:12px}
+.tag-item.builtin .tag-item-del{opacity:0;pointer-events:none}
+
+.color-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.color-swatch{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .1s,border-color .1s}
+.color-swatch:hover{transform:scale(1.15)}
+.color-swatch.selected{border-color:var(--text)}
+
+/* toast */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--text);color:#fff;padding:9px 20px;border-radius:var(--r);font-size:13px;opacity:0;transition:opacity .2s,transform .2s;z-index:300;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5rem;border-top:1px solid var(--border);margin-top:2rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="hd-title">Saudi Arabic Daily Sentences</div>
+    <div class="hd-sub" id="hd-sub">Loading…</div>
+  </div>
+  <div class="hd-btns">
+    <button class="btn-outline" onclick="openTagsModal()">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1h5l6 6-5 5-6-6V1z"/><circle cx="3.5" cy="3.5" r=".8" fill="currentColor" stroke="none"/></svg>
+      Manage tags
+    </button>
+    <button class="btn-primary" onclick="openPhraseModal(null)">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
+      Add phrase
+    </button>
+  </div>
+</header>
+
+<div class="container">
+  <div class="toolbar" id="toolbar"></div>
+  <div class="search-wrap" style="margin-bottom:.9rem">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="4.5"/><line x1="10" y1="10" x2="14" y2="14"/></svg>
+    <input class="search" id="searchBox" placeholder="Search Arabic or English…" oninput="renderGrid()">
+  </div>
+  <p class="stats" id="statsBar"></p>
+  <p class="hint">Hover a card to edit or delete it. Click to flip and reveal the meaning.</p>
+  <div class="grid" id="grid"></div>
+</div>
+
+<footer>Saudi Arabic Daily Phrases · For classroom use</footer>
+
+<!-- ── PHRASE MODAL (add / edit) ── -->
+<div class="backdrop" id="phraseBackdrop" onclick="backdropClick(event,'phraseBackdrop')">
+  <div class="modal">
+    <div class="modal-title" id="phraseModalTitle">Add a new phrase</div>
+    <div class="fgg">
+      <label>Arabic phrase *</label>
+      <input type="text" class="ar-in" id="inAr" placeholder="اكتب هنا…">
+      <div class="err" id="errAr">Please enter the Arabic phrase.</div>
+    </div>
+    <div class="fgg">
+      <label>Pronunciation <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+      <input type="text" id="inPr" placeholder="e.g. Kayf ḥālik?">
+    </div>
+    <div class="fgg">
+      <label>English meaning *</label>
+      <textarea id="inEn" placeholder="What does it mean? When is it used?"></textarea>
+      <div class="err" id="errEn">Please enter the English meaning.</div>
+    </div>
+    <div class="fgg" style="margin-bottom:0">
+      <label>Tags <span style="font-weight:400;text-transform:none;letter-spacing:0">(pick one or more)</span></label>
+      <div class="tag-select-row" id="tagSelectRow"></div>
+    </div>
+    <div class="modal-actions">
+      <div class="modal-actions-left" id="phraseDelWrap" style="display:none">
+        <button class="btn-danger" onclick="deleteFromModal()">Delete phrase</button>
+      </div>
+      <button class="btn-cancel" onclick="closePhraseModal()">Cancel</button>
+      <button class="btn-save" onclick="savePhrase()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MANAGE TAGS MODAL ── -->
+<div class="backdrop" id="tagsBackdrop" onclick="backdropClick(event,'tagsBackdrop')">
+  <div class="modal">
+    <div class="modal-title">Manage tags</div>
+    <div class="tags-list" id="tagsList"></div>
+    <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem">
+      <div class="fgg" style="margin-bottom:.75rem">
+        <label>New tag name *</label>
+        <input type="text" id="newTagName" placeholder="e.g. Religion, Travel…" maxlength="30">
+        <div class="err" id="errTagName">Please enter a tag name.</div>
+      </div>
+      <div class="fgg" style="margin-bottom:0">
+        <label>Tag color</label>
+        <div class="color-row" id="colorRow"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeTagsModal()">Close</button>
+      <button class="btn-save" onclick="addTag()">Add tag</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   ▶ CONFIGURATION — only thing you ever need to change
+   ═══════════════════════════════════════════════════════════
+   1. Publish your Google Sheet as CSV (File → Share → Publish
+      to web → choose your sheet → CSV → Publish)
+   2. Paste the URL below, replacing the placeholder
+   ─────────────────────────────────────────────────────────── */
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRYL3PrErxi22DF1M3kBNDtfQwrWbCfiWSFM7QBUKFeRbnxBQ3H5WUFFSFR4xhyzg/pub?gid=627851250&single=true&output=csv';
+
+/* ═══════════════════════════════════════════════════════════
+   SHEET FORMAT (columns in order, row 1 = headers):
+   arabic | pronunciation | english | tags
+
+   • arabic       → the Arabic phrase, e.g.  كيف حالك؟
+   • pronunciation → romanized guide, e.g.  Kayf ḥālik?
+   • english      → meaning/notes, e.g.  How are you?
+   • tags         → comma-separated tag ids, e.g.  greet,social
+   ═══════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────
+   BUILT-IN TAGS (always available)
+───────────────────────────────────────────── */
+const BUILTIN_TAGS = [
+  {id:'greet',  label:'Greeting',   color:'#1a6b45', bg:'#e4f4ec', builtin:true},
+  {id:'social', label:'Social',     color:'#4e3f96', bg:'#eeecfb', builtin:true},
+  {id:'daily',  label:'Daily life', color:'#7a5010', bg:'#fdf0d8', builtin:true},
+  {id:'express',label:'Expression', color:'#923020', bg:'#faeae5', builtin:true},
+  {id:'emotion',label:'Emotion',    color:'#255230', bg:'#e5f2e8', builtin:true},
+];
+
+const COLOR_PALETTE = [
+  {color:'#1a6b45',bg:'#e4f4ec'},{color:'#4e3f96',bg:'#eeecfb'},
+  {color:'#923020',bg:'#faeae5'},{color:'#7a5010',bg:'#fdf0d8'},
+  {color:'#255230',bg:'#e5f2e8'},{color:'#b85c1e',bg:'#fdf0e6'},
+  {color:'#1a5c8a',bg:'#e3f0fb'},{color:'#6b1a5a',bg:'#f5e4f2'},
+  {color:'#2d5a6b',bg:'#e0f2f7'},{color:'#5a6b1a',bg:'#f0f5e0'},
+];
+
+/* ─────────────────────────────────────────────
+   STATE
+───────────────────────────────────────────── */
+const SK_CUSTOM = 'saudi_custom_v2';  // student's own phrases
+const SK_TAGS   = 'saudi_tags_v1';    // student's custom tags
+const SK_CACHE  = 'saudi_sheet_cache';// cached sheet phrases
+
+let sheetPhrases = []; // loaded from Google Sheet
+let custom       = []; // student-added phrases (localStorage)
+let extraTags    = []; // student-added tags (localStorage)
+
+let currentFilter  = 'all';
+const flipped      = {};
+let editingIndex   = null;
+let selectedTagIds = new Set();
+let selectedColorIdx = 0;
+
+/* ─────────────────────────────────────────────
+   STORAGE
+───────────────────────────────────────────── */
+function loadStorage() {
+  try { custom    = JSON.parse(localStorage.getItem(SK_CUSTOM)) || []; } catch { custom = []; }
+  try { extraTags = JSON.parse(localStorage.getItem(SK_TAGS))   || []; } catch { extraTags = []; }
+}
+function save() {
+  try {
+    localStorage.setItem(SK_CUSTOM, JSON.stringify(custom));
+    localStorage.setItem(SK_TAGS,   JSON.stringify(extraTags));
+  } catch {}
+}
+
+/* ─────────────────────────────────────────────
+   GOOGLE SHEET FETCH & CSV PARSE
+───────────────────────────────────────────── */
+
+// Minimal CSV parser — handles quoted fields with commas inside
+function parseCSV(text) {
+  const rows = [];
+  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
+  for (const line of lines) {
+    if (!line.trim()) continue;
+    const cols = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (inQ && line[i+1] === '"') { cur += '"'; i++; }
+        else inQ = !inQ;
+      } else if (ch === ',' && !inQ) {
+        cols.push(cur.trim()); cur = '';
+      } else cur += ch;
+    }
+    cols.push(cur.trim());
+    rows.push(cols);
+  }
+  return rows;
+}
+
+function csvRowToPhrase(cols) {
+  // Expected columns: arabic, pronunciation, english, tags
+  const [ar='', pr='', en='', tagsRaw=''] = cols;
+  if (!ar || !en) return null;
+  const tags = tagsRaw.split(',').map(t=>t.trim().toLowerCase()).filter(Boolean);
+  return { ar: ar.trim(), pr: pr.trim(), en: en.trim(), tags: tags.length ? tags : ['greet'], _sheet: true };
+}
+
+async function fetchSheet() {
+  // Show loading state
+  document.getElementById('hd-sub').textContent = 'Loading phrases…';
+
+  // Try cache first so the app feels instant
+  const cached = localStorage.getItem(SK_CACHE);
+  if (cached) {
+    try {
+      sheetPhrases = JSON.parse(cached);
+      render();
+    } catch {}
+  }
+
+  if (!SHEET_CSV_URL || SHEET_CSV_URL === 'YOUR_GOOGLE_SHEET_CSV_URL_HERE') {
+    showSetupBanner();
+    sheetPhrases = [];
+    render();
+    return;
+  }
+
+  try {
+    const res  = await fetch(SHEET_CSV_URL);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    const rows = parseCSV(text);
+
+    // First row = headers — skip it
+    const phrases = rows.slice(1).map(csvRowToPhrase).filter(Boolean);
+    sheetPhrases = phrases;
+    localStorage.setItem(SK_CACHE, JSON.stringify(phrases));
+    render();
+  } catch (err) {
+    console.warn('Sheet fetch failed:', err);
+    if (!sheetPhrases.length) {
+      document.getElementById('hd-sub').textContent = 'Could not load sheet — showing cached data';
+    }
+    render();
+  }
+}
+
+function showSetupBanner() {
+  const b = document.createElement('div');
+  b.style.cssText = 'background:#fdf0e6;border:1px solid #f0c896;border-radius:10px;padding:1rem 1.25rem;margin-bottom:1rem;font-size:13px;line-height:1.6;color:#7a3800';
+  b.innerHTML = `<strong>Setup needed:</strong> Open this file in a text editor and replace <code>YOUR_GOOGLE_SHEET_CSV_URL_HERE</code> with your Google Sheet CSV link.<br>
+    <span style="color:var(--muted)">File → Share → Publish to web → your sheet tab → CSV → Publish → copy the URL</span>`;
+  document.getElementById('grid').before(b);
+}
+
+/* ─────────────────────────────────────────────
+   DATA HELPERS
+───────────────────────────────────────────── */
+function allTags() {
+  // Collect any tag ids used in sheet that aren't in BUILTIN_TAGS
+  const knownIds = new Set(BUILTIN_TAGS.map(t=>t.id));
+  const sheetTagIds = new Set(sheetPhrases.flatMap(p=>p.tags));
+  const autoTags = [...sheetTagIds]
+    .filter(id => !knownIds.has(id) && !extraTags.find(t=>t.id===id))
+    .map((id,i) => ({
+      id, label: id.charAt(0).toUpperCase() + id.slice(1).replace(/_/g,' '),
+      color: COLOR_PALETTE[i % COLOR_PALETTE.length].color,
+      bg:    COLOR_PALETTE[i % COLOR_PALETTE.length].bg,
+      builtin: true, // treat as protected
+    }));
+  return [...BUILTIN_TAGS, ...autoTags, ...extraTags];
+}
+
+function getTag(id) { return allTags().find(t=>t.id===id) || {id,label:id,color:'#888',bg:'#eee'}; }
+
+function normTags(p) {
+  return Array.isArray(p.tags) ? p.tags : (p.tag ? [p.tag] : ['greet']);
+}
+
+function allPhrases() {
+  return [
+    ...sheetPhrases.map((p,i) => ({ ...p, tags: normTags(p), _si: i })),
+    ...custom.map((p,i)  => ({ ...p, tags: normTags(p), _ci: i })),
+  ];
+}
+
+/* ─────────────────────────────────────────────
+   RENDER TOOLBAR
+───────────────────────────────────────────── */
+function renderToolbar() {
+  const tags = allTags();
+  const all  = allPhrases();
+  const tb   = document.getElementById('toolbar');
+  tb.innerHTML =
+    `<button class="fb ${currentFilter==='all'?'active':''}" onclick="setFilter('all',this)">All (${all.length})</button>`
+    + tags.map(t => {
+        const cnt = all.filter(p=>p.tags.includes(t.id)).length;
+        if (!cnt && currentFilter !== t.id) return '';
+        return `<button class="fb ${currentFilter===t.id?'active':''}" onclick="setFilter('${t.id}',this)"
+          style="${currentFilter===t.id?`background:${t.color};border-color:${t.color};color:#fff`:''}"
+          >${t.label}${cnt?` (${cnt})`:''}</button>`;
+      }).join('');
+}
+
+/* ─────────────────────────────────────────────
+   RENDER GRID
+───────────────────────────────────────────── */
+function renderGrid() {
+  const q    = (document.getElementById('searchBox')||{value:''}).value.trim().toLowerCase();
+  const all  = allPhrases();
+  const visible = all.filter(p => {
+    const mf = currentFilter === 'all' ? true : p.tags.includes(currentFilter);
+    const ms = !q || p.ar.includes(q) || p.en.toLowerCase().includes(q) || (p.pr||'').toLowerCase().includes(q);
+    return mf && ms;
+  });
+
+  document.getElementById('hd-sub').textContent  = all.length + ' phrases · click a card to flip';
+  document.getElementById('statsBar').textContent = visible.length + ' sentence' + (visible.length!==1?'s':'') + ' shown';
+
+  const grid = document.getElementById('grid');
+  if (!visible.length) { grid.innerHTML = '<div class="empty">No phrases match your search.</div>'; return; }
+
+  grid.innerHTML = visible.map(p => {
+    const gIdx   = all.indexOf(p);
+    const isF    = !!flipped[gIdx];
+    const isStudent = p._ci !== undefined; // only student phrases show edit/delete
+    const badges = p.tags.map(tid => {
+      const t = getTag(tid);
+      return `<span class="tag-badge" style="background:${t.bg};color:${t.color}">${t.label}</span>`;
+    }).join('');
+    return `
+    <div class="card${isF?' flipped':''}" id="card-${gIdx}" onclick="flip(${gIdx})">
+      ${isStudent ? `<div class="card-actions">
+        <button class="icon-btn edit" onclick="openEdit(event,${gIdx})" title="Edit">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z"/></svg>
+        </button>
+        <button class="icon-btn del" onclick="deletePhrase(event,${gIdx})" title="Delete">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="2" y1="2" x2="12" y2="12"/><line x1="12" y1="2" x2="2" y2="12"/></svg>
+        </button>
+      </div>` : ''}
+      <div class="card-num">#${gIdx+1}</div>
+      <div class="tag-badges">${badges}</div>
+      <div class="arabic">${p.ar}</div>
+      ${p.pr ? `<div class="pronun">${p.pr}</div>` : ''}
+      <div class="meaning" style="display:${isF?'block':'none'}">${p.en}</div>
+      ${!isF ? '<div class="flip-hint">Tap to reveal meaning</div>' : ''}
+    </div>`;
+  }).join('');
+}
+
+function render() { renderToolbar(); renderGrid(); }
+function flip(i)  { flipped[i]=!flipped[i]; renderGrid(); }
+
+function setFilter(tag) {
+  currentFilter = tag;
+  renderToolbar();
+  renderGrid();
+}
+
+/* ─────────────────────────────────────────────
+   PHRASE MODAL (student phrases only)
+───────────────────────────────────────────── */
+function buildTagSelector() {
+  const row = document.getElementById('tagSelectRow');
+  row.innerHTML = allTags().map(t => {
+    const sel = selectedTagIds.has(t.id);
+    return `<span class="tag-opt ${sel?'selected':''}"
+      style="${sel?`background:${t.color};border-color:${t.color}`:`border-color:${t.color};color:${t.color}`}"
+      onclick="toggleTag('${t.id}')">${sel?'✓ ':''}${t.label}</span>`;
+  }).join('') + `<span class="tag-opt add-tag-btn" onclick="closePhraseModal();openTagsModal()">+ New tag</span>`;
+}
+
+function toggleTag(id) {
+  if (selectedTagIds.has(id)) { if (selectedTagIds.size===1) return; selectedTagIds.delete(id); }
+  else selectedTagIds.add(id);
+  buildTagSelector();
+}
+
+function openPhraseModal(gIdx) {
+  editingIndex = gIdx;
+  const isEdit = gIdx !== null;
+  document.getElementById('phraseModalTitle').textContent = isEdit ? 'Edit phrase' : 'Add a new phrase';
+  document.getElementById('phraseDelWrap').style.display  = isEdit ? '' : 'none';
+
+  if (isEdit) {
+    const p = allPhrases()[gIdx];
+    document.getElementById('inAr').value = p.ar;
+    document.getElementById('inPr').value = p.pr || '';
+    document.getElementById('inEn').value = p.en;
+    selectedTagIds = new Set(p.tags);
+  } else {
+    ['inAr','inPr','inEn'].forEach(id => document.getElementById(id).value = '');
+    selectedTagIds = new Set([allTags()[0].id]);
+  }
+  buildTagSelector();
+  ['errAr','errEn'].forEach(id => document.getElementById(id).style.display='none');
+  document.getElementById('phraseBackdrop').classList.add('open');
+  setTimeout(()=>document.getElementById('inAr').focus(), 120);
+}
+
+function closePhraseModal() { document.getElementById('phraseBackdrop').classList.remove('open'); }
+
+function savePhrase() {
+  const ar   = document.getElementById('inAr').value.trim();
+  const pr   = document.getElementById('inPr').value.trim();
+  const en   = document.getElementById('inEn').value.trim();
+  const tags = [...selectedTagIds];
+  let ok = true;
+  document.getElementById('errAr').style.display = ar?'none':'block'; if(!ar) ok=false;
+  document.getElementById('errEn').style.display = en?'none':'block'; if(!en) ok=false;
+  if (!ok) return;
+
+  if (editingIndex === null) {
+    custom.push({ar,pr,en,tags});
+    showToast('Phrase added!');
+  } else {
+    const p = allPhrases()[editingIndex];
+    custom[p._ci] = {...custom[p._ci], ar,pr,en,tags};
+    showToast('Phrase updated!');
+  }
+  save(); closePhraseModal(); render();
+}
+
+function deleteFromModal() {
+  if (editingIndex === null) return;
+  if (!confirm('Delete this phrase?')) return;
+  deleteByIndex(editingIndex);
+  closePhraseModal();
+}
+
+function openEdit(e, gIdx) { e.stopPropagation(); openPhraseModal(gIdx); }
+
+function deletePhrase(e, gIdx) {
+  e.stopPropagation();
+  if (!confirm('Delete this phrase?')) return;
+  deleteByIndex(gIdx);
+}
+
+function deleteByIndex(gIdx) {
+  const p = allPhrases()[gIdx];
+  if (p._ci === undefined) return; // can't delete sheet phrases
+  custom.splice(p._ci, 1);
+  delete flipped[gIdx];
+  save(); render();
+  showToast('Phrase removed.');
+}
+
+/* ─────────────────────────────────────────────
+   TAGS MODAL
+───────────────────────────────────────────── */
+function openTagsModal() {
+  document.getElementById('newTagName').value = '';
+  document.getElementById('errTagName').style.display = 'none';
+  selectedColorIdx = 0;
+  renderColorPicker();
+  renderTagsList();
+  document.getElementById('tagsBackdrop').classList.add('open');
+}
+function closeTagsModal() { document.getElementById('tagsBackdrop').classList.remove('open'); }
+
+function renderColorPicker() {
+  document.getElementById('colorRow').innerHTML = COLOR_PALETTE.map((c,i)=>
+    `<div class="color-swatch ${selectedColorIdx===i?'selected':''}" style="background:${c.color}" onclick="pickColor(${i})"></div>`
+  ).join('');
+}
+function pickColor(i) { selectedColorIdx=i; renderColorPicker(); }
+
+function renderTagsList() {
+  const all  = allPhrases();
+  const tags = allTags();
+  document.getElementById('tagsList').innerHTML = tags.map(t => {
+    const cnt = all.filter(p=>p.tags.includes(t.id)).length;
+    return `<div class="tag-item ${t.builtin?'builtin':''}">
+      <div class="tag-item-swatch" style="background:${t.color}"></div>
+      <span class="tag-item-name" style="color:${t.color}">${t.label}</span>
+      <span class="tag-item-count">${cnt} phrase${cnt!==1?'s':''}</span>
+      ${!t.builtin
+        ? `<button class="tag-item-del" onclick="deleteTag('${t.id}')">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="2" y1="2" x2="12" y2="12"/><line x1="12" y1="2" x2="2" y2="12"/></svg>
+           </button>`
+        : `<span style="font-size:11px;color:var(--faint)">built-in</span>`}
+    </div>`;
+  }).join('');
+}
+
+function addTag() {
+  const name = document.getElementById('newTagName').value.trim();
+  document.getElementById('errTagName').style.display = name?'none':'block';
+  if (!name) return;
+  const c  = COLOR_PALETTE[selectedColorIdx];
+  const id = 'c_' + name.toLowerCase().replace(/\s+/g,'_') + '_' + Date.now();
+  extraTags.push({id, label:name, color:c.color, bg:c.bg});
+  save();
+  document.getElementById('newTagName').value = '';
+  renderTagsList(); render();
+  showToast('Tag "' + name + '" added!');
+}
+
+function deleteTag(id) {
+  const n = allPhrases().filter(p=>p.tags.includes(id)).length;
+  if (n>0 && !confirm(`Used by ${n} phrase(s). Delete anyway?`)) return;
+  extraTags = extraTags.filter(t=>t.id!==id);
+  save(); renderTagsList(); render();
+  showToast('Tag deleted.');
+}
+
+/* ─────────────────────────────────────────────
+   UTILS
+───────────────────────────────────────────── */
+function backdropClick(e,id) {
+  if (e.target===document.getElementById(id)) {
+    if (id==='phraseBackdrop') closePhraseModal(); else closeTagsModal();
+  }
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+document.addEventListener('keydown', e=>{
+  if (e.key==='Escape') { closePhraseModal(); closeTagsModal(); }
+});
+
+/* ─────────────────────────────────────────────
+   INIT
+───────────────────────────────────────────── */
+loadStorage();
+fetchSheet(); // fetches sheet then calls render()
+</script>
+</body>
+</html>
