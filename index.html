@@ -65,6 +65,19 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 .flip-hint{font-size:10.5px;color:var(--faint);margin-top:7px}
 .empty{text-align:center;padding:3rem 1rem;color:var(--faint);font-size:14px}
 
+/* ── SPEAK BUTTON ── */
+.speak-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  margin-top:8px;padding:4px 11px;
+  background:none;border:1px solid var(--border);border-radius:20px;
+  font-size:11.5px;font-family:'DM Sans',sans-serif;color:var(--muted);
+  cursor:pointer;transition:all .15s;
+}
+.speak-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.speak-btn.playing{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.speak-btn.loading{opacity:.6;cursor:wait}
+.speak-btn svg{width:12px;height:12px;flex-shrink:0}
+
 /* ── MODAL SHARED ── */
 .backdrop{display:none;position:fixed;inset:0;background:rgba(28,26,20,.45);z-index:200;align-items:center;justify-content:center;padding:1rem}
 .backdrop.open{display:flex}
@@ -115,6 +128,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 /* toast */
 .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--text);color:#fff;padding:9px 20px;border-radius:var(--r);font-size:13px;opacity:0;transition:opacity .2s,transform .2s;z-index:300;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
 footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5rem;border-top:1px solid var(--border);margin-top:2rem}
 </style>
@@ -216,7 +230,7 @@ footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5r
       to web → choose your sheet → CSV → Publish)
    2. Paste the URL below, replacing the placeholder
    ─────────────────────────────────────────────────────────── */
-const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRYL3PrErxi22DFiM3kBNDtfQwrWbCfiWSFM7QBUKFeRbnxBQ3H5WUFFSFR4xhyzg/pub?gid=627851250&single=true&output=csv';
+const SHEET_CSV_URL = 'YOUR_GOOGLE_SHEET_CSV_URL_HERE';
 
 /* ═══════════════════════════════════════════════════════════
    SHEET FORMAT (columns in order, row 1 = headers):
@@ -450,6 +464,14 @@ function renderGrid() {
       <div class="tag-badges">${badges}</div>
       <div class="arabic">${p.ar}</div>
       ${p.pr ? `<div class="pronun">${p.pr}</div>` : ''}
+      <button class="speak-btn" id="speak-${gIdx}" onclick="speak(event,${gIdx},'${p.ar.replace(/'/g,"\\'")}')">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="3,3 3,13 10,8" fill="currentColor" stroke="none"/>
+          <path d="M12 5.5a4 4 0 0 1 0 5"/>
+          <path d="M13.5 3.5a6.5 6.5 0 0 1 0 9"/>
+        </svg>
+        Listen
+      </button>
       <div class="meaning" style="display:${isF?'block':'none'}">${p.en}</div>
       ${!isF ? '<div class="flip-hint">Tap to reveal meaning</div>' : ''}
     </div>`;
@@ -638,6 +660,125 @@ document.addEventListener('keydown', e=>{
 ───────────────────────────────────────────── */
 loadStorage();
 fetchSheet(); // fetches sheet then calls render()
+
+/* ─────────────────────────────────────────────
+   ELEVENLABS TEXT-TO-SPEECH
+   ─────────────────────────────────────────────
+   The actual API key lives in Vercel environment
+   variables (never in this file).
+   This just calls our own /api/speak proxy.
+───────────────────────────────────────────── */
+let currentAudio = null;
+let currentSpeakBtn = null;
+
+async function speak(e, gIdx, text) {
+  e.stopPropagation();
+
+  const btn = document.getElementById('speak-' + gIdx);
+
+  // If this button is already playing — stop it
+  if (currentSpeakBtn === btn && currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
+    resetSpeakBtn(btn);
+    currentSpeakBtn = null;
+    return;
+  }
+
+  // Stop any other playing audio
+  if (currentAudio) {
+    currentAudio.pause();
+    if (currentSpeakBtn) resetSpeakBtn(currentSpeakBtn);
+  }
+
+  // Set loading state
+  btn.classList.add('loading');
+  btn.innerHTML = spinnerHTML() + ' Loading…';
+  currentSpeakBtn = btn;
+
+  try {
+    const res = await fetch('/api/speak', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: res.statusText }));
+      throw new Error(err.error || 'Failed');
+    }
+
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    currentAudio = audio;
+
+    btn.classList.remove('loading');
+    btn.classList.add('playing');
+    btn.innerHTML = stopHTML() + ' Stop';
+
+    audio.play();
+
+    audio.onended = () => {
+      resetSpeakBtn(btn);
+      URL.revokeObjectURL(url);
+      currentAudio = null;
+      currentSpeakBtn = null;
+    };
+
+    audio.onerror = () => {
+      resetSpeakBtn(btn);
+      currentAudio = null;
+      currentSpeakBtn = null;
+      showToast('Audio error — check ElevenLabs setup');
+    };
+
+  } catch (err) {
+    console.error('Speak error:', err);
+    resetSpeakBtn(btn);
+    currentSpeakBtn = null;
+
+    // If ElevenLabs not set up yet, fall back to browser TTS
+    if (err.message.includes('not configured') || err.message.includes('Failed to fetch')) {
+      browserSpeak(text);
+    } else {
+      showToast('Could not play audio: ' + err.message);
+    }
+  }
+}
+
+function resetSpeakBtn(btn) {
+  if (!btn) return;
+  btn.classList.remove('loading', 'playing');
+  btn.innerHTML = speakerHTML() + ' Listen';
+}
+
+// Fallback: browser built-in TTS (no Saudi accent but works offline)
+function browserSpeak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'ar-SA'; // request Saudi Arabic
+  window.speechSynthesis.speak(utt);
+}
+
+function speakerHTML() {
+  return `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="12" height="12">
+    <polygon points="3,3 3,13 10,8" fill="currentColor" stroke="none"/>
+    <path d="M12 5.5a4 4 0 0 1 0 5"/><path d="M13.5 3.5a6.5 6.5 0 0 1 0 9"/>
+  </svg>`;
+}
+function stopHTML() {
+  return `<svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12">
+    <rect x="3" y="3" width="10" height="10" rx="2"/>
+  </svg>`;
+}
+function spinnerHTML() {
+  return `<svg viewBox="0 0 16 16" width="12" height="12" style="animation:spin .8s linear infinite">
+    <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="20 18"/>
+  </svg>`;
+}
+
 </script>
 </body>
 </html>
