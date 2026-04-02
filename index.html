@@ -33,9 +33,10 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 .fb{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 13px;font-size:12.5px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap}
 .fb:hover{border-color:var(--border-med);color:var(--text)}
 .fb.active{background:var(--text);color:#fff;border-color:var(--text)}
-.search-wrap{margin-left:auto;position:relative}
-.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--faint);pointer-events:none}
-.search{border:1px solid var(--border);border-radius:var(--r);padding:7px 12px 7px 32px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);width:210px;outline:none;transition:border-color .15s}
+.search-bar-sticky{position:sticky;top:57px;z-index:40;background:var(--bg);padding:.6rem 0;margin-bottom:.5rem}
+.search-wrap{position:relative;max-width:1120px;margin:0 auto;padding:0 1.5rem}
+.search-wrap svg{position:absolute;left:calc(1.5rem + 10px);top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--faint);pointer-events:none}
+.search{border:1px solid var(--border);border-radius:var(--r);padding:8px 12px 8px 34px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);width:100%;outline:none;transition:border-color .15s;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .search:focus{border-color:var(--border-med)}
 .search::placeholder{color:var(--faint)}
 .stats{font-size:12px;color:var(--faint);margin-bottom:.85rem}
@@ -152,12 +153,15 @@ footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5r
   </div>
 </header>
 
-<div class="container">
-  <div class="toolbar" id="toolbar"></div>
-  <div class="search-wrap" style="margin-bottom:.9rem">
+<div class="search-bar-sticky">
+  <div class="search-wrap">
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="4.5"/><line x1="10" y1="10" x2="14" y2="14"/></svg>
     <input class="search" id="searchBox" placeholder="Search Arabic or English…" oninput="renderGrid()">
   </div>
+</div>
+
+<div class="container">
+  <div class="toolbar" id="toolbar"></div>
   <p class="stats" id="statsBar"></p>
   <p class="hint">Hover a card to edit or delete it. Click to flip and reveal the meaning.</p>
   <div class="grid" id="grid"></div>
@@ -171,8 +175,9 @@ footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5r
     <div class="modal-title" id="phraseModalTitle">Add a new phrase</div>
     <div class="fgg">
       <label>Arabic phrase *</label>
-      <input type="text" class="ar-in" id="inAr" placeholder="اكتب هنا…">
+      <input type="text" class="ar-in" id="inAr" placeholder="اكتب هنا…" oninput="checkDuplicate(this.value)">
       <div class="err" id="errAr">Please enter the Arabic phrase.</div>
+      <div class="err" id="errDup" style="color:#b85c1e">⚠️ This phrase already exists in the list.</div>
     </div>
     <div class="fgg">
       <label>Pronunciation <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
@@ -230,7 +235,7 @@ footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5r
       to web → choose your sheet → CSV → Publish)
    2. Paste the URL below, replacing the placeholder
    ─────────────────────────────────────────────────────────── */
-const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRYL3PrErxi22DFlM3kBNDtfQwrWbCfiWSFM7QBUKFeRbnxBQ3H5WUFFSFR4xhyzg/pub?gid=627851250&single=true&output=csv';
+const SHEET_CSV_URL = 'YOUR_GOOGLE_SHEET_CSV_URL_HERE';
 
 /* ═══════════════════════════════════════════════════════════
    SHEET FORMAT (columns in order, row 1 = headers):
@@ -523,12 +528,17 @@ function openPhraseModal(gIdx) {
     selectedTagIds = new Set([allTags()[0].id]);
   }
   buildTagSelector();
-  ['errAr','errEn'].forEach(id => document.getElementById(id).style.display='none');
+  ['errAr','errEn','errDup'].forEach(id => document.getElementById(id).style.display='none');
   document.getElementById('phraseBackdrop').classList.add('open');
   setTimeout(()=>document.getElementById('inAr').focus(), 120);
 }
 
 function closePhraseModal() { document.getElementById('phraseBackdrop').classList.remove('open'); }
+
+function checkDuplicate(val) {
+  const show = val.trim() && editingIndex === null && isDuplicate(val.trim());
+  document.getElementById('errDup').style.display = show ? 'block' : 'none';
+}
 
 function savePhrase() {
   const ar   = document.getElementById('inAr').value.trim();
@@ -538,11 +548,22 @@ function savePhrase() {
   let ok = true;
   document.getElementById('errAr').style.display = ar?'none':'block'; if(!ar) ok=false;
   document.getElementById('errEn').style.display = en?'none':'block'; if(!en) ok=false;
+  // block exact/fuzzy duplicate on new phrases
+  if (editingIndex === null && isDuplicate(ar)) {
+    document.getElementById('errDup').style.display = 'block';
+    ok = false;
+  }
   if (!ok) return;
 
   if (editingIndex === null) {
     custom.push({ar,pr,en,tags});
     showToast('Phrase added!');
+    // silently send to teacher's suggestions inbox
+    fetch('/api/suggest', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ar,pr,en,tags})
+    }).catch(()=>{}); // silent — never block the student
   } else {
     const p = allPhrases()[editingIndex];
     custom[p._ci] = {...custom[p._ci], ar,pr,en,tags};
@@ -656,8 +677,25 @@ document.addEventListener('keydown', e=>{
 });
 
 /* ─────────────────────────────────────────────
-   INIT
+   ARABIC FUZZY NORMALIZER (Level 3 duplicate check)
 ───────────────────────────────────────────── */
+function normalizeAr(str) {
+  return str
+    .replace(/[\u064B-\u065F\u0670]/g, '')  // diacritics / tashkeel
+    .replace(/\u0640/g, '')                  // tatweel
+    .replace(/[إأآا]/g, 'ا')                // alef variants
+    .replace(/ى/g, 'ي')                     // alef maqsura → ya
+    .replace(/ة/g, 'ه')                     // taa marbuta → ha
+    .replace(/[^\u0621-\u064A]/g, '')       // keep Arabic letters only
+    .trim();
+}
+
+function isDuplicate(ar) {
+  const norm = normalizeAr(ar);
+  return allPhrases().some(p => normalizeAr(p.ar) === norm);
+}
+
+
 loadStorage();
 fetchSheet(); // fetches sheet then calls render()
 
