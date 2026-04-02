@@ -48,7 +48,7 @@ export default async function handler(req, res) {
     const keys = await kvKeys('suggestion:');
     for (const key of keys) {
       const existing = await kvGet(key);
-      if (existing && normalizeAr(existing.ar) === normalizeAr(ar)) {
+      if (existing && existing.ar && normalizeAr(existing.ar) === normalizeAr(ar)) {
         return res.status(409).json({ error: 'duplicate' });
       }
     }
