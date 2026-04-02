@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin · Saudi Arabic</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f5f0;--surface:#fff;--border:#e5e1d8;--border-med:#ccc8bc;
+  --text:#1c1a15;--muted:#7a7669;--faint:#b3ae9f;
+  --accent:#b85c1e;--accent-bg:#fdf0e6;
+  --green:#1a6b45;--green-bg:#e4f4ec;
+  --red:#922020;--red-bg:#faeae5;
+  --r:10px;--rlg:14px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* LOGIN */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:2rem;width:100%;max-width:360px;text-align:center}
+.login-title{font-family:'Lora',serif;font-size:20px;font-weight:600;margin-bottom:.5rem}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:1.5rem}
+.login-input{width:100%;border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);outline:none;margin-bottom:1rem;transition:border-color .15s;text-align:center;letter-spacing:2px}
+.login-input:focus{border-color:var(--accent)}
+.login-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--r);padding:10px;font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity .15s}
+.login-btn:hover{opacity:.88}
+.login-err{font-size:12px;color:var(--red);margin-top:.75rem;display:none}
+
+/* DASHBOARD */
+.dash{display:none}
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50}
+.hd-left h1{font-family:'Lora',serif;font-size:17px;font-weight:600}
+.hd-left p{font-size:12px;color:var(--muted);margin-top:2px}
+.hd-right{display:flex;gap:8px;align-items:center}
+.btn-sm{background:none;border:1px solid var(--border-med);border-radius:var(--r);padding:6px 14px;font-size:12.5px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted);transition:all .15s}
+.btn-sm:hover{background:var(--bg);color:var(--text)}
+.badge{background:var(--accent);color:#fff;border-radius:20px;font-size:11px;padding:1px 8px;font-weight:500}
+
+.container{max-width:1100px;margin:0 auto;padding:1.5rem}
+
+/* EMPTY */
+.empty{text-align:center;padding:4rem 1rem;color:var(--faint)}
+.empty svg{width:40px;height:40px;margin-bottom:1rem;opacity:.3}
+.empty p{font-size:15px}
+
+/* SUGGESTION CARDS */
+.suggestions{display:flex;flex-direction:column;gap:12px}
+.sug-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem 1.4rem}
+.sug-meta{font-size:11px;color:var(--faint);margin-bottom:.75rem}
+.sug-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
+@media(max-width:600px){.sug-fields{grid-template-columns:1fr}}
+.field-group{display:flex;flex-direction:column;gap:4px}
+.field-group label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.field-group input,.field-group textarea{border:1px solid var(--border);border-radius:var(--r);padding:8px 10px;font-size:13.5px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s;width:100%}
+.field-group input:focus,.field-group textarea:focus{border-color:var(--accent)}
+.ar-field{direction:rtl;text-align:right;font-size:18px}
+.field-group textarea{resize:vertical;min-height:60px;line-height:1.5}
+.field-full{grid-column:1/-1}
+
+/* TAG SELECT */
+.tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.tag-pill{border:1px solid var(--border);border-radius:20px;padding:3px 11px;font-size:12px;cursor:pointer;background:var(--surface);color:var(--muted);transition:all .15s;user-select:none}
+.tag-pill:hover{border-color:var(--border-med);color:var(--text)}
+.tag-pill.sel{color:#fff;border-color:transparent}
+
+.sug-actions{display:flex;gap:8px;justify-content:flex-end}
+.btn-approve{background:var(--green);color:#fff;border:none;border-radius:var(--r);padding:8px 20px;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity .15s;display:flex;align-items:center;gap:6px}
+.btn-approve:hover{opacity:.88}
+.btn-approve:disabled{opacity:.5;cursor:wait}
+.btn-reject{background:none;border:1px solid var(--border-med);border-radius:var(--r);padding:8px 16px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted);transition:all .15s}
+.btn-reject:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--text);color:#fff;padding:9px 20px;border-radius:var(--r);font-size:13px;opacity:0;transition:opacity .2s,transform .2s;z-index:300;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5rem;border-top:1px solid var(--border);margin-top:2rem}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div class="login-title">Teacher Dashboard</div>
+    <p class="login-sub">Saudi Arabic Daily Sentences</p>
+    <input type="password" class="login-input" id="pwdInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
+    <button class="login-btn" onclick="login()">Sign in</button>
+    <div class="login-err" id="loginErr">Wrong password. Try again.</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dash" id="dash">
+  <header>
+    <div class="hd-left">
+      <h1>Suggestions <span class="badge" id="badge">0</span></h1>
+      <p>Student-submitted phrases waiting for your review</p>
+    </div>
+    <div class="hd-right">
+      <button class="btn-sm" onclick="loadSuggestions()">↻ Refresh</button>
+      <button class="btn-sm" onclick="logout()">Sign out</button>
+    </div>
+  </header>
+
+  <div class="container">
+    <div id="sugList"></div>
+  </div>
+</div>
+
+<footer style="display:none" id="footer">Saudi Arabic Daily Sentences · Teacher Dashboard</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const BUILTIN_TAGS = [
+  {id:'greet',  label:'Greeting',   color:'#1a6b45'},
+  {id:'social', label:'Social',     color:'#4e3f96'},
+  {id:'daily',  label:'Daily life', color:'#7a5010'},
+  {id:'express',label:'Expression', color:'#923020'},
+  {id:'emotion',label:'Emotion',    color:'#255230'},
+];
+
+let pwd = '';
+let suggestions = [];
+
+/* ── LOGIN ── */
+function login() {
+  const val = document.getElementById('pwdInput').value;
+  if (!val) return;
+  pwd = val;
+  // Try fetching suggestions — if 401, wrong password
+  loadSuggestions(true);
+}
+
+function logout() {
+  pwd = '';
+  document.getElementById('loginWrap').style.display = 'flex';
+  document.getElementById('dash').style.display = 'none';
+  document.getElementById('footer').style.display = 'none';
+  document.getElementById('pwdInput').value = '';
+}
+
+/* ── LOAD SUGGESTIONS ── */
+async function loadSuggestions(isLogin = false) {
+  try {
+    const res = await fetch(`/api/suggestions?pwd=${encodeURIComponent(pwd)}`);
+    if (res.status === 401) {
+      if (isLogin) {
+        document.getElementById('loginErr').style.display = 'block';
+        pwd = '';
+      }
+      return;
+    }
+
+    if (isLogin) {
+      document.getElementById('loginWrap').style.display = 'none';
+      document.getElementById('dash').style.display = 'block';
+      document.getElementById('footer').style.display = 'block';
+      document.getElementById('loginErr').style.display = 'none';
+    }
+
+    suggestions = await res.json();
+    renderSuggestions();
+  } catch (err) {
+    console.error(err);
+    showToast('Failed to load suggestions');
+  }
+}
+
+/* ── RENDER ── */
+function renderSuggestions() {
+  const list = document.getElementById('sugList');
+  document.getElementById('badge').textContent = suggestions.length;
+
+  if (!suggestions.length) {
+    list.innerHTML = `<div class="empty">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      <p>No pending suggestions — all clear!</p>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = `<div class="suggestions">${suggestions.map(s => renderCard(s)).join('')}</div>`;
+}
+
+function tagPillsHTML(sId, selectedTags) {
+  return BUILTIN_TAGS.map(t => {
+    const sel = selectedTags.includes(t.id);
+    return `<span class="tag-pill ${sel?'sel':''}" id="tp-${sId}-${t.id}"
+      style="${sel?`background:${t.color};border-color:${t.color}`:''}"
+      onclick="toggleTagPill('${sId}','${t.id}','${t.color}')">${t.label}</span>`;
+  }).join('');
+}
+
+function renderCard(s) {
+  const date = new Date(s.submittedAt).toLocaleString();
+  const tags = Array.isArray(s.tags) ? s.tags : [s.tags];
+  return `
+  <div class="sug-card" id="card-${s.id}">
+    <div class="sug-meta">Submitted ${date}</div>
+    <div class="sug-fields">
+      <div class="field-group field-full">
+        <label>Arabic phrase</label>
+        <input type="text" class="ar-field" id="ar-${s.id}" value="${escHtml(s.ar)}">
+      </div>
+      <div class="field-group">
+        <label>Pronunciation</label>
+        <input type="text" id="pr-${s.id}" value="${escHtml(s.pr||'')}">
+      </div>
+      <div class="field-group">
+        <label>English meaning</label>
+        <textarea id="en-${s.id}">${escHtml(s.en)}</textarea>
+      </div>
+      <div class="field-group field-full">
+        <label>Tags</label>
+        <div class="tag-row" id="tags-${s.id}">${tagPillsHTML(s.id, tags)}</div>
+      </div>
+    </div>
+    <div class="sug-actions">
+      <button class="btn-reject" onclick="reject('${s.id}')">✕ Reject</button>
+      <button class="btn-approve" id="appbtn-${s.id}" onclick="approve('${s.id}')">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2,7 6,11 12,3"/></svg>
+        Publish to sheet
+      </button>
+    </div>
+  </div>`;
+}
+
+function escHtml(str) {
+  return (str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ── TAG TOGGLE ── */
+function toggleTagPill(sId, tagId, color) {
+  const el = document.getElementById(`tp-${sId}-${tagId}`);
+  const isSel = el.classList.contains('sel');
+  // count currently selected
+  const row = document.getElementById(`tags-${sId}`);
+  const selCount = row.querySelectorAll('.sel').length;
+  if (isSel && selCount === 1) return; // must keep at least one
+  el.classList.toggle('sel', !isSel);
+  el.style.background = !isSel ? color : '';
+  el.style.borderColor = !isSel ? color : '';
+}
+
+function getSelectedTags(sId) {
+  const row = document.getElementById(`tags-${sId}`);
+  return [...row.querySelectorAll('.sel')].map(el => el.id.replace(`tp-${sId}-`,''));
+}
+
+/* ── APPROVE ── */
+async function approve(id) {
+  const btn = document.getElementById(`appbtn-${id}`);
+  btn.disabled = true;
+  btn.textContent = 'Publishing…';
+
+  const ar   = document.getElementById(`ar-${id}`).value.trim();
+  const pr   = document.getElementById(`pr-${id}`).value.trim();
+  const en   = document.getElementById(`en-${id}`).value.trim();
+  const tags = getSelectedTags(id);
+
+  if (!ar || !en) { showToast('Arabic and meaning are required'); btn.disabled=false; btn.innerHTML='Publish to sheet'; return; }
+
+  try {
+    const res = await fetch('/api/approve', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ pwd, id, ar, pr, en, tags }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+
+    // Remove from list
+    suggestions = suggestions.filter(s => s.id !== id);
+    document.getElementById(`card-${id}`).remove();
+    document.getElementById('badge').textContent = suggestions.length;
+    if (!suggestions.length) renderSuggestions();
+    showToast('Published to sheet!');
+  } catch (err) {
+    showToast('Error: ' + err.message);
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2,7 6,11 12,3"/></svg> Publish to sheet';
+  }
+}
+
+/* ── REJECT ── */
+async function reject(id) {
+  if (!confirm('Reject and delete this suggestion?')) return;
+  try {
+    await fetch('/api/reject', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ pwd, id }),
+    });
+    suggestions = suggestions.filter(s => s.id !== id);
+    document.getElementById(`card-${id}`).remove();
+    document.getElementById('badge').textContent = suggestions.length;
+    if (!suggestions.length) renderSuggestions();
+    showToast('Suggestion rejected.');
+  } catch { showToast('Error rejecting.'); }
+}
+
+/* ── TOAST ── */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+document.getElementById('pwdInput').focus();
+</script>
+</body>
+</html>
