@@ -12,7 +12,12 @@ export default async function handler(req, res) {
       headers: { Authorization: `Bearer ${KV_TOKEN}` }
     });
     const d = await r.json();
-    return d.result ? JSON.parse(d.result) : null;
+    if (!d.result) return null;
+    // Upstash may return already-parsed object or a JSON string — handle both
+    if (typeof d.result === 'string') {
+      try { return JSON.parse(d.result); } catch { return null; }
+    }
+    return d.result;
   }
 
   async function kvKeys(prefix) {
