@@ -162,12 +162,13 @@ async function loadSuggestions(isLogin = false) {
     }
 
     const raw = await res.json();
-suggestions = raw.map(item => {
-  if (item && typeof item.value === 'string') {
-    try { return JSON.parse(item.value); } catch { return item; }
-  }
-  return item;
-});
+    // Upstash wraps stored objects in { value: "..." } or { value: {...} } — unwrap it
+    suggestions = raw.map(item => {
+      if (item && item.value !== undefined && !item.ar) {
+        return typeof item.value === 'string' ? JSON.parse(item.value) : item.value;
+      }
+      return item;
+    });
     renderSuggestions();
   } catch (err) {
     console.error(err);
