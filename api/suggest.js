@@ -1,12 +1,14 @@
-import { kv } from '@vercel/kv';
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
   const { ar, pr, en, tags } = req.body;
   if (!ar || !en) return res.status(400).json({ error: 'Missing fields' });
 
-  // Fuzzy normalize Arabic for duplicate check
+  const KV_URL   = process.env.KV_REST_API_URL;
+  const KV_TOKEN = process.env.KV_REST_API_TOKEN;
+
+  if (!KV_URL || !KV_TOKEN) return res.status(500).json({ error: 'KV not configured' });
+
   function normalizeAr(str) {
     return str
       .replace(/[\u064B-\u065F\u0670]/g, '')
@@ -18,22 +20,44 @@ export default async function handler(req, res) {
       .trim();
   }
 
+  async function kvGet(key) {
+    const r = await fetch(`${KV_URL}/get/${encodeURIComponent(key)}`, {
+      headers: { Authorization: `Bearer ${KV_TOKEN}` }
+    });
+    const d = await r.json();
+    return d.result ? JSON.parse(d.result) : null;
+  }
+
+  async function kvSet(key, value) {
+    await fetch(`${KV_URL}/set/${encodeURIComponent(key)}`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${KV_TOKEN}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ value: JSON.stringify(value) })
+    });
+  }
+
+  async function kvKeys(prefix) {
+    const r = await fetch(`${KV_URL}/keys/${encodeURIComponent(prefix + '*')}`, {
+      headers: { Authorization: `Bearer ${KV_TOKEN}` }
+    });
+    const d = await r.json();
+    return d.result || [];
+  }
+
   try {
-    // Check for duplicates among pending suggestions
-    const keys = await kv.keys('suggestion:*');
+    const keys = await kvKeys('suggestion:');
     for (const key of keys) {
-      const existing = await kv.get(key);
+      const existing = await kvGet(key);
       if (existing && normalizeAr(existing.ar) === normalizeAr(ar)) {
         return res.status(409).json({ error: 'duplicate' });
       }
     }
 
-    // Save suggestion with unique ID
     const id = `suggestion:${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
-    await kv.set(id, {
+    await kvSet(id, {
       id,
       ar: ar.trim(),
-      pr: pr?.trim() || '',
+      pr: (pr||'').trim(),
       en: en.trim(),
       tags: Array.isArray(tags) ? tags : ['greet'],
       submittedAt: new Date().toISOString(),
@@ -42,6 +66,6 @@ export default async function handler(req, res) {
     res.status(200).json({ ok: true });
   } catch (err) {
     console.error('suggest error:', err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: err.message });
   }
 }
