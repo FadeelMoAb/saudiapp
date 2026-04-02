@@ -161,7 +161,13 @@ async function loadSuggestions(isLogin = false) {
       document.getElementById('loginErr').style.display = 'none';
     }
 
-    suggestions = await res.json();
+    const raw = await res.json();
+suggestions = raw.map(item => {
+  if (item && typeof item.value === 'string') {
+    try { return JSON.parse(item.value); } catch { return item; }
+  }
+  return item;
+});
     renderSuggestions();
   } catch (err) {
     console.error(err);
