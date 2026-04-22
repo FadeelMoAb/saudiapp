@@ -697,7 +697,6 @@ for (let j = 0; j < numPositions.length - 1; j++) {
 function bdNext() {
   bdClear();
 
-  // Difficulty zones — randomly pick one
   const zone = Math.random();
   let n;
 
@@ -711,25 +710,28 @@ function bdNext() {
     // Hard: 100–999
     n = Math.floor(Math.random() * 900) + 100;
   } else if (zone < 0.85) {
-    // Very hard: 1000–9999
-    n = Math.floor(Math.random() * 9000) + 1000;
+    // 1000–9999 — 50% flat, 50% random
+    if (Math.random() < 0.5) {
+      // Flat: round to nearest 100 (e.g. 2300, 7500)
+      n = Math.round((Math.floor(Math.random() * 9000) + 1000) / 100) * 100;
+    } else {
+      // Truly random
+      n = Math.floor(Math.random() * 9000) + 1000;
+    }
   } else {
-    // Challenge: 10000–99999
-    n = Math.floor(Math.random() * 90000) + 10000;
+    // 10000–99999 — 50% flat, 50% random
+    if (Math.random() < 0.5) {
+      // Flat: round to nearest 1000 (e.g. 25000, 98000)
+      n = Math.round((Math.floor(Math.random() * 90000) + 10000) / 1000) * 1000;
+    } else {
+      // Truly random
+      n = Math.floor(Math.random() * 90000) + 10000;
+    }
   }
 
-  // Round to a "clean" number — avoids ugly ones like 10,473
-  // Snap to nearest 5 for small, nearest 50 for medium, nearest 100 for large
-  /*if (n <= 99) {
-    // keep as is
-  } else if (n <= 999) {
-    n = Math.round(n / 5) * 5;
-  } else if (n <= 9999) {
-    n = Math.round(n / 100) * 100;
-  } else {
-    n = Math.round(n / 1000) * 1000;
-  }*/
-
+  bdTarget = {n};
+  document.getElementById('bdNum').textContent = n.toLocaleString();
+}
   bdTarget = {n};
   document.getElementById('bdNum').textContent = n.toLocaleString();
 }
