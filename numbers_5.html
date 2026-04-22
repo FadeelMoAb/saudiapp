@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saudi Arabic Numbers</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f5f0;--surface:#fff;--border:#e5e1d8;--border-med:#ccc8bc;
+  --text:#1c1a15;--muted:#7a7669;--faint:#b3ae9f;
+  --accent:#b85c1e;--accent-bg:#fdf0e6;
+  --gold:#c9953a;--gold-bg:#fdf6e6;
+  --green:#1a6b45;--green-bg:#e4f4ec;
+  --purple:#4e3f96;--purple-bg:#eeecfb;
+  --blue:#1a5c8a;--blue-bg:#e3f0fb;
+  --r:10px;--rlg:14px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── HEADER ── */
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;flex-wrap:wrap}
+.hd-title{font-family:'Lora',serif;font-size:17px;font-weight:600}
+.hd-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.nav-back{display:flex;align-items:center;gap:6px;text-decoration:none;font-size:13px;color:var(--muted);border:1px solid var(--border-med);border-radius:var(--r);padding:6px 14px;transition:all .15s}
+.nav-back:hover{color:var(--text)}
+
+/* ── TABS ── */
+.tabs-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;gap:0;overflow-x:auto}
+.tab-btn{background:none;border:none;border-bottom:2px solid transparent;padding:.75rem 1.1rem;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;color:var(--muted);transition:all .15s;white-space:nowrap}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ── CONTAINER ── */
+.container{max-width:1100px;margin:0 auto;padding:1.75rem 1.5rem}
+.section{display:none}
+.section.active{display:block}
+
+/* ── SHARED CHIP STYLE ── */
+.chip{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:7px 12px;cursor:pointer;transition:all .15s;display:inline-flex;flex-direction:column;align-items:center;gap:2px;user-select:none}
+.chip:hover{border-color:var(--accent);background:var(--accent-bg)}
+.chip.on{border-color:var(--accent);background:var(--accent);color:#fff}
+.chip .c-ar{font-size:15px;direction:rtl;font-weight:500}
+.chip .c-en{font-size:10px;color:var(--muted)}
+.chip.on .c-en{color:rgba(255,255,255,.7)}
+.chip.connector{background:var(--gold-bg);border-color:var(--gold)}
+.chip.connector.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.chip.saaa{background:var(--purple-bg);border-color:var(--purple)}
+.chip.saaa.on{background:var(--purple);color:#fff}
+
+/* ── SHARED DISPLAY BOX ── */
+.display-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:1.4rem;text-align:center;margin-bottom:1.25rem}
+.db-label{font-size:13px;color:var(--muted);margin-bottom:.4rem}
+.db-big{font-family:'Lora',serif;font-size:50px;font-weight:700;color:var(--accent);line-height:1}
+.db-built{font-size:22px;direction:rtl;margin-top:.5rem;min-height:34px;color:var(--text);font-weight:500}
+.db-pronun{font-size:12.5px;color:var(--muted);font-style:italic;margin-top:4px;min-height:18px}
+.db-feedback{font-size:13px;margin-top:.6rem;min-height:20px;font-weight:500}
+.db-feedback.ok{color:var(--green)}
+.db-feedback.err{color:#c0392b}
+
+/* ── SHARED ACTIONS ── */
+.actions{display:flex;gap:8px;margin-top:1rem;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--accent);color:#fff;border:none;border-radius:var(--r);padding:9px 22px;font-size:13.5px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity .15s}
+.btn-primary:hover{opacity:.88}
+.btn-outline{background:none;border:1px solid var(--border-med);border-radius:var(--r);padding:9px 18px;font-size:13.5px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted);transition:all .15s}
+.btn-outline:hover{color:var(--text);background:var(--bg)}
+.btn-ghost{background:none;border:1px solid var(--border);border-radius:var(--r);padding:9px 14px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--faint);transition:all .15s}
+.btn-ghost:hover{color:var(--text)}
+.hint{font-size:11.5px;color:var(--faint);text-align:center;margin-top:.75rem;line-height:1.6}
+
+/* ══════════════════════════════════
+   TAB 1 — FLIP CARDS
+══════════════════════════════════ */
+.cat-filter{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:1.25rem}
+.cf{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:12.5px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted);transition:all .15s}
+.cf:hover{border-color:var(--border-med);color:var(--text)}
+.cf.active{background:var(--text);color:#fff;border-color:var(--text)}
+
+.num-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.num-card{height:140px;perspective:800px;cursor:pointer}
+.num-card-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .45s ease}
+.num-card.flipped .num-card-inner{transform:rotateY(180deg)}
+.num-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--rlg);display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid var(--border);transition:box-shadow .15s;padding:.5rem}
+.num-front{background:var(--surface)}
+.num-back{background:var(--accent-bg);border-color:#e8c4a0;transform:rotateY(180deg)}
+.num-card:hover .num-face{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.num-numeral{font-family:'Lora',serif;font-size:34px;font-weight:700;color:var(--accent);line-height:1}
+.num-arabic-word{font-size:16px;direction:rtl;color:var(--text);margin-top:6px;font-weight:500;text-align:center}
+.num-cat-dot{width:7px;height:7px;border-radius:50%;margin-top:8px}
+.num-pronun{font-size:11.5px;color:var(--muted);font-style:italic;margin-top:3px;text-align:center}
+.num-english{font-size:12px;color:var(--text);margin-top:5px;font-weight:500}
+.speak-btn{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:3px 9px;background:none;border:1px solid var(--border);border-radius:20px;font-size:11px;font-family:'DM Sans',sans-serif;color:var(--muted);cursor:pointer;transition:all .15s}
+.speak-btn:hover{border-color:var(--accent);color:var(--accent)}
+.speak-btn svg{width:11px;height:11px}
+
+/* ══════════════════════════════════
+   TAB 2 — NUMBER BUILDER
+══════════════════════════════════ */
+.chip-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:1rem 1.1rem;margin-bottom:10px}
+.cp-title{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.6rem}
+.cp-row{display:flex;flex-wrap:wrap;gap:7px}
+.bp-chip{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:7px 12px;cursor:pointer;transition:all .15s;display:inline-flex;flex-direction:column;align-items:center;gap:2px;min-width:64px;user-select:none}
+.bp-chip:hover{border-color:var(--accent);background:var(--accent-bg)}
+.bp-chip.used{border-color:var(--accent);background:var(--accent);color:#fff;opacity:.5;cursor:default}
+.bp-chip .bpc-n{font-family:'Lora',serif;font-size:15px;font-weight:600}
+.bp-chip .bpc-ar{font-size:12.5px;direction:rtl}
+.bp-chip.used .bpc-ar{color:rgba(255,255,255,.8)}
+
+/* Sequence display */
+.seq-display{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:1rem 1.2rem;margin-bottom:10px;min-height:56px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;direction:rtl}
+.seq-token{background:var(--accent-bg);border:1px solid #e8c4a0;border-radius:8px;padding:4px 10px;font-size:15px;font-weight:500;display:flex;align-items:center;gap:5px;cursor:pointer;transition:all .1s;direction:rtl}
+.seq-token:hover{background:#fce4cc;border-color:#d4935a}
+.seq-token .rm{font-size:11px;color:var(--faint);margin-right:2px}
+.seq-empty{color:var(--faint);font-size:13px;direction:ltr;width:100%;text-align:center}
+
+/* ══════════════════════════════════
+   TAB 3 — TELL THE TIME
+══════════════════════════════════ */
+.clock-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:1.25rem}
+.clock-svg-wrap{width:170px;height:170px;margin-bottom:.75rem;filter:drop-shadow(0 4px 14px rgba(0,0,0,.09))}
+.clock-digital{font-family:'Lora',serif;font-size:38px;font-weight:700;color:var(--accent);letter-spacing:2px;margin-bottom:.3rem}
+.clock-instr{font-size:13px;color:var(--muted)}
+
+/* ══════════════════════════════════
+   TAB 4 — FREE EXPLORER
+══════════════════════════════════ */
+.free-tabs{display:flex;gap:8px;margin-bottom:1.25rem}
+.free-tab{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:5px 16px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted);transition:all .15s}
+.free-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.free-panel{display:none}
+.free-panel.active{display:block}
+
+.free-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:1.5rem;max-width:560px;margin:0 auto}
+.free-label{font-size:13px;color:var(--muted);margin-bottom:.6rem;font-weight:500}
+.free-input{width:100%;border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-size:20px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s;text-align:center}
+.free-input:focus{border-color:var(--accent)}
+.free-input.ar-in{direction:rtl;font-size:17px}
+.free-result{background:var(--accent-bg);border:1px solid #e8c4a0;border-radius:var(--r);padding:1rem 1.2rem;margin-top:1rem;text-align:center;display:none}
+.free-result.show{display:block}
+.free-result-ar{font-size:26px;direction:rtl;font-weight:600;color:var(--text);margin-bottom:.4rem}
+.free-result-pr{font-size:13px;color:var(--muted);font-style:italic}
+.free-result-num{font-family:'Lora',serif;font-size:44px;font-weight:700;color:var(--accent)}
+
+/* ── REAL LIFE ── */
+.ctx-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.25rem}
+.ctx-btn{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:6px 16px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted);transition:all .15s}
+.ctx-btn:hover{border-color:var(--border-med);color:var(--text)}
+.ctx-btn.active{color:#fff;border-color:transparent}
+.ctx-btn.prices.active{background:var(--accent)}
+.ctx-btn.time.active{background:var(--purple)}
+.ctx-btn.phone.active{background:var(--blue)}
+.ctx-btn.dates.active{background:var(--green)}
+.ctx-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:10px}
+.ctx-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:1.1rem 1.2rem;cursor:pointer;transition:all .15s}
+.ctx-card:hover{border-color:var(--border-med);box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.ctx-card.flipped{background:#f4f9ff;border-color:#9ec8f0}
+.ctx-scene{font-size:12px;color:var(--faint);margin-bottom:.4rem}
+.ctx-english{font-size:15px;font-weight:500;color:var(--text);margin-bottom:.5rem}
+.ctx-arabic{font-size:20px;direction:rtl;text-align:right;color:var(--text);line-height:1.4}
+.ctx-pronun{font-size:12px;color:var(--muted);font-style:italic;margin-top:4px;display:none}
+.ctx-card.flipped .ctx-pronun{display:block}
+.ctx-tip{font-size:10.5px;color:var(--faint);margin-top:8px}
+.ctx-card.flipped .ctx-tip{display:none}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--text);color:#fff;padding:9px 20px;border-radius:var(--r);font-size:13px;opacity:0;transition:opacity .2s,transform .2s;z-index:300;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5rem;border-top:1px solid var(--border);margin-top:2rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="hd-title">Saudi Arabic Numbers</div>
+    <div class="hd-sub">الأرقام بالعامية السعودية</div>
+  </div>
+  <a href="/" class="nav-back">
+    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="9,2 4,7 9,12"/></svg>
+    Back to phrases
+  </a>
+</header>
+
+<div class="tabs-bar">
+  <button class="tab-btn active" onclick="switchTab('cards',this)">🃏 Number Cards</button>
+  <button class="tab-btn" onclick="switchTab('builder',this)">🔢 Number Builder</button>
+  <button class="tab-btn" onclick="switchTab('time',this)">🕐 Tell the Time</button>
+  <button class="tab-btn" onclick="switchTab('free',this)">🔍 Free Explorer</button>
+  <button class="tab-btn" onclick="switchTab('reallife',this)">🌍 Real Life</button>
+</div>
+
+<!-- ════════════════════════════════
+     TAB 1: NUMBER CARDS
+════════════════════════════════ -->
+<div class="section active" id="sec-cards">
+  <div class="container">
+    <div class="cat-filter">
+      <button class="cf active" onclick="filterCards('all',this)">All</button>
+      <button class="cf" onclick="filterCards('basic',this)">0–10</button>
+      <button class="cf" onclick="filterCards('teens',this)">11–19</button>
+      <button class="cf" onclick="filterCards('tens',this)">Tens</button>
+      <button class="cf" onclick="filterCards('big',this)">Big Numbers</button>
+    </div>
+    <div class="num-grid" id="numGrid"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     TAB 2: NUMBER BUILDER
+════════════════════════════════ -->
+<div class="section" id="sec-builder">
+  <div class="container">
+    <div class="display-box">
+      <div class="db-label">Build this number in Saudi Arabic — click chips in the correct order:</div>
+      <div class="db-big" id="bdNum">—</div>
+      <div class="db-pronun" id="bdPr"></div>
+      <div class="db-feedback" id="bdFb"></div>
+    </div>
+
+    <!-- Sequence the student is building -->
+    <div class="seq-display" id="bdSeq"><span class="seq-empty">Click chips below to build the number →</span></div>
+
+    <div class="chip-panel">
+      <div class="cp-title">Hundreds & Thousands</div>
+      <div class="cp-row" id="bpBig"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div class="chip-panel">
+        <div class="cp-title">Teens (Saudi dialect)</div>
+        <div class="cp-row" id="bpTeens"></div>
+      </div>
+      <div class="chip-panel">
+        <div class="cp-title">Tens (20–90)</div>
+        <div class="cp-row" id="bpTens"></div>
+      </div>
+    </div>
+    <div class="chip-panel">
+      <div class="cp-title">Units (1–9) &amp; Zero</div>
+      <div class="cp-row" id="bpUnits"></div>
+    </div>
+    <div class="chip-panel" style="background:var(--gold-bg);border-color:var(--gold)">
+      <div class="cp-title">Connector</div>
+      <div class="cp-row" id="bpConn"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-ghost" onclick="bdUndo()">↩ Undo</button>
+      <button class="btn-ghost" onclick="bdClear()">✕ Clear</button>
+      <button class="btn-primary" onclick="bdCheck()">Check ✓</button>
+      <button class="btn-outline" onclick="bdNext()">New number →</button>
+    </div>
+    <div class="hint">Click chips in order from <strong>largest to smallest</strong>, joined by <strong>وِ</strong><br>
+    Example for 134: مية → وِ → أربعة → وِ → ثلاثين</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     TAB 3: TELL THE TIME
+════════════════════════════════ -->
+<div class="section" id="sec-time">
+  <div class="container">
+    <div class="clock-wrap">
+      <svg class="clock-svg-wrap" viewBox="0 0 200 200" id="clockSvg">
+        <circle cx="100" cy="100" r="96" fill="#fff" stroke="#e5e1d8" stroke-width="2"/>
+        <g id="clockMarks"></g>
+        <line id="hourHand" x1="100" y1="100" x2="100" y2="55" stroke="#1c1a15" stroke-width="5" stroke-linecap="round"/>
+        <line id="minHand"  x1="100" y1="100" x2="100" y2="32" stroke="#b85c1e" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="100" cy="100" r="5" fill="#b85c1e"/>
+      </svg>
+      <div class="clock-digital" id="clockDigital">—:—</div>
+      <div class="clock-instr">Build the time in Saudi Arabic using the chips below</div>
+    </div>
+
+    <!-- Sequence display -->
+    <div class="display-box" style="padding:1rem">
+      <div class="db-label">Your answer:</div>
+      <div class="db-built" id="tmSeqDisplay" dir="rtl">—</div>
+      <div class="db-feedback" id="tmFb"></div>
+    </div>
+
+    <!-- Chips: الساعة -->
+    <div class="chip-panel" style="background:var(--purple-bg);border-color:var(--purple)">
+      <div class="cp-title">Start with</div>
+      <div class="cp-row">
+        <div class="chip saaa" id="tc-saaa" onclick="tmChip('الساعة','prefix','الساعة')">
+          <span class="c-ar">الساعة</span><span class="c-en">the hour</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hours 1-12 -->
+    <div class="chip-panel">
+      <div class="cp-title">Hours (١–١٢)</div>
+      <div class="cp-row" id="tmHours"></div>
+    </div>
+
+    <!-- Minutes: 1-12 then tens 20-50 -->
+    <div class="chip-panel">
+      <div class="cp-title">Minutes — units (١–١٢)</div>
+      <div class="cp-row" id="tmMinUnits"></div>
+    </div>
+    <div class="chip-panel">
+      <div class="cp-title">Minutes — tens (٢٠–٥٠)</div>
+      <div class="cp-row" id="tmMinTens"></div>
+    </div>
+
+    <!-- Connectors -->
+    <div class="chip-panel" style="background:var(--gold-bg);border-color:var(--gold)">
+      <div class="cp-title">Connectors</div>
+      <div class="cp-row" id="tmConn"></div>
+    </div>
+
+    <div class="display-box" id="tmSeqBox" style="display:none">
+      <div class="db-label">Your sequence:</div>
+      <div id="tmSeqTokens" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;direction:rtl"></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-ghost" onclick="tmUndo()">↩ Undo</button>
+      <button class="btn-ghost" onclick="tmClear()">✕ Clear</button>
+      <button class="btn-primary" onclick="tmCheck()">Check ✓</button>
+      <button class="btn-outline" onclick="tmNext()">New time →</button>
+    </div>
+    <div class="hint">
+      Build like: <strong>الساعة</strong> ← hour ← connector ← minutes<br>
+      4:45 = الساعة + خمسة + إلا + ربع &nbsp;|&nbsp; OR: الساعة + أربعة + وِ + خمسة + وِ + أربعين<br>
+      Connectors: وِ (and) · إلا (minus) · نص (half) · ربع (quarter) · ثلث (third)
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     TAB 4: FREE EXPLORER
+════════════════════════════════ -->
+<div class="section" id="sec-free">
+  <div class="container">
+    <div class="free-tabs">
+      <button class="free-tab active" onclick="switchFreeTab('num2ar',this)">🔢 → عربي Number to Arabic</button>
+      <button class="free-tab" onclick="switchFreeTab('ar2num',this)">عربي → 🔢 Arabic to Number</button>
+    </div>
+
+    <!-- Number → Arabic -->
+    <div class="free-panel active" id="fp-num2ar">
+      <div class="free-card">
+        <div class="free-label">Enter any number:</div>
+        <input class="free-input" id="freeNumInput" type="number" min="0" max="9999999" placeholder="e.g. 234" oninput="convertNum2Ar()">
+        <div class="free-result" id="freeNum2ArResult">
+          <div class="free-result-ar" id="freeArWord"></div>
+          <div class="free-result-pr" id="freeArPr"></div>
+          <button class="speak-btn" id="freeSpeakBtn" onclick="speakFree()" style="margin:8px auto 0;display:flex">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><polygon points="3,3 3,13 10,8" fill="currentColor" stroke="none"/><path d="M12 5.5a4 4 0 0 1 0 5"/></svg> Listen
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Arabic → Number -->
+    <div class="free-panel" id="fp-ar2num">
+      <div class="free-card">
+        <div class="free-label">Enter a number in Arabic (Saudi dialect):</div>
+        <input class="free-input ar-in" id="freeArInput" placeholder="مثال: مية وثلاثة وعشرين" oninput="convertAr2Num()">
+        <div class="free-result" id="freeAr2NumResult">
+          <div class="free-result-num" id="freeNumOut"></div>
+          <div class="free-result-pr" id="freeAr2NumNote"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════
+     TAB 5: REAL LIFE
+════════════════════════════════ -->
+<div class="section" id="sec-reallife">
+  <div class="container">
+    <div class="ctx-tabs">
+      <button class="ctx-btn prices active" onclick="switchCtx('prices',this)">💰 Prices</button>
+      <button class="ctx-btn time" onclick="switchCtx('time',this)">🕐 Time</button>
+      <button class="ctx-btn phone" onclick="switchCtx('phone',this)">📱 Phone</button>
+      <button class="ctx-btn dates" onclick="switchCtx('dates',this)">📅 Dates</button>
+    </div>
+    <div class="ctx-grid" id="ctxGrid"></div>
+  </div>
+</div>
+
+<footer>Saudi Arabic Numbers · Classroom Learning Tool</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════
+   DATA
+══════════════════════════════════════════ */
+
+// Saudi dialect numbers — used in CARDS
+const NUMBERS = [
+  {n:0,  ar:'صفر',        pr:'ṣifr',           en:'Zero',        cat:'basic', dot:'#888'},
+  {n:1,  ar:'واحد',       pr:'wāḥid',          en:'One',         cat:'basic', dot:'#1a6b45'},
+  {n:2,  ar:'اثنين',      pr:'ithnayn',        en:'Two',         cat:'basic', dot:'#1a6b45'},
+  {n:3,  ar:'ثلاثة',      pr:'thalātha',       en:'Three',       cat:'basic', dot:'#1a6b45'},
+  {n:4,  ar:'أربعة',      pr:"arba'a",         en:'Four',        cat:'basic', dot:'#1a6b45'},
+  {n:5,  ar:'خمسة',       pr:'khamsa',         en:'Five',        cat:'basic', dot:'#1a6b45'},
+  {n:6,  ar:'ستة',        pr:'sitta',          en:'Six',         cat:'basic', dot:'#1a6b45'},
+  {n:7,  ar:'سبعة',       pr:"sab'a",          en:'Seven',       cat:'basic', dot:'#1a6b45'},
+  {n:8,  ar:'ثمانية',     pr:'thamānya',       en:'Eight',       cat:'basic', dot:'#1a6b45'},
+  {n:9,  ar:'تسعة',       pr:"tis'a",          en:'Nine',        cat:'basic', dot:'#1a6b45'},
+  {n:10, ar:'عشرة',       pr:"'ashara",        en:'Ten',         cat:'basic', dot:'#1a6b45'},
+  // Saudi accent teens
+  {n:11, ar:'إحدعش',      pr:"iḥda'sh",        en:'Eleven',      cat:'teens', dot:'#4e3f96'},
+  {n:12, ar:'اثنعش',      pr:"ithna'sh",       en:'Twelve',      cat:'teens', dot:'#4e3f96'},
+  {n:13, ar:'ثلاث طعش',   pr:"thalāsh ṭa'sh",  en:'Thirteen',    cat:'teens', dot:'#4e3f96'},
+  {n:14, ar:'أربع طعش',   pr:"arba' ṭa'sh",    en:'Fourteen',    cat:'teens', dot:'#4e3f96'},
+  {n:15, ar:'خمس طعش',    pr:"khams ṭa'sh",    en:'Fifteen',     cat:'teens', dot:'#4e3f96'},
+  {n:16, ar:'ست طعش',     pr:"sit ṭa'sh",      en:'Sixteen',     cat:'teens', dot:'#4e3f96'},
+  {n:17, ar:'سبع طعش',    pr:"sab' ṭa'sh",     en:'Seventeen',   cat:'teens', dot:'#4e3f96'},
+  {n:18, ar:'ثمن طعش',    pr:"thaman ṭa'sh",   en:'Eighteen',    cat:'teens', dot:'#4e3f96'},
+  {n:19, ar:'تسع طعش',    pr:"tasa' ṭa'sh",    en:'Nineteen',    cat:'teens', dot:'#4e3f96'},
+  {n:20, ar:'عشرين',      pr:"'ishrīn",        en:'Twenty',      cat:'tens',  dot:'#b85c1e'},
+  {n:30, ar:'ثلاثين',     pr:'thalāthīn',      en:'Thirty',      cat:'tens',  dot:'#b85c1e'},
+  {n:40, ar:'أربعين',     pr:"arba'īn",        en:'Forty',       cat:'tens',  dot:'#b85c1e'},
+  {n:50, ar:'خمسين',      pr:'khamsīn',        en:'Fifty',       cat:'tens',  dot:'#b85c1e'},
+  {n:60, ar:'ستين',       pr:'sittīn',         en:'Sixty',       cat:'tens',  dot:'#b85c1e'},
+  {n:70, ar:'سبعين',      pr:"sab'īn",         en:'Seventy',     cat:'tens',  dot:'#b85c1e'},
+  {n:80, ar:'ثمانين',     pr:'thamānīn',       en:'Eighty',      cat:'tens',  dot:'#b85c1e'},
+  {n:90, ar:'تسعين',      pr:"tis'īn",         en:'Ninety',      cat:'tens',  dot:'#b85c1e'},
+  {n:100,  ar:'مية',      pr:'miyya',          en:'Hundred',     cat:'big',   dot:'#1a5c8a'},
+  {n:200,  ar:'مئتين',    pr:"mi'itayn",       en:'Two hundred', cat:'big',   dot:'#1a5c8a'},
+  {n:500,  ar:'خمس مية',  pr:'khams miyya',    en:'Five hundred',cat:'big',   dot:'#1a5c8a'},
+  {n:1000, ar:'ألف',      pr:'alf',            en:'Thousand',    cat:'big',   dot:'#1a5c8a'},
+  {n:2000, ar:'ألفين',    pr:'alfayn',         en:'Two thousand',cat:'big',   dot:'#1a5c8a'},
+  {n:1000000,ar:'مليون',  pr:'milyōn',         en:'Million',     cat:'big',   dot:'#1a5c8a'},
+];
+
+// Saudi dialect lookup tables (for generation)
+const U = ['','واحد','اثنين','ثلاثة','أربعة','خمسة','ستة','سبعة','ثمانية','تسعة'];
+const T = ['','عشرة','عشرين','ثلاثين','أربعين','خمسين','ستين','سبعين','ثمانين','تسعين'];
+const TEENS = {11:'إحدعش',12:'اثنعش',13:'ثلاث طعش',14:'أربع طعش',15:'خمس طعش',16:'ست طعش',17:'سبع طعش',18:'ثمن طعش',19:'تسع طعش'};
+const H = {1:'مية',2:'مئتين',3:'ثلاث مية',4:'أربع مية',5:'خمس مية',6:'ست مية',7:'سبع مية',8:'ثمان مية',9:'تسع مية'};
+
+// Generate correct Saudi Arabic parts for a number (returns array of strings)
+// Thousands 3000-9000
+const TH = {3:'ثلاث آلاف',4:'أربع آلاف',5:'خمس آلاف',6:'ست آلاف',7:'سبع آلاف',8:'ثمان آلاف',9:'تسع آلاف'};
+
+function saudiParts(n) {
+  if (n === 0) return ['صفر'];
+  const parts = [];
+  let r = n;
+  // Millions
+  if (r >= 1000000) {
+    const m = Math.floor(r / 1000000);
+    if (m === 1) parts.push('مليون');
+    else if (m === 2) parts.push('مليونين');
+    else parts.push(U[m] + ' ملايين');
+    r -= m * 1000000;
+  }
+  // Thousands 3000-9000 use آلاف, 1000=ألف, 2000=ألفين
+  if (r >= 3000) {
+    const th = Math.floor(r / 1000);
+    parts.push(TH[th] || (U[th] + ' آلاف'));
+    r -= th * 1000;
+  } else if (r >= 2000) { parts.push('ألفين'); r -= 2000; }
+  else if (r >= 1000) { parts.push('ألف'); r -= 1000; }
+  // Hundreds
+  if (r >= 100) { const h = Math.floor(r/100); parts.push(H[h]); r -= h*100; }
+  // Teens 11-19
+  if (r >= 11 && r <= 19) { parts.push(TEENS[r]); r = 0; }
+  // Composites 21+: unit first then ten (Saudi dialect)
+  else if (r >= 21) {
+    const unit = r % 10, ten = Math.floor(r/10);
+    if (unit) parts.push(U[unit]);
+    parts.push(T[ten]);
+    r = 0;
+  } else if (r === 20) { parts.push('عشرين'); r = 0; }
+  else if (r === 10) { parts.push('عشرة'); r = 0; }
+  if (r > 0) parts.push(U[r]);
+  return parts;
+}
+
+function saudiText(n) { return saudiParts(n).join(' وِ '); }
+
+// Saudi hours for time (different words for 1 and 2)
+const HOUR_WORDS = ['','وحدة','اثنتين','ثلاثة','أربعة','خمسة','ستة','سبعة','ثمانية','تسعة','عشرة','إحدعش','اثنعش'];
+
+/* ══════════════════════════════════════════
+   TAB SWITCHING
+══════════════════════════════════════════ */
+function switchTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'time' && !tmReady) initTime();
+}
+
+/* ══════════════════════════════════════════
+   TAB 1: NUMBER CARDS
+══════════════════════════════════════════ */
+let cardFilter = 'all';
+
+function renderCards() {
+  const visible = NUMBERS.filter(n => cardFilter === 'all' || n.cat === cardFilter);
+  document.getElementById('numGrid').innerHTML = visible.map(num => `
+    <div class="num-card" id="nc-${num.n}" onclick="flipCard('nc-${num.n}')">
+      <div class="num-card-inner">
+        <div class="num-face num-front">
+          <div class="num-numeral">${num.n >= 1000000 ? '1M' : num.n.toLocaleString()}</div>
+          <div class="num-arabic-word">${num.ar}</div>
+          <div class="num-cat-dot" style="background:${num.dot}"></div>
+        </div>
+        <div class="num-face num-back">
+          <div class="num-arabic-word" style="font-size:19px">${num.ar}</div>
+          <div class="num-pronun">${num.pr}</div>
+          <div class="num-english">${num.en}</div>
+          <button class="speak-btn" onclick="speakText(event,'${num.ar.replace(/'/g,"\\'")}')">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><polygon points="3,3 3,13 10,8" fill="currentColor" stroke="none"/><path d="M12 5.5a4 4 0 0 1 0 5"/></svg> Listen
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function flipCard(id) { document.getElementById(id).classList.toggle('flipped'); }
+
+function filterCards(cat, btn) {
+  cardFilter = cat;
+  document.querySelectorAll('.cf').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards();
+}
+
+/* ══════════════════════════════════════════
+   TAB 2: NUMBER BUILDER
+   User taps chips in order — sequence preserved, order NOT auto-sorted
+══════════════════════════════════════════ */
+const BD_UNITS   = [{n:1,ar:'واحد'},{n:2,ar:'اثنين'},{n:3,ar:'ثلاثة'},{n:4,ar:'أربعة'},{n:5,ar:'خمسة'},{n:6,ar:'ستة'},{n:7,ar:'سبعة'},{n:8,ar:'ثمانية'},{n:9,ar:'تسعة'},{n:0,ar:'صفر'}];
+const BD_TENS    = [{n:20,ar:'عشرين'},{n:30,ar:'ثلاثين'},{n:40,ar:'أربعين'},{n:50,ar:'خمسين'},{n:60,ar:'ستين'},{n:70,ar:'سبعين'},{n:80,ar:'ثمانين'},{n:90,ar:'تسعين'}];
+const BD_TEENS   = [{n:11,ar:'إحدعش'},{n:12,ar:'اثنعش'},{n:13,ar:'ثلاث طعش'},{n:14,ar:'أربع طعش'},{n:15,ar:'خمس طعش'},{n:16,ar:'ست طعش'},{n:17,ar:'سبع طعش'},{n:18,ar:'ثمن طعش'},{n:19,ar:'تسع طعش'}];
+const BD_BIG     = [
+  {n:100,ar:'مية'},{n:200,ar:'مئتين'},{n:300,ar:'ثلاث مية'},{n:400,ar:'أربع مية'},
+  {n:500,ar:'خمس مية'},{n:600,ar:'ست مية'},{n:700,ar:'سبع مية'},{n:800,ar:'ثمان مية'},{n:900,ar:'تسع مية'},
+  {n:1000,ar:'ألف'},{n:2000,ar:'ألفين'},{n:3000,ar:'ثلاث آلاف'},{n:4000,ar:'أربع آلاف'},
+  {n:5000,ar:'خمس آلاف'},{n:6000,ar:'ست آلاف'},{n:7000,ar:'سبع آلاف'},{n:8000,ar:'ثمان آلاف'},{n:9000,ar:'تسع آلاف'},
+];
+const BD_CONN    = [{n:null,ar:'وِ',cls:'connector'}];
+
+let bdSeq = [];   // array of {ar, n} in user's tap order
+let bdTarget = null;
+
+function bdRenderChips() {
+  function chips(id, arr) {
+    document.getElementById(id).innerHTML = arr.map(item => `
+      <div class="bp-chip" data-n="${item.n}" data-ar="${item.ar}" onclick="bdTap(this,'${item.ar.replace(/'/g,"\\'")}',${item.n})">
+        <span class="bpc-ar">${item.ar}</span>
+      </div>
+    `).join('');
+  }
+  chips('bpBig',   BD_BIG);
+  chips('bpTeens', BD_TEENS);
+  chips('bpTens',  BD_TENS);
+  chips('bpUnits', BD_UNITS);
+  chips('bpConn',  BD_CONN);
+}
+
+function bdTap(el, ar, n) {
+  bdSeq.push({ar, n});
+  bdRenderSeq();
+  document.getElementById('bdFb').textContent = '';
+  document.getElementById('bdFb').className = 'db-feedback';
+}
+
+function bdRenderSeq() {
+  const box = document.getElementById('bdSeq');
+  if (!bdSeq.length) {
+    box.innerHTML = '<span class="seq-empty">Click chips below to build the number →</span>';
+    return;
+  }
+  box.innerHTML = bdSeq.map((tok, i) => `
+    <div class="seq-token" onclick="bdRemoveTok(${i})">
+      <span class="rm">✕</span>${tok.ar}
+    </div>
+  `).join('');
+}
+
+function bdRemoveTok(i) {
+  bdSeq.splice(i, 1);
+  bdRenderSeq();
+}
+
+function bdUndo() {
+  bdSeq.pop();
+  bdRenderSeq();
+  document.getElementById('bdFb').textContent = '';
+  document.getElementById('bdFb').className = 'db-feedback';
+}
+
+function bdClear() {
+  bdSeq = [];
+  bdRenderSeq();
+  document.getElementById('bdFb').textContent = '';
+  document.getElementById('bdFb').className = 'db-feedback';
+  document.getElementById('bdPr').textContent = '';
+}
+
+function bdCheck() {
+  if (!bdTarget) return;
+  const fb = document.getElementById('bdFb');
+
+  // Extract non-connector tokens and connectors separately
+  const numToks = bdSeq.filter(t => t.n !== null);
+  const connToks = bdSeq.filter(t => t.n === null);
+
+  // Check total value
+  const total = numToks.reduce((s, t) => s + t.n, 0);
+  if (total !== bdTarget.n) {
+    fb.textContent = `✗ That adds up to ${total}, not ${bdTarget.n}. Check your chips.`;
+    fb.className = 'db-feedback err';
+    return;
+  }
+
+  // Check that connectors (وِ) are present between each number token
+  // Build what the user wrote as a string
+  const builtText = bdSeq.map(t => t.ar).join(' ');
+
+  // Build the correct answer
+  const correctParts = saudiParts(bdTarget.n);
+  const correctText = correctParts.join(' وِ ');
+
+  // Compare removing all whitespace variation
+  const normalize = s => s.replace(/\s+/g,' ').trim();
+
+  if (normalize(builtText) === normalize(correctText)) {
+    fb.textContent = '✓ Correct! ' + correctText;
+    fb.className = 'db-feedback ok';
+    document.getElementById('bdPr').textContent = saudiTextPr(bdTarget.n);
+  } else {
+    // Total is right but order or connector is wrong
+    fb.textContent = '✗ Wrong order or missing وِ. Try again!';
+    fb.className = 'db-feedback err';
+  }
+}
+
+function bdNext() {
+  bdClear();
+  document.getElementById('bdPr').textContent = '';
+  const pool = [
+    2,3,5,7,9,11,12,13,15,17,19,
+    20,21,23,25,30,32,45,50,53,64,70,75,83,90,91,
+    100,101,110,150,200,215,250,300,400,500,600,750,999,
+    1000,1001,1100,1500,2000,3000,4500,5000,7000,9000,
+  ];
+  const n = pool[Math.floor(Math.random() * pool.length)];
+  bdTarget = {n};
+  document.getElementById('bdNum').textContent = n.toLocaleString();
+}
+
+// Pronunciation hints (approximate)
+function saudiTextPr(n) {
+  const text = saudiText(n);
+  return text; // for now same text serves as readable form
+}
+
+/* ══════════════════════════════════════════
+   TAB 3: TELL THE TIME
+   Student builds time from chips in their chosen order
+   System validates the MEANING, not just the string
+══════════════════════════════════════════ */
+let tmSeq = [];   // [{ar, role, val}]
+let tmTarget = null; // {h, m}
+let tmReady = false;
+
+// Chips data
+const TM_HOURS = [
+  {n:1,ar:'وحدة'},{n:2,ar:'اثنتين'},{n:3,ar:'ثلاثة'},
+  {n:4,ar:'أربعة'},{n:5,ar:'خمسة'},{n:6,ar:'ستة'},
+  {n:7,ar:'سبعة'},{n:8,ar:'ثمانية'},{n:9,ar:'تسعة'},
+  {n:10,ar:'عشرة'},{n:11,ar:'إحدعش'},{n:12,ar:'اثنعش'},
+];
+const TM_MIN_UNITS = [
+  {n:1,ar:'وحدة'},{n:2,ar:'اثنتين'},{n:3,ar:'ثلاثة'},
+  {n:4,ar:'أربعة'},{n:5,ar:'خمسة'},{n:6,ar:'ستة'},
+  {n:7,ar:'سبعة'},{n:8,ar:'ثمانية'},{n:9,ar:'تسعة'},
+  {n:10,ar:'عشرة'},{n:11,ar:'إحدعش'},{n:12,ar:'اثنعش'},
+];
+const TM_MIN_TENS = [
+  {n:20,ar:'عشرين'},{n:30,ar:'ثلاثين'},{n:40,ar:'أربعين'},{n:50,ar:'خمسين'},
+];
+const TM_CONN = [
+  {ar:'وِ',  role:'connector', val:null},
+  {ar:'إلا', role:'connector', val:null},
+  {ar:'نص',  role:'minute',    val:30},
+  {ar:'ربع', role:'minute',    val:15},
+  {ar:'ثلث', role:'minute',    val:20},
+];
+
+function initTime() {
+  tmReady = true;
+  // Draw clock marks
+  const marks = document.getElementById('clockMarks');
+  let m = '';
+  for (let i = 1; i <= 12; i++) {
+    const a = (i/12*360 - 90) * Math.PI/180;
+    const x1 = (100 + 82*Math.cos(a)).toFixed(1), y1 = (100 + 82*Math.sin(a)).toFixed(1);
+    const x2 = (100 + 90*Math.cos(a)).toFixed(1), y2 = (100 + 90*Math.sin(a)).toFixed(1);
+    m += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#ccc8bc" stroke-width="${i%3===0?2.5:1.5}" stroke-linecap="round"/>`;
+    if (i%3 === 0) {
+      const tx = (100 + 68*Math.cos(a)).toFixed(1), ty = (100 + 68*Math.sin(a) + 4).toFixed(1);
+      m += `<text x="${tx}" y="${ty}" text-anchor="middle" font-size="13" fill="#7a7669" font-family="DM Sans,sans-serif">${i}</text>`;
+    }
+  }
+  marks.innerHTML = m;
+
+  // Render chips
+  document.getElementById('tmHours').innerHTML = TM_HOURS.map(h =>
+    `<div class="chip" onclick="tmTap('${h.ar}','hour',${h.n})">${chipInner(h.ar, h.n)}</div>`
+  ).join('');
+  document.getElementById('tmMinUnits').innerHTML = TM_MIN_UNITS.map(m =>
+    `<div class="chip" onclick="tmTap('${m.ar}','min_unit',${m.n})">${chipInner(m.ar, m.n)}</div>`
+  ).join('');
+  document.getElementById('tmMinTens').innerHTML = TM_MIN_TENS.map(m =>
+    `<div class="chip" onclick="tmTap('${m.ar}','min_ten',${m.n})">${chipInner(m.ar, m.n)}</div>`
+  ).join('');
+  document.getElementById('tmConn').innerHTML = TM_CONN.map(c =>
+    `<div class="chip connector" onclick="tmTap('${c.ar}','${c.role}',${c.val})">${chipInner(c.ar, null)}</div>`
+  ).join('');
+
+  // الساعة chip
+  document.getElementById('tc-saaa').onclick = () => tmTap('الساعة','prefix',null);
+
+  tmNext();
+}
+
+function chipInner(ar, n) {
+  return `<span class="c-ar">${ar}</span>${n !== null ? `<span class="c-en">${n}</span>` : ''}`;
+}
+
+function tmTap(ar, role, val) {
+  tmSeq.push({ar, role, val: val !== undefined ? val : null});
+  tmRenderSeq();
+  document.getElementById('tmFb').textContent = '';
+  document.getElementById('tmFb').className = 'db-feedback';
+}
+
+function tmRenderSeq() {
+  const display = tmSeq.map(t => t.ar).join(' ');
+  document.getElementById('tmSeqDisplay').textContent = display || '—';
+
+  const box = document.getElementById('tmSeqBox');
+  const tokDiv = document.getElementById('tmSeqTokens');
+  if (!tmSeq.length) { box.style.display = 'none'; return; }
+  box.style.display = 'block';
+  tokDiv.innerHTML = tmSeq.map((tok, i) => `
+    <div class="seq-token" onclick="tmRemoveTok(${i})">
+      <span class="rm">✕</span>${tok.ar}
+    </div>
+  `).join('');
+}
+
+function tmRemoveTok(i) {
+  tmSeq.splice(i, 1);
+  tmRenderSeq();
+}
+
+function tmUndo() {
+  tmSeq.pop();
+  tmRenderSeq();
+  document.getElementById('tmFb').textContent = '';
+  document.getElementById('tmFb').className = 'db-feedback';
+}
+
+function tmClear() {
+  tmSeq = [];
+  tmRenderSeq();
+  document.getElementById('tmFb').textContent = '';
+  document.getElementById('tmFb').className = 'db-feedback';
+}
+
+// Evaluate the meaning of a student's sequence and compare to target
+function tmEvaluate(seq, target) {
+  const {h, m} = target;
+
+  // Extract roles
+  const hasPrefix = seq.some(t => t.role === 'prefix');
+  const hours = seq.filter(t => t.role === 'hour').map(t => t.val);
+  const minUnits = seq.filter(t => t.role === 'min_unit').map(t => t.val);
+  const minTens = seq.filter(t => t.role === 'min_ten').map(t => t.val);
+  const conns = seq.filter(t => t.role === 'connector').map(t => t.ar);
+  const specials = seq.filter(t => t.role === 'minute').map(t => ({ar:t.ar, val:t.val})); // نص ربع ثلث
+
+  if (!hasPrefix) return {ok:false, msg:'Missing الساعة at the start'};
+  if (!hours.length) return {ok:false, msg:'No hour selected'};
+
+  const hourVal = hours[0];
+  const hasIlla = conns.includes('إلا');
+  const hasWaw  = conns.includes('وِ');
+
+  // Check for missing connectors: if there are number chips but no connector between them
+  const numTokens = seq.filter(t => t.role === 'hour' || t.role === 'min_unit' || t.role === 'min_ten');
+  const connTokens = seq.filter(t => t.role === 'connector' || t.role === 'minute');
+  // If there are more than 1 number-type tokens (hour + any minute) but no connectors at all → missing connector
+  if (numTokens.length > 1 && connTokens.length === 0) {
+    return {ok:false, msg:'⚠️ DON\'T FORGET THE CONNECTORS! (وِ، إلا، نص، ربع، ثلث)'};
+  }
+
+  // Case: إلا (minus) — e.g. الساعة 5 إلا ربع = 4:45
+  if (hasIlla) {
+    const specialMin = specials[0];
+    const numMins = [...minUnits, ...minTens].reduce((s,v)=>s+v,0) || (specialMin ? specialMin.val : 0);
+    // إلا: time = (hourVal - 1) : (60 - numMins)
+    const computedH = hourVal; // displayed hour is next hour
+    const computedM = 60 - numMins;
+    // target hour from student perspective = next hour, so actual displayed = h+1 (if m>30)
+    const nextH = m > 30 ? h + 1 : h;
+    const remain = 60 - m;
+    if (computedH === nextH && computedM === m) return {ok:true};
+    if (computedH === nextH && numMins === remain) return {ok:true};
+    return {ok:false, msg:`✗ Not quite. Revisit your hour or minutes.`};
+  }
+
+  // Case: special connector (نص=30, ربع=15, ثلث=20)
+  if (specials.length) {
+    const specialVal = specials.reduce((s,x)=>s+x.val,0);
+    if (hourVal === h && specialVal === m) return {ok:true};
+    return {ok:false, msg:`✗ Not quite.`};
+  }
+
+  // Case: regular وِ
+  if (hourVal !== h) return {ok:false, msg:`✗ Wrong hour.`};
+
+  if (m === 0) {
+    // Exact hour — no minutes expected
+    const totalMins = [...minUnits,...minTens].reduce((s,v)=>s+v,0);
+    if (totalMins === 0) return {ok:true};
+    return {ok:false, msg:`✗ It's exactly ${h}:00 — no minutes needed.`};
+  }
+
+  // Minutes: unit + ten (in any order with وِ between)
+  const totalMins = [...minUnits,...minTens].reduce((s,v)=>s+v,0);
+  if (totalMins === m) return {ok:true};
+  return {ok:false, msg:`✗ Minutes add up to ${totalMins}, not ${m}.`};
+}
+
+function tmCheck() {
+  if (!tmTarget) return;
+  const fb = document.getElementById('tmFb');
+  const result = tmEvaluate(tmSeq, tmTarget);
+  if (result.ok) {
+    fb.textContent = `✓ Correct! ${tmTarget.h}:${String(tmTarget.m).padStart(2,'0')}`;
+    fb.className = 'db-feedback ok';
+  } else {
+    fb.textContent = result.msg || '✗ Not quite — check your order and connectors.';
+    fb.className = 'db-feedback err';
+  }
+}
+
+function tmNext() {
+  tmClear();
+  // Random time on 5-min intervals
+  const h = Math.floor(Math.random()*12)+1;
+  const mins = [0,5,10,15,20,25,30,35,40,45,50,55];
+  const m = mins[Math.floor(Math.random()*mins.length)];
+  tmTarget = {h, m};
+  drawClock(h, m);
+  document.getElementById('clockDigital').textContent =
+    String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0');
+}
+
+function drawClock(h, m) {
+  const hAngle = ((h%12) + m/60) * 30 - 90;
+  const hRad = hAngle * Math.PI/180;
+  const hx = (100 + 45*Math.cos(hRad)).toFixed(1);
+  const hy = (100 + 45*Math.sin(hRad)).toFixed(1);
+  document.getElementById('hourHand').setAttribute('x2', hx);
+  document.getElementById('hourHand').setAttribute('y2', hy);
+
+  const mAngle = m*6 - 90;
+  const mRad = mAngle * Math.PI/180;
+  const mx = (100 + 62*Math.cos(mRad)).toFixed(1);
+  const my = (100 + 62*Math.sin(mRad)).toFixed(1);
+  document.getElementById('minHand').setAttribute('x2', mx);
+  document.getElementById('minHand').setAttribute('y2', my);
+}
+
+/* ══════════════════════════════════════════
+   TAB 4: FREE EXPLORER
+══════════════════════════════════════════ */
+
+function switchFreeTab(id, btn) {
+  document.querySelectorAll('.free-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.free-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('fp-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+let lastSpokenAr = '';
+
+function convertNum2Ar() {
+  const raw = document.getElementById('freeNumInput').value.trim();
+  const result = document.getElementById('freeNum2ArResult');
+  if (!raw || isNaN(raw)) { result.classList.remove('show'); return; }
+  const n = parseInt(raw);
+  if (n < 0 || n > 9999999) { result.classList.remove('show'); return; }
+  const ar = saudiText(n);
+  document.getElementById('freeArWord').textContent = ar;
+  document.getElementById('freeArPr').textContent = `Number: ${n.toLocaleString()}`;
+  lastSpokenAr = ar;
+  result.classList.add('show');
+}
+
+function speakFree() { speakText(null, lastSpokenAr); }
+
+// Arabic → Number (parse Saudi words with fuzzy matching)
+const AR2NUM_MAP = {
+  // Zero
+  'صفر':0,
+  // Units
+  'واحد':1,'وحدة':1,'وحده':1,
+  'اثنين':2,'اثنتين':2,'اثنان':2,'اثنان':2,
+  'ثلاثة':3,'ثلاثه':3,'ثلاثة':3,
+  'أربعة':4,'اربعة':4,'اربعه':4,'أربعه':4,'أربع':4,'اربع':4,
+  'خمسة':5,'خمسه':5,'خمس':5,
+  'ستة':6,'سته':6,'ست':6,
+  'سبعة':7,'سبعه':7,'سبع':7,
+  'ثمانية':8,'ثمانيه':8,'ثمان':8,'ثماني':8,
+  'تسعة':9,'تسعه':9,'تسع':9,
+  'عشرة':10,'عشره':10,'عشر':10,
+  // Saudi teens
+  'إحدعش':11,'احدعش':11,'إحداعش':11,'احداعش':11,
+  'اثنعش':12,'اثناعش':12,'إثنعش':12,
+  'ثلاث طعش':13,'ثلاثطعش':13,'ثلاثة عشر':13,
+  'أربع طعش':14,'اربع طعش':14,'أربعة عشر':14,
+  'خمس طعش':15,'خمسة عشر':15,'خمسطعش':15,
+  'ست طعش':16,'ستة عشر':16,'ستطعش':16,
+  'سبع طعش':17,'سبعة عشر':17,'سبعطعش':17,
+  'ثمن طعش':18,'ثمانية عشر':18,'ثمنطعش':18,
+  'تسع طعش':19,'تسعة عشر':19,'تسعطعش':19,
+  // Tens
+  'عشرين':20,'عشرون':20,
+  'ثلاثين':30,'ثلاثون':30,
+  'أربعين':40,'اربعين':40,'أربعون':40,
+  'خمسين':50,'خمسون':50,
+  'ستين':60,'ستون':60,
+  'سبعين':70,'سبعون':70,
+  'ثمانين':80,'ثمانون':80,
+  'تسعين':90,'تسعون':90,
+  // Hundreds
+  'مية':100,'مائة':100,'ميه':100,'مئة':100,
+  'مئتين':200,'مئتان':200,'ميتين':200,'مائتين':200,
+  'ثلاث مية':300,'ثلاثمية':300,'ثلاث مائة':300,
+  'أربع مية':400,'اربع مية':400,'أربعمية':400,'أربع مائة':400,
+  'خمس مية':500,'خمسمية':500,'خمس مائة':500,
+  'ست مية':600,'ستمية':600,'ست مائة':600,
+  'سبع مية':700,'سبعمية':700,'سبع مائة':700,
+  'ثمان مية':800,'ثمانمية':800,'ثمان مائة':800,'ثماني مية':800,
+  'تسع مية':900,'تسعمية':900,'تسع مائة':900,
+  // Thousands
+  'ألف':1000,'الف':1000,'ألف':1000,
+  'ألفين':2000,'الفين':2000,'ألفان':2000,
+  'ثلاث آلاف':3000,'ثلاثة آلاف':3000,'ثلاث الاف':3000,
+  'أربع آلاف':4000,'أربعة آلاف':4000,'اربع آلاف':4000,
+  'خمس آلاف':5000,'خمسة آلاف':5000,
+  'ست آلاف':6000,'ستة آلاف':6000,
+  'سبع آلاف':7000,'سبعة آلاف':7000,
+  'ثمان آلاف':8000,'ثمانية آلاف':8000,
+  'تسع آلاف':9000,'تسعة آلاف':9000,
+  'مليون':1000000,
+};
+
+// Normalize Arabic text for fuzzy matching
+function normAr(s) {
+  return s
+    .replace(/[أإآا]/g, 'ا')  // normalize alef
+    .replace(/ة/g, 'ه')        // taa marbuta
+    .replace(/ى/g, 'ي')        // alef maqsura
+    .replace(/[\u064B-\u065F]/g, '') // diacritics
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+// Build normalized lookup for fuzzy search
+const AR2NUM_NORM = {};
+for (const [key, val] of Object.entries(AR2NUM_MAP)) {
+  AR2NUM_NORM[normAr(key)] = val;
+}
+
+function ar2numLookup(token) {
+  // exact
+  if (AR2NUM_MAP[token] !== undefined) return AR2NUM_MAP[token];
+  // normalized
+  const norm = normAr(token);
+  if (AR2NUM_NORM[norm] !== undefined) return AR2NUM_NORM[norm];
+  return undefined;
+}
+
+function convertAr2Num() {
+  const raw = document.getElementById('freeArInput').value.trim();
+  const result = document.getElementById('freeAr2NumResult');
+  if (!raw) { result.classList.remove('show'); return; }
+
+  // Strip connectors (و، وِ) and split into tokens
+  const cleaned = raw
+    .replace(/وِ/g, ' ')
+    .replace(/\bو\b/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const tokens = cleaned.split(' ').map(t => t.trim()).filter(Boolean);
+
+  let total = 0;
+  let i = 0;
+  let found = false;
+
+  while (i < tokens.length) {
+    // Try 3-word combo (e.g. "ثلاث آلاف", "أربع مية")
+    if (i+2 < tokens.length) {
+      const three = tokens[i] + ' ' + tokens[i+1] + ' ' + tokens[i+2];
+      const v = ar2numLookup(three);
+      if (v !== undefined) { total += v; i += 3; found = true; continue; }
+    }
+    // Try 2-word combo
+    if (i+1 < tokens.length) {
+      const two = tokens[i] + ' ' + tokens[i+1];
+      const v = ar2numLookup(two);
+      if (v !== undefined) { total += v; i += 2; found = true; continue; }
+    }
+    // Single token
+    const v = ar2numLookup(tokens[i]);
+    if (v !== undefined) { total += v; found = true; }
+    i++;
+  }
+
+  if (found) {
+    document.getElementById('freeNumOut').textContent = total.toLocaleString();
+    document.getElementById('freeAr2NumNote').textContent = `= ${total}`;
+    result.classList.add('show');
+  } else {
+    result.classList.remove('show');
+  }
+}
+
+/* ══════════════════════════════════════════
+   TAB 5: REAL LIFE
+══════════════════════════════════════════ */
+const CONTEXTS = {
+  prices:[
+    {scene:'At the market',en:'This costs 5 riyals',ar:'هذا بخمسة ريالات',pr:"hātha bi-khamsat riyālāt"},
+    {scene:'At the shop',en:'How much? — 25 riyals',ar:'بكم هذا؟ — بخمسة وعشرين ريال',pr:"bi-kam hātha? — bi-khamsa w-'ishrīn riyāl"},
+    {scene:'Paying',en:'I have 100 riyals',ar:'عندي مية ريال',pr:"'indi miyya riyāl"},
+    {scene:'Bargaining',en:"I'll give you 50",ar:'أعطيك خمسين',pr:"a'ṭīk khamsīn"},
+    {scene:'Restaurant',en:'The bill is 75 riyals',ar:'الحساب خمسة وسبعين ريال',pr:"al-ḥisāb khamsa w-sab'īn riyāl"},
+    {scene:'Discount',en:'Was 200, now 150',ar:'كان مئتين، الحين مية وخمسين',pr:"kān mi'itayn, al-ḥīn miyya w-khamsīn"},
+  ],
+  time:[
+    {scene:"Exact hour",en:"It's 3 o'clock",ar:'الساعة ثلاثة',pr:"as-sā'a thalātha"},
+    {scene:"Half past",en:"It's 7:30",ar:'الساعة سبعة ونص',pr:"as-sā'a sab'a w-nuṣṣ"},
+    {scene:"Quarter past",en:"It's 9:15",ar:'الساعة تسعة وربع',pr:"as-sā'a tis'a w-rub'"},
+    {scene:"Quarter to",en:"It's quarter to 5",ar:'الساعة خمسة إلا ربع',pr:"as-sā'a khamsa illa rub'"},
+    {scene:"Afternoon",en:"At 2 in the afternoon",ar:'الساعة اثنتين الظهر',pr:"as-sā'a ithnitayn aẓ-ẓuhr"},
+    {scene:"Evening",en:"At 8 in the evening",ar:'الساعة ثمانية الليل',pr:"as-sā'a thamānya al-layl"},
+  ],
+  phone:[
+    {scene:'Saudi mobile prefix',en:'05 — (zero five)',ar:'صفر خمسة',pr:'ṣifr khamsa'},
+    {scene:'Reading digits',en:'0–5–5',ar:'صفر — خمسة — خمسة',pr:'ṣifr — khamsa — khamsa'},
+    {scene:'Area code Riyadh',en:'Riyadh: 011',ar:'الرياض: صفر واحد واحد',pr:'ṣifr wāḥid wāḥid'},
+    {scene:'Emergency',en:'999 (emergency)',ar:'تسعة تسعة تسعة',pr:"tis'a tis'a tis'a"},
+    {scene:'Extension',en:'Extension 3',ar:'تحويلة ثلاثة',pr:"taḥwīla thalātha"},
+    {scene:'Hotline',en:'Toll-free: 800',ar:'ثمان مية',pr:'thamān miyya'},
+  ],
+  dates:[
+    {scene:'Day of month',en:'The 1st',ar:'الأول',pr:'al-awwal'},
+    {scene:'Day of month',en:'The 15th',ar:'الخامس عشر',pr:"al-khāmis 'ashar"},
+    {scene:'Day of month',en:'The 25th',ar:'الخامس والعشرين',pr:"al-khāmis wal-'ishrīn"},
+    {scene:'Year',en:'The year 2025',ar:'سنة ألفين وخمسة وعشرين',pr:"sanat alfayn w-khamsa w-'ishrīn"},
+    {scene:'Age',en:"I'm 20 years old",ar:'عمري عشرين',pr:"'umri 'ishrīn"},
+    {scene:'Duration',en:'3 days ago',ar:'من ثلاثة أيام',pr:"min thalātha ayyām"},
+  ],
+};
+
+let currentCtx = 'prices';
+const ctxFlipped = {};
+
+function renderCtx() {
+  const items = CONTEXTS[currentCtx];
+  document.getElementById('ctxGrid').innerHTML = items.map((item,i) => `
+    <div class="ctx-card ${ctxFlipped[currentCtx+i]?'flipped':''}" id="ctx-${i}" onclick="flipCtx(${i})">
+      <div class="ctx-scene">${item.scene}</div>
+      <div class="ctx-english">${item.en}</div>
+      <div class="ctx-arabic">${item.ar}</div>
+      <div class="ctx-pronun">${item.pr}</div>
+      <button class="speak-btn" onclick="speakText(event,'${item.ar.replace(/'/g,"\\'")}')">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><polygon points="3,3 3,13 10,8" fill="currentColor" stroke="none"/><path d="M12 5.5a4 4 0 0 1 0 5"/></svg> Listen
+      </button>
+      <div class="ctx-tip">Tap to see pronunciation</div>
+    </div>
+  `).join('');
+}
+
+function flipCtx(i) {
+  const key = currentCtx+i;
+  ctxFlipped[key] = !ctxFlipped[key];
+  document.getElementById('ctx-'+i).classList.toggle('flipped', ctxFlipped[key]);
+}
+
+function switchCtx(ctx, btn) {
+  currentCtx = ctx;
+  document.querySelectorAll('.ctx-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCtx();
+}
+
+/* ══════════════════════════════════════════
+   SPEAK (ElevenLabs → browser fallback)
+══════════════════════════════════════════ */
+let currentAudio = null;
+
+async function speakText(e, text) {
+  if (e) e.stopPropagation();
+  if (!text) return;
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  try {
+    const res = await fetch('/api/speak', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({text})
+    });
+    if (!res.ok) throw new Error('no api');
+    const blob = await res.blob();
+    const audio = new Audio(URL.createObjectURL(blob));
+    currentAudio = audio;
+    audio.play();
+    audio.onended = () => { currentAudio = null; };
+  } catch {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'ar-SA'; u.rate = 0.85;
+    window.speechSynthesis.speak(u);
+  }
+}
+
+/* ── TOAST ── */
+let toastT;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+renderCards();
+bdRenderChips();
+bdNext();
+renderCtx();
+</script>
+</body>
+</html>
