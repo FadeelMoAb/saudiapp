@@ -248,8 +248,8 @@ footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5r
       <div class="cp-row" id="bpTools"></div>
     </div>
 
-    <div class="hint">Click chips in order, join with <strong>وِ</strong><br>
-    450 = أربعة → مية → وِ → خمسين &nbsp;|&nbsp; 3000 = ثلاثة → آلاف</div>
+    <div class="hint">Click chips in order, join with <strong>و</strong><br>
+    450 = أربعة → مية → و → خمسين &nbsp;|&nbsp; 3000 = ثلاثة → آلاف</div>
   </div>
 </div>
 
@@ -313,7 +313,7 @@ footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5r
     <div class="hint">
       Build like: <strong>الساعة</strong> + hour + connector + minutes<br>
       4:45 = الساعة + خمسة + إلا + ربع &nbsp;|&nbsp; 4:55 = الساعة + خمسة + إلا + خمسة<br>
-      Connectors: وِ (and) · إلا (minus) · نص (half) · ربع (quarter) · ثلث (third)
+      Connectors: و (and) · إلا (minus) · نص (half) · ربع (quarter) · ثلث (third)
     </div>
   </div>
 </div>
@@ -447,16 +447,16 @@ function saudiParts(n) {
   const parts = [];
   let r = n;
 
-  // Millions — digit × مليون is multiplication, NO وِ between digit and مليون
+  // Millions — digit × مليون is multiplication, NO و between digit and مليون
   if (r >= 1000000) {
     const millions = Math.floor(r / 1000000);
     if (millions === 1) parts.push('مليون');
     else if (millions === 2) parts.push('مليونين');
     else {
-      // e.g. 4,000,000 = أربعة مليون (no وِ)
+      // e.g. 4,000,000 = أربعة مليون (no و)
       const millionParts = saudiParts(millions);
       // Combine digit + مليون as a single unit (no separator)
-      parts.push(millionParts.join(' وِ ') + ' مليون');
+      parts.push(millionParts.join(' و ') + ' مليون');
     }
     r -= millions * 1000000;
   }
@@ -479,13 +479,13 @@ function saudiParts(n) {
       const thParts = [];
       if (th >= 11 && th <= 19) thParts.push(TEENS[th]);
       else { if (unit) thParts.push(U[unit]); thParts.push(T[ten]); }
-      parts.push(thParts.join(' وِ ') + ' ألف');
+      parts.push(thParts.join(' و ') + ' ألف');
     } else if (th === 100) parts.push('مية ألف');
     else if (th === 200) parts.push('ميتين ألف');
     else if (th >= 100 && th <= 999) {
       // e.g. 150,000 = مية وخمسين ألف
       const thParts = saudiParts(th);
-      parts.push(thParts.join(' وِ ') + ' ألف');
+      parts.push(thParts.join(' و ') + ' ألف');
     }
   }
 
@@ -505,7 +505,7 @@ function saudiParts(n) {
   return parts;
 }
 
-function saudiText(n) { return saudiParts(n).join(' وِ '); }
+function saudiText(n) { return saudiParts(n).join(' و '); }
 
 // Saudi hours for time (different words for 1 and 2)
 const HOUR_WORDS = ['','وحدة','اثنتين','ثلاثة','أربعة','خمسة','ستة','سبعة','ثمانية','تسعة','عشرة','إحدعش','اثنعش'];
@@ -563,18 +563,18 @@ function filterCards(cat, btn) {
    User taps chips in order — sequence preserved, order NOT auto-sorted
 ══════════════════════════════════════════ */
 // Builder: single unified chip list — units, hundreds-word, thousands-word, tens, teens, connector
-// User builds e.g. 450 as: أربعة → مية → وِ → خمسين
+// User builds e.g. 450 as: أربعة → مية → و → خمسين
 const BD_TEENS = [{n:19,ar:'تسع طعش'},{n:18,ar:'ثمن طعش'},{n:17,ar:'سبع طعش'},{n:16,ar:'ست طعش'},{n:15,ar:'خمس طعش'},{n:14,ar:'أربع طعش'},{n:13,ar:'ثلاث طعش'},{n:12,ar:'اثنعش'},{n:11,ar:'إحدعش'}];
 const BD_UNITS = [{n:10,ar:'عشرة'},{n:9,ar:'تسعة'},{n:8,ar:'ثمانية'},{n:7,ar:'سبعة'},{n:6,ar:'ستة'},{n:5,ar:'خمسة'},{n:4,ar:'أربعة'},{n:3,ar:'ثلاثة'},{n:2,ar:'اثنين'},{n:1,ar:'واحد'},{n:0,ar:'صفر'}];
 const BD_TENS  = [{n:90,ar:'تسعين'},{n:80,ar:'ثمانين'},{n:70,ar:'سبعين'},{n:60,ar:'ستين'},{n:50,ar:'خمسين'},{n:40,ar:'أربعين'},{n:30,ar:'ثلاثين'},{n:20,ar:'عشرين'}];
-// Tools: مية (×digit), ميتين, ألف (×digit), ألفين, آلاف (×digit), وِ
+// Tools: مية (×digit), ميتين, ألف (×digit), ألفين, آلاف (×digit), و
 const BD_TOOLS = [
   {n:100,  ar:'مية'},
   {n:200,  ar:'ميتين'},
   {n:1000, ar:'ألف'},
   {n:2000, ar:'ألفين'},
   {n:'alaf', ar:'آلاف'},   // multiplier: digit × 1000 (3000-9000)
-  {n:null, ar:'وِ'},
+  {n:null, ar:'و'},
 ];
 
 let bdSeq = [];
@@ -636,7 +636,7 @@ function bdCheck() {
   //  digit(1-9/10-12) + مية(100)  → multiply  e.g. أربعة+مية = 400
   //  digit(1-9)       + ألف(1000) → multiply  e.g. خمسة+ألف = 5000
   //  digit(1-9)       + آلاف      → multiply  e.g. ثلاثة+آلاف = 3000
-  //  وِ (null)                     → skip (connector)
+  //  و (null)                     → skip (connector)
   const numToks = bdSeq.filter(t => t.n !== null && t.n !== 'alaf');
   const allToks = bdSeq.filter(t => t.n !== null); // includes alaf marker
   let total = 0;
@@ -685,7 +685,7 @@ for (let j = 0; j < numPositions.length - 1; j++) {
   if (!hasConn) { connOk = false; break; }
 }
   if (!connOk) {
-    fb.textContent = '✗ Don\'t forget وِ between the parts!';
+    fb.textContent = '✗ Don\'t forget و between the parts!';
     fb.className = 'db-feedback err';
     return;
   }
@@ -762,7 +762,7 @@ const TM_TENS = [
   {n:'tashr',ar:'طعش'},
 ];
 const TM_CONN = [
-  {ar:'وِ',  role:'connector', val:null},
+  {ar:'و',  role:'connector', val:null},
   {ar:'إلا', role:'connector', val:null},
   {ar:'نص',  role:'special',   val:30},
   {ar:'ربع', role:'special',   val:15},
@@ -812,7 +812,8 @@ function chipInner(ar, n) {
 }
 
 function tmTap(ar, role, val) {
-  tmSeq.push({ar, role, val: val !== undefined ? val : null});
+  const parsedVal = (val !== undefined && val !== null && val !== 'null') ? (isNaN(val) ? val : Number(val)) : null;
+  tmSeq.push({ar, role, val: parsedVal});
   tmRenderSeq();
   document.getElementById('tmFb').textContent = '';
   document.getElementById('tmFb').className = 'db-feedback';
@@ -866,7 +867,7 @@ function tmEvaluate(seq, target) {
   const numericParts = seq.filter(t => ['number','hour','min_unit','min_ten','ten'].includes(t.role));
   const connParts    = seq.filter(t => ['connector','special'].includes(t.role));
   if (numericParts.length > 1 && connParts.length === 0) {
-    return {ok:false, msg:'⚠️ DON\'T FORGET THE CONNECTORS! (وِ، إلا، نص، ربع، ثلث)'};
+    return {ok:false, msg:'⚠️ DON\'T FORGET THE CONNECTORS! (و، إلا، نص، ربع، ثلث)'};
   }
 
   const hasIlla = connToks.includes('إلا');
@@ -901,7 +902,7 @@ function tmEvaluate(seq, target) {
     return {ok:false, msg:`✗ Not quite.`};
   }
 
-  // Case: regular وِ — hour + minutes
+  // Case: regular و — hour + minutes
   if (hourVal !== h) return {ok:false, msg:`✗ Wrong hour. The target hour is ${h}.`};
 
   if (m === 0) {
@@ -1079,9 +1080,9 @@ function convertAr2Num() {
   if (!raw) { result.classList.remove('show'); return; }
 
   // Step 1: separate attached و from words (e.g. "واربعين" → "اربعين", "وخمس طعش" → "خمس طعش")
-  // Strategy: replace وِ and و (whether standalone or attached to next word) with a space
+  // Strategy: replace و and و (whether standalone or attached to next word) with a space
   let cleaned = raw
-    .replace(/وِ\s*/g, ' ')               // وِ connector → space
+    .replace(/و\s*/g, ' ')               // و connector → space
     .replace(/و(?=[ء-ي])/g, ' ')          // و immediately before Arabic letter → space (strips attached و)
     .replace(/\bو\b/g, ' ')               // standalone و → space
     .replace(/\s+/g, ' ')
@@ -1107,7 +1108,7 @@ function convertAr2Num() {
       if (v !== undefined) { total += v; i += 2; found = true; continue; }
     }
     // Skip leftover standalone و tokens
-    if (tokens[i] === 'و' || tokens[i] === 'وِ') { i++; continue; }
+    if (tokens[i] === 'و' || tokens[i] === 'و') { i++; continue; }
     // Single token
     const v = ar2numLookup(tokens[i]);
     if (v !== undefined) { total += v; found = true; }
