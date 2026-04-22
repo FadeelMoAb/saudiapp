@@ -796,7 +796,7 @@ function initTime() {
 
   // Tens + طعش
   document.getElementById('tmTens').innerHTML = TM_TENS.map(t =>
-    `<div class="chip" onclick="tmTap('${t.ar}','${t.n === 'tashr' ? 'tashr' : 'ten'}',${JSON.stringify(t.n)})"><span class="c-ar">${t.ar}</span></div>`
+    `<div class="chip" onclick="tmTap('${t.ar}','${t.n === 'tashr' ? 'tashr' : 'ten'}','${t.n}')"><span class="c-ar">${t.ar}</span></div>`
   ).join('');
 
   // Connectors
@@ -928,10 +928,18 @@ function tmCheck() {
 
 function tmNext() {
   tmClear();
-  // Random time on 5-min intervals
-  const h = Math.floor(Math.random()*12)+1;
-  const mins = [0,5,10,15,20,25,30,35,40,45,50,55];
-  const m = mins[Math.floor(Math.random()*mins.length)];
+  const h = Math.floor(Math.random() * 12) + 1;
+
+  let m;
+  if (Math.random() < 0.70) {
+    // 70% — clean 5-min interval
+    const clean = [0,5,10,15,20,25,30,35,40,45,50,55];
+    m = clean[Math.floor(Math.random() * clean.length)];
+  } else {
+    // 30% — any minute 1–59
+    m = Math.floor(Math.random() * 59) + 1;
+  }
+
   tmTarget = {h, m};
   drawClock(h, m);
   document.getElementById('clockDigital').textContent =
