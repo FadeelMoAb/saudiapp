@@ -412,7 +412,7 @@ const NUMBERS = [
   {n:80, ar:'ثمانين',     pr:'thamānīn',       en:'Eighty',      cat:'tens',  dot:'#b85c1e'},
   {n:90, ar:'تسعين',      pr:"tis'īn",         en:'Ninety',      cat:'tens',  dot:'#b85c1e'},
   {n:100,  ar:'مية',        pr:'miyya',           en:'Hundred',        cat:'big',   dot:'#1a5c8a'},
-  {n:200,  ar:'مئتين',      pr:"mi'itayn",        en:'Two hundred',    cat:'big',   dot:'#1a5c8a'},
+  {n:200,  ar:'ميتين',      pr:"mi'itayn",        en:'Two hundred',    cat:'big',   dot:'#1a5c8a'},
   {n:300,  ar:'ثلاث مية',   pr:'thalāth miyya',   en:'Three hundred',  cat:'big',   dot:'#1a5c8a'},
   {n:400,  ar:'أربع مية',   pr:"arba' miyya",     en:'Four hundred',   cat:'big',   dot:'#1a5c8a'},
   {n:500,  ar:'خمس مية',    pr:'khams miyya',     en:'Five hundred',   cat:'big',   dot:'#1a5c8a'},
@@ -436,7 +436,7 @@ const NUMBERS = [
 const U = ['','واحد','اثنين','ثلاثة','أربعة','خمسة','ستة','سبعة','ثمانية','تسعة'];
 const T = ['','عشرة','عشرين','ثلاثين','أربعين','خمسين','ستين','سبعين','ثمانين','تسعين'];
 const TEENS = {11:'إحدعش',12:'اثنعش',13:'ثلاث طعش',14:'أربع طعش',15:'خمس طعش',16:'ست طعش',17:'سبع طعش',18:'ثمن طعش',19:'تسع طعش'};
-const H = {1:'مية',2:'مئتين',3:'ثلاث مية',4:'أربع مية',5:'خمس مية',6:'ست مية',7:'سبع مية',8:'ثمان مية',9:'تسع مية'};
+const H = {1:'مية',2:'ميتين',3:'ثلاث مية',4:'أربع مية',5:'خمس مية',6:'ست مية',7:'سبع مية',8:'ثمان مية',9:'تسع مية'};
 
 // Generate correct Saudi Arabic parts for a number (returns array of strings)
 // Thousands 3000-9000
@@ -481,7 +481,7 @@ function saudiParts(n) {
       else { if (unit) thParts.push(U[unit]); thParts.push(T[ten]); }
       parts.push(thParts.join(' وِ ') + ' ألف');
     } else if (th === 100) parts.push('مية ألف');
-    else if (th === 200) parts.push('مئتين ألف');
+    else if (th === 200) parts.push('ميتين ألف');
     else if (th >= 100 && th <= 999) {
       // e.g. 150,000 = مية وخمسين ألف
       const thParts = saudiParts(th);
@@ -567,10 +567,10 @@ function filterCards(cat, btn) {
 const BD_TEENS = [{n:19,ar:'تسع طعش'},{n:18,ar:'ثمن طعش'},{n:17,ar:'سبع طعش'},{n:16,ar:'ست طعش'},{n:15,ar:'خمس طعش'},{n:14,ar:'أربع طعش'},{n:13,ar:'ثلاث طعش'},{n:12,ar:'اثنعش'},{n:11,ar:'إحدعش'}];
 const BD_UNITS = [{n:10,ar:'عشرة'},{n:9,ar:'تسعة'},{n:8,ar:'ثمانية'},{n:7,ar:'سبعة'},{n:6,ar:'ستة'},{n:5,ar:'خمسة'},{n:4,ar:'أربعة'},{n:3,ar:'ثلاثة'},{n:2,ar:'اثنين'},{n:1,ar:'واحد'},{n:0,ar:'صفر'}];
 const BD_TENS  = [{n:90,ar:'تسعين'},{n:80,ar:'ثمانين'},{n:70,ar:'سبعين'},{n:60,ar:'ستين'},{n:50,ar:'خمسين'},{n:40,ar:'أربعين'},{n:30,ar:'ثلاثين'},{n:20,ar:'عشرين'}];
-// Tools: مية (×digit), مئتين, ألف (×digit), ألفين, آلاف (×digit), وِ
+// Tools: مية (×digit), ميتين, ألف (×digit), ألفين, آلاف (×digit), وِ
 const BD_TOOLS = [
   {n:100,  ar:'مية'},
-  {n:200,  ar:'مئتين'},
+  {n:200,  ar:'ميتين'},
   {n:1000, ar:'ألف'},
   {n:2000, ar:'ألفين'},
   {n:'alaf', ar:'آلاف'},   // multiplier: digit × 1000 (3000-9000)
@@ -1018,7 +1018,7 @@ const AR2NUM_MAP = {
   'تسعين':90,'تسعون':90,
   // Hundreds
   'مية':100,'مائة':100,'ميه':100,'مئة':100,
-  'مئتين':200,'مئتان':200,'ميتين':200,'مائتين':200,
+  'ميتين':200,'مئتان':200,'ميتين':200,'مائتين':200,
   'ثلاث مية':300,'ثلاثمية':300,'ثلاث مائة':300,
   'أربع مية':400,'اربع مية':400,'أربعمية':400,'أربع مائة':400,
   'خمس مية':500,'خمسمية':500,'خمس مائة':500,
@@ -1125,7 +1125,7 @@ const CONTEXTS = {
     {scene:'Paying',en:'I have 100 riyals',ar:'عندي مية ريال',pr:"'indi miyya riyāl"},
     {scene:'Bargaining',en:"I'll give you 50",ar:'أعطيك خمسين',pr:"a'ṭīk khamsīn"},
     {scene:'Restaurant',en:'The bill is 75 riyals',ar:'الحساب خمسة وسبعين ريال',pr:"al-ḥisāb khamsa w-sab'īn riyāl"},
-    {scene:'Discount',en:'Was 200, now 150',ar:'كان مئتين، الحين مية وخمسين',pr:"kān mi'itayn, al-ḥīn miyya w-khamsīn"},
+    {scene:'Discount',en:'Was 200, now 150',ar:'كان ميتين، الحين مية وخمسين',pr:"kān mi'itayn, al-ḥīn miyya w-khamsīn"},
   ],
   time:[
     {scene:"Exact hour",en:"It's 3 o'clock",ar:'الساعة ثلاثة',pr:"as-sā'a thalātha"},
