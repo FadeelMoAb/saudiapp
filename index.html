@@ -141,18 +141,36 @@ footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5r
     <div class="hd-title">Saudi Arabic Daily Sentences</div>
     <div class="hd-sub" id="hd-sub">Loading…</div>
   </div>
+
+  
   <div class="hd-btns">
-    <button class="btn-outline" onclick="openTagsModal()">
-      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1h5l6 6-5 5-6-6V1z"/><circle cx="3.5" cy="3.5" r=".8" fill="currentColor" stroke="none"/></svg>
-      Manage tags
-    </button>
-    <button class="btn-primary" onclick="openPhraseModal(null)">
-      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
-      Add phrase
-    </button>
+        <a href="/numbers.html" class="btn-primary" style="text-decoration:none"> Learn Numbers 🔢</a>
   </div>
+  
 </header>
 
+<!-- Floating action buttons -->
+<style>
+.fab-btn { height:48px; width:48px; border-radius:var(--r); display:flex; align-items:center; justify-content:flex-end; padding:0 13px; gap:8px; overflow:hidden; white-space:nowrap; transition:width .25s ease; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; }
+.fab-btn span { max-width:0; overflow:hidden; transition:max-width .25s ease; display:inline-block; }
+.fab-btn:hover { width:auto; padding:0 13px; }
+.fab-btn:hover span { max-width:150px; }
+.fab-outline { background:var(--surface); color:var(--muted); border:1px solid var(--border-med); box-shadow:0 4px 12px rgba(0,0,0,.12); }
+.fab-outline:hover { color:var(--text); }
+.fab-primary { background:var(--accent); color:#fff; border:none; box-shadow:0 4px 12px rgba(184,92,30,.35); }
+</style>
+<div style="position:fixed;bottom:1.5rem;right:1.5rem;display:flex;flex-direction:column;align-items:flex-end;gap:10px;z-index:100">
+  <button class="fab-btn fab-outline" onclick="openTagsModal()">
+    <span>Manage tags</span>
+    <svg style="flex-shrink:0" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1h5l6 6-5 5-6-6V1z"/><circle cx="3.5" cy="3.5" r=".8" fill="currentColor" stroke="none"/></svg>
+  </button>
+  <button class="fab-btn fab-primary" onclick="openPhraseModal(null)">
+    <span>Add phrase</span>
+    <svg style="flex-shrink:0" width="16" height="16" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
+  </button>
+</div>
+  
+  
 <div class="search-bar-sticky">
   <div class="search-wrap">
     <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="4.5"/><line x1="10" y1="10" x2="14" y2="14"/></svg>
