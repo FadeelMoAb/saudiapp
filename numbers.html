@@ -666,17 +666,56 @@ function bdCheck() {
 }
 
 function computeTotal(seq) {
-  const toks = seq.filter(t => t.n !== null);
-  let total = 0; let i = 0;
-  while (i < toks.length) {
-    const cur = toks[i], nxt = toks[i+1];
-    if (cur.n === 'alaf') { total *= 1000; i++; continue; }
-    if (typeof cur.n === 'number' && cur.n >= 1 && cur.n <= 9 && nxt && nxt.n === 100) { total += cur.n * 100; i += 2; continue; }
-    if (typeof cur.n === 'number' && cur.n >= 1 && cur.n <= 9 && nxt && nxt.n === 1000) { total += cur.n * 1000; i += 2; continue; }
-    if (cur.n === 200 || cur.n === 2000 || cur.n === 1000 || cur.n === 100) { total += cur.n; i++; continue; }
-    if (typeof cur.n === 'number') { total += cur.n; }
-    i++;
+  let total = 0;
+  let lastWasWaw = false;
+
+  for (let i = 0; i < seq.length; i++) {
+    const tok = seq[i];
+
+    if (tok.n === null) {
+      // و → next operation is addition
+      lastWasWaw = true;
+      continue;
+    }
+
+    if (tok.n === 'alaf' || tok.n === 1000) {
+      // آلاف or ألف — multiply everything accumulated so far
+      if (total === 0) {
+        total = 1000; // standalone ألف with nothing before it
+      } else {
+        total *= 1000;
+      }
+      lastWasWaw = false;
+      continue;
+    }
+
+    if (tok.n === 100) {
+      // مية — if previous token was a digit (no و), multiply; else add
+      if (!lastWasWaw && total > 0) {
+        total *= 100;
+      } else {
+        total += 100;
+      }
+      lastWasWaw = false;
+      continue;
+    }
+
+    // مئتين, ألفين — standalone
+    if (tok.n === 200 || tok.n === 2000) {
+      total += tok.n;
+      lastWasWaw = false;
+      continue;
+    }
+
+    // Normal number (unit or ten)
+    if (lastWasWaw || total === 0) {
+      total += tok.n;
+    } else {
+      total *= tok.n;
+    }
+    lastWasWaw = false;
   }
+
   return total;
 }
 function bdNext() {
