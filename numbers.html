@@ -583,7 +583,7 @@ let bdTarget = null;
 function bdRenderChips() {
   function chips(id, arr) {
     document.getElementById(id).innerHTML = arr.map(item => `
-      <div class="bp-chip" onclick="bdTap('${item.ar.replace(/'/g,"\\'")}',${JSON.stringify(item.n)})">
+      <div class="bp-chip" onclick="bdTap('${item.ar.replace(/'/g,"\\'")}','${item.n}')">
         <span class="bpc-ar">${item.ar}</span>
       </div>
     `).join('');
@@ -647,8 +647,8 @@ function bdCheck() {
   for (let j = 0; j < numPositions.length - 1; j++) {
     const posA = numPositions[j], posB = numPositions[j+1];
     const tokA = bdSeq[posA], tokB = bdSeq[posB];
-    const isMultiply = (typeof tokA.n === 'number' && tokA.n >= 1 && tokA.n <= 9 &&
-                        (tokB.n === 100 || tokB.n === 1000));
+    const isMultiply = (typeof tokA.n === 'number' && tokA.n >= 1 &&
+                    (tokB.n === 100 || tokB.n === 1000 || tokB.n === 'alaf'));
     if (isMultiply) continue;
     const alafIdx = bdSeq.findIndex((t,k) => k > posA && t.n === 'alaf');
     if (alafIdx > -1 && posB >= alafIdx) continue;
