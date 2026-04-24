@@ -595,7 +595,8 @@ function bdRenderChips() {
 }
 
 function bdTap(ar, n) {
-  bdSeq.push({ar, n});
+  const parsed = (n === 'null' || n === null) ? null : (n === 'alaf' ? 'alaf' : Number(n));
+  bdSeq.push({ar, n: parsed});
   bdRenderSeq();
   document.getElementById('bdFb').textContent = '';
   document.getElementById('bdFb').className = 'db-feedback';
