@@ -667,45 +667,32 @@ function bdCheck() {
 }
 
 function computeTotal(seq) {
-  // Split sequence into groups separated by و
-  // Then process each group: if it ends with ألف/آلاف/مية → multiply
-  const groups = [];
-  let current = [];
+  const toks = seq.filter(t => t.n !== null);
+  const alfIdx = toks.map((t,i) => [t,i]).filter(([t]) => t.n === 1000 || t.n === 'alaf').pop();
+  const alfPos = alfIdx ? alfIdx[1] : -1;
 
-  for (let i = 0; i < seq.length; i++) {
-    const tok = seq[i];
-    if (tok.n === null) {
-      // و = end of current group, start new one
-      if (current.length) groups.push(current);
-      current = [];
-    } else {
-      current.push(tok);
-    }
+  if (alfPos >= 0) {
+    const thousandsGroup = toks.slice(0, alfPos).filter(t => typeof t.n === 'number');
+    const thousandsSum = computeRemainder(thousandsGroup);
+    return (thousandsSum || 1) * 1000 + computeRemainder(toks.slice(alfPos + 1));
   }
-  if (current.length) groups.push(current);
+  return computeRemainder(toks);
+}
 
-  // Each group is either:
-  // [number] → just that number
-  // [number, multiplier] → number × multiplier (e.g. ثمانية + ألف = 8000, ثلاثة + مية = 300)
-  // [multiplier] → standalone ألف=1000, آلاف=error, مية=100, ألفين=2000, مئتين=200
-  let total = 0;
-  for (const group of groups) {
-    const nums = group.filter(t => t.n !== 'alaf' && t.n !== null);
-    const hasAlaf = group.some(t => t.n === 'alaf');
-    const hasAlf  = group.some(t => t.n === 1000);
-    const hasMiya = group.some(t => t.n === 100);
-
-    const numVal = nums.reduce((s, t) => s + t.n, 0);
-
-    if (hasAlaf) { total += numVal * 1000; }
-    else if (hasAlf && numVal > 0) { total += numVal * 1000; }
-    else if (hasAlf) { total += 1000; }
-    else if (hasMiya && numVal > 1) { total += numVal * 100; }
-    else if (hasMiya) { total += 100; }
-    else { total += numVal; }
+function computeRemainder(toks) {
+  let result = 0;
+  let i = 0;
+  while (i < toks.length) {
+    const cur = toks[i], nxt = toks[i+1];
+    if (nxt && nxt.n === 100 && typeof cur.n === 'number') {
+      result += cur.n * 100; i += 2;
+    } else if (cur.n === 100) { result += 100; i++; }
+    else if (cur.n === 200) { result += 200; i++; }
+    else if (cur.n === 2000) { result += 2000; i++; }
+    else if (typeof cur.n === 'number') { result += cur.n; i++; }
+    else i++;
   }
-
-  return total;
+  return result;
 }
   
 function bdNext() {
