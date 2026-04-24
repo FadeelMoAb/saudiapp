@@ -631,38 +631,7 @@ function bdCheck() {
   if (!bdTarget) return;
   const fb = document.getElementById('bdFb');
 
-  // Compute value of the user's sequence
-  // Rules:
-  //  digit(1-9/10-12) + مية(100)  → multiply  e.g. أربعة+مية = 400
-  //  digit(1-9)       + ألف(1000) → multiply  e.g. خمسة+ألف = 5000
-  //  digit(1-9)       + آلاف      → multiply  e.g. ثلاثة+آلاف = 3000
-  //  و (null)                     → skip (connector)
-  const numToks = bdSeq.filter(t => t.n !== null && t.n !== 'alaf');
-  const allToks = bdSeq.filter(t => t.n !== null); // includes alaf marker
-  let total = 0;
-  let i = 0;
-  while (i < allToks.length) {
-    const cur = allToks[i];
-    const nxt = allToks[i+1];
-    if (cur.n === null) { i++; continue; } // connector
-    // digit + آلاف → ×1000
-    if (cur.n >= 1 && cur.n <= 9 && nxt && nxt.n === 'alaf') {
-      total += cur.n * 1000;
-      i += 2;
-    }
-    // digit + مية → ×100
-    else if (cur.n >= 1 && cur.n <= 9 && nxt && nxt.n === 100) {
-      total += cur.n * 100;
-      i += 2;
-    }
-    // digit + ألف → ×1000
-    else if (cur.n >= 1 && cur.n <= 9 && nxt && nxt.n === 1000) {
-      total += cur.n * 1000;
-      i += 2;
-    }
-    else if (cur.n === 'alaf') { i++; } // stray آلاف, skip
-    else { total += cur.n; i++; }
-  }
+  const total = computeTotal(bdSeq);
 
   if (total !== bdTarget.n) {
     fb.textContent = `✗ That adds up to ${total}, not ${bdTarget.n}. Check your chips.`;
@@ -670,22 +639,24 @@ function bdCheck() {
     return;
   }
 
-  // Check connectors exist between number groups
   const numPositions = [];
-bdSeq.forEach((tok, idx) => { if (tok.n !== null && tok.n !== 'alaf') numPositions.push(idx); });
-let connOk = true;
-for (let j = 0; j < numPositions.length - 1; j++) {
-  const posA = numPositions[j], posB = numPositions[j+1];
-  const between = bdSeq.slice(posA+1, posB);
-  // Skip the connector check if this pair is digit+مية or digit+ألف (multiplication)
-  const tokA = bdSeq[posA], tokB = bdSeq[posB];
-  const isMultiply = (tokA.n >= 1 && tokA.n <= 9 && (tokB.n === 100 || tokB.n === 1000 || tokB.n === 'alaf'));
-  if (isMultiply) continue;
-  const hasConn = between.some(t => t.n === null);
-  if (!hasConn) { connOk = false; break; }
-}
+  bdSeq.forEach((tok, idx) => {
+    if (tok.n !== null && tok.n !== 'alaf') numPositions.push(idx);
+  });
+  let connOk = true;
+  for (let j = 0; j < numPositions.length - 1; j++) {
+    const posA = numPositions[j], posB = numPositions[j+1];
+    const tokA = bdSeq[posA], tokB = bdSeq[posB];
+    const isMultiply = (typeof tokA.n === 'number' && tokA.n >= 1 && tokA.n <= 9 &&
+                        (tokB.n === 100 || tokB.n === 1000));
+    if (isMultiply) continue;
+    const alafIdx = bdSeq.findIndex((t,k) => k > posA && t.n === 'alaf');
+    if (alafIdx > -1 && posB >= alafIdx) continue;
+    const hasConn = bdSeq.slice(posA+1, posB).some(t => t.n === null);
+    if (!hasConn) { connOk = false; break; }
+  }
   if (!connOk) {
-    fb.textContent = '✗ Don\'t forget و between the parts!';
+    fb.textContent = '✗ Don\'t forget وِ between the parts!';
     fb.className = 'db-feedback err';
     return;
   }
@@ -694,6 +665,20 @@ for (let j = 0; j < numPositions.length - 1; j++) {
   fb.className = 'db-feedback ok';
 }
 
+function computeTotal(seq) {
+  const toks = seq.filter(t => t.n !== null);
+  let total = 0; let i = 0;
+  while (i < toks.length) {
+    const cur = toks[i], nxt = toks[i+1];
+    if (cur.n === 'alaf') { total *= 1000; i++; continue; }
+    if (typeof cur.n === 'number' && cur.n >= 1 && cur.n <= 9 && nxt && nxt.n === 100) { total += cur.n * 100; i += 2; continue; }
+    if (typeof cur.n === 'number' && cur.n >= 1 && cur.n <= 9 && nxt && nxt.n === 1000) { total += cur.n * 1000; i += 2; continue; }
+    if (cur.n === 200 || cur.n === 2000 || cur.n === 1000 || cur.n === 100) { total += cur.n; i++; continue; }
+    if (typeof cur.n === 'number') { total += cur.n; }
+    i++;
+  }
+  return total;
+}
 function bdNext() {
   bdClear();
 
