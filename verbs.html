@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saudi Arabic Verbs</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f7f5f0;--surface:#fff;--border:#e5e1d8;--border-med:#ccc8bc;
+  --text:#1c1a15;--muted:#7a7669;--faint:#b3ae9f;
+  --accent:#b85c1e;--accent-bg:#fdf0e6;
+  --green:#1a6b45;--green-bg:#e4f4ec;--green-border:#a8d8be;
+  --red:#922020;--red-bg:#faeae5;--red-border:#e8b4b0;
+  --purple:#4e3f96;--purple-bg:#eeecfb;
+  --blue:#1a5c8a;--blue-bg:#e3f0fb;
+  --gold:#c9953a;--gold-bg:#fdf6e6;
+  --r:10px;--rlg:14px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── HEADER ── */
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;flex-wrap:wrap}
+.hd-title{font-family:'Lora',serif;font-size:17px;font-weight:600;letter-spacing:-.2px}
+.hd-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.btn-outline{display:flex;align-items:center;gap:6px;background:none;color:var(--muted);border:1px solid var(--border-med);border-radius:var(--r);padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;text-decoration:none;white-space:nowrap}
+.btn-outline:hover{background:var(--surface);color:var(--text)}
+.btn-primary{display:flex;align-items:center;gap:7px;background:var(--accent);color:#fff;border:none;border-radius:var(--r);padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:500;cursor:pointer;transition:opacity .15s;white-space:nowrap}
+.btn-primary:hover{opacity:.88}
+
+/* ── CONTAINER ── */
+.container{max-width:860px;margin:0 auto;padding:2rem 1.5rem}
+
+/* ── LEVEL SELECTOR ── */
+.level-selector{display:flex;gap:8px;margin-bottom:2rem;flex-wrap:wrap}
+.level-btn{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rlg);padding:10px 20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;min-width:100px}
+.level-btn:hover{border-color:var(--border-med);background:var(--bg)}
+.level-btn .lv-ar{font-size:16px;font-weight:600}
+.level-btn .lv-en{font-size:11px;color:var(--muted)}
+.level-btn .lv-desc{font-size:10px;color:var(--faint);text-align:center;margin-top:2px}
+.level-btn.active{border-color:var(--accent);background:var(--accent-bg)}
+.level-btn.active .lv-en{color:var(--accent)}
+.level-btn.lv-easy.active{border-color:var(--green);background:var(--green-bg)}
+.level-btn.lv-easy.active .lv-en{color:var(--green)}
+.level-btn.lv-medium.active{border-color:var(--gold);background:var(--gold-bg)}
+.level-btn.lv-medium.active .lv-en{color:var(--gold)}
+.level-btn.lv-hard.active{border-color:var(--accent);background:var(--accent-bg)}
+.level-btn.lv-hard.active .lv-en{color:var(--accent)}
+.level-btn.lv-pro.active{border-color:var(--purple);background:var(--purple-bg)}
+.level-btn.lv-pro.active .lv-en{color:var(--purple)}
+
+/* ── EXERCISE CARD ── */
+.ex-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:1.75rem;margin-bottom:1.25rem}
+.ex-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:1.25rem}
+.ex-meta{display:flex;align-items:center;gap:8px}
+.ex-badge{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.badge-easy{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+.badge-medium{background:var(--gold-bg);color:var(--gold);border:1px solid #e8cfa0}
+.badge-hard{background:var(--accent-bg);color:var(--accent);border:1px solid #e8c4a0}
+.badge-pro{background:var(--purple-bg);color:var(--purple);border:1px solid #c0b8e8}
+.ex-theme{font-size:11px;color:var(--faint)}
+.ex-actions{display:flex;gap:6px}
+
+.ex-prompt{font-size:14px;color:var(--muted);margin-bottom:1rem;line-height:1.5}
+.ex-prompt strong{color:var(--text)}
+
+/* ── DROP ZONE ── */
+.drop-zone{min-height:56px;border:2px dashed var(--border);border-radius:var(--r);padding:10px 12px;display:flex;flex-wrap:wrap;gap:7px;align-items:center;direction:rtl;transition:border-color .2s,background .2s;margin-bottom:1rem;background:var(--bg)}
+.drop-zone.drag-over{border-color:var(--accent);background:var(--accent-bg)}
+.drop-zone.correct{border-color:var(--green);background:var(--green-bg);border-style:solid}
+.drop-zone.incorrect{border-color:var(--red);background:var(--red-bg);border-style:solid}
+.drop-zone-hint{font-size:12px;color:var(--faint);direction:ltr}
+
+/* ── WORD CHIPS ── */
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;direction:rtl;margin-bottom:1.25rem;min-height:46px;padding:4px 0}
+.chip{background:var(--surface);border:1.5px solid var(--border-med);border-radius:8px;padding:7px 14px;font-size:16px;cursor:grab;user-select:none;transition:all .15s;direction:rtl;white-space:nowrap;touch-action:none}
+.chip:hover{border-color:var(--accent);background:var(--accent-bg);transform:translateY(-1px)}
+.chip.dragging{opacity:.4;cursor:grabbing;transform:scale(.95)}
+.chip.placed{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+.chip.placed:hover{background:#fce0cc;transform:translateY(-1px)}
+.chip.correct-chip{background:var(--green-bg);border-color:var(--green);color:var(--green);cursor:default}
+.chip.incorrect-chip{background:var(--red-bg);border-color:var(--red);color:var(--red);cursor:default}
+
+/* ── FEEDBACK ── */
+.feedback-box{border-radius:var(--r);padding:.9rem 1.1rem;font-size:13.5px;line-height:1.6;display:none;margin-bottom:1rem}
+.feedback-box.show{display:block}
+.feedback-box.correct-fb{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green)}
+.feedback-box.wrong-fb{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red)}
+.fb-ar{font-size:18px;direction:rtl;margin-bottom:.3rem;font-weight:600}
+.fb-en{font-size:12px;opacity:.85}
+
+/* ── CORRECT ANSWER REVEAL ── */
+.answer-reveal{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:.75rem 1rem;margin-bottom:.75rem;display:none}
+.answer-reveal.show{display:block}
+.ar-answer{font-size:20px;direction:rtl;color:var(--text);margin-bottom:3px}
+.ar-translation{font-size:12px;color:var(--muted);font-style:italic}
+
+/* ── ACTIONS ROW ── */
+.ex-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.footer-left{display:flex;gap:8px}
+.speak-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;background:none;border:1px solid var(--border);border-radius:20px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--muted);cursor:pointer;transition:all .15s}
+.speak-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.check-btn{background:var(--accent);color:#fff;border:none;border-radius:var(--r);padding:8px 22px;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.check-btn:hover{opacity:.88}
+.check-btn:disabled{opacity:.4;cursor:default}
+.next-btn{background:var(--text);color:#fff;border:none;border-radius:var(--r);padding:8px 22px;font-family:'DM Sans',sans-serif;font-size:13.5px;font-weight:500;cursor:pointer;transition:opacity .15s;display:none}
+.next-btn:hover{opacity:.82}
+.next-btn.show{display:inline-flex;align-items:center;gap:6px}
+
+/* ── SCORE BAR ── */
+.score-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.score-item{text-align:center}
+.score-num{font-family:'Lora',serif;font-size:26px;font-weight:700;color:var(--accent)}
+.score-label{font-size:11px;color:var(--muted);margin-top:2px}
+.score-streak{font-size:20px}
+.progress-wrap{flex:1;min-width:140px}
+.progress-bar{height:6px;background:var(--border);border-radius:3px;overflow:hidden;margin-top:4px}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease}
+
+/* ── VERB REFERENCE ── */
+.verb-ref{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem;margin-top:1.5rem}
+.vr-title{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.75rem}
+.vr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:6px}
+.vr-chip{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:13.5px;direction:rtl;text-align:center;color:var(--text)}
+.vr-chip span{display:block;font-size:10.5px;color:var(--muted);direction:ltr;margin-top:1px}
+
+/* ── LOADING ── */
+.loading-state{text-align:center;padding:3rem;color:var(--faint)}
+.loading-spinner{width:28px;height:28px;border:2.5px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--text);color:#fff;padding:9px 20px;border-radius:var(--r);font-size:13px;opacity:0;transition:all .25s;z-index:300;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5rem;border-top:1px solid var(--border);margin-top:2rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="hd-title">Saudi Arabic Verbs</div>
+    <div class="hd-sub">تمارين الأفعال — Present, Future & Imperatives</div>
+  </div>
+  <a href="index.html" class="btn-outline">
+    <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="9,2 4,7 9,12"/></svg>
+    Back to phrases
+  </a>
+</header>
+
+<div class="container">
+
+  <!-- Score Bar -->
+  <div class="score-bar">
+    <div class="score-item">
+      <div class="score-num" id="scoreCorrect">0</div>
+      <div class="score-label">✓ Correct</div>
+    </div>
+    <div class="score-item">
+      <div class="score-num" id="scoreTotal">0</div>
+      <div class="score-label">Total</div>
+    </div>
+    <div class="score-item">
+      <div class="score-num score-streak" id="scoreStreak">🔥 0</div>
+      <div class="score-label">Streak</div>
+    </div>
+    <div class="progress-wrap">
+      <div style="font-size:11px;color:var(--muted)">Accuracy</div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- Level Selector -->
+  <div class="level-selector">
+    <button class="level-btn lv-easy active" onclick="setLevel('easy',this)">
+      <span class="lv-ar">سهل</span>
+      <span class="lv-en">Easy</span>
+      <span class="lv-desc">3–4 words • SVO</span>
+    </button>
+    <button class="level-btn lv-medium" onclick="setLevel('medium',this)">
+      <span class="lv-ar">متوسط</span>
+      <span class="lv-en">Medium</span>
+      <span class="lv-desc">5–6 words • Future/Negative</span>
+    </button>
+    <button class="level-btn lv-hard" onclick="setLevel('hard',this)">
+      <span class="lv-ar">صعب</span>
+      <span class="lv-en">Hard</span>
+      <span class="lv-desc">7–8 words • Don't!</span>
+    </button>
+    <button class="level-btn lv-pro" onclick="setLevel('pro',this)">
+      <span class="lv-ar">محترف</span>
+      <span class="lv-en">Pro</span>
+      <span class="lv-desc">9+ words • Compound</span>
+    </button>
+  </div>
+
+  <!-- Exercise Area -->
+  <div id="exerciseArea"></div>
+
+  <!-- Verb Reference -->
+  <div class="verb-ref">
+    <div class="vr-title">Essential Verbs Pack — أفعال أساسية</div>
+    <div class="vr-grid" id="verbRef"></div>
+  </div>
+
+</div>
+
+<footer>Saudi Arabic Verbs · Classroom Learning Tool</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════
+   VERB DATA
+══════════════════════════════════════════ */
+const VERBS = [
+  {imp:'اكتب',  present:'يكتب',  en:'write'},
+  {imp:'اقرا',  present:'يقرا',  en:'read'},
+  {imp:'قول',   present:'يقول',  en:'say/tell'},
+  {imp:'روح',   present:'يروح',  en:'go'},
+  {imp:'شوف',   present:'يشوف',  en:'see/look'},
+  {imp:'تعلم',  present:'يتعلم', en:'learn'},
+  {imp:'تكلم',  present:'يتكلم', en:'talk'},
+  {imp:'عط',    present:'يعطي',  en:'give'},
+  {imp:'سوّ',   present:'يسوّي', en:'do/make'},
+  {imp:'نام',   present:'ينام',  en:'sleep'},
+  {imp:'اشتغل', present:'يشتغل', en:'work'},
+  {imp:'خلّ',   present:'يخلّي', en:'let/allow'},
+  {imp:'حاول',  present:'يحاول', en:'try'},
+  {imp:'اطلع',  present:'يطلع',  en:'go out'},
+  {imp:'اقدر',  present:'يقدر',  en:'can'},
+  {imp:'ابدأ',  present:'يبدأ',  en:'start'},
+  {imp:'كون',   present:'يكون',  en:'be'},
+  {imp:'ساعد',  present:'يساعد', en:'help'},
+  {imp:'جي',    present:'يجي',   en:'come'},
+  {imp:'اكل',   present:'يأكل',  en:'eat'},
+  {imp:'اشرب',  present:'يشرب',  en:'drink'},
+  {imp:'فتح',   present:'يفتح',  en:'open'},
+  {imp:'غلّق',  present:'يغلّق', en:'close'},
+  {imp:'شري',   present:'يشري',  en:'buy'},
+  {imp:'باع',   present:'يباع',  en:'sell'},
+  {imp:'طبخ',   present:'يطبخ',  en:'cook'},
+  {imp:'ركب',   present:'يركب',  en:'drive/ride'},
+  {imp:'طلب',   present:'يطلب',  en:'order/request'},
+  {imp:'درس',   present:'يدرس',  en:'study'},
+  {imp:'حضّر',  present:'يحضّر', en:'prepare'},
+];
+
+/* ══════════════════════════════════════════
+   SENTENCE DATABASE per level
+══════════════════════════════════════════ */
+const SENTENCES = {
+  easy: [
+    // University life
+    {ar:['أنا','أدرس','في','الجامعة'],      en:'I study at the university.',           theme:'🎓 University'},
+    {ar:['هو','يكتب','الواجب'],              en:'He writes the homework.',              theme:'🎓 University'},
+    {ar:['هي','تقرا','الكتاب'],              en:'She reads the book.',                  theme:'🎓 University'},
+    {ar:['نحن','نتعلم','عربي'],              en:'We learn Arabic.',                     theme:'🎓 University'},
+    {ar:['إنت','تروح','الجامعة'],            en:'You go to the university.',            theme:'🎓 University'},
+    // Cooking
+    {ar:['أنا','أطبخ','كبدة'],               en:'I cook liver.',                        theme:'🍳 Cooking'},
+    {ar:['هي','تحضّر','الفلافل'],            en:'She prepares falafel.',                theme:'🍳 Cooking'},
+    {ar:['هو','يأكل','الفطور'],              en:'He eats breakfast.',                   theme:'🍳 Cooking'},
+    {ar:['نحن','نشرب','قهوة'],               en:'We drink coffee.',                     theme:'🍳 Cooking'},
+    // Tech
+    {ar:['هو','يكتب','كود'],                 en:'He writes code.',                      theme:'💻 Tech'},
+    {ar:['أنا','أفتح','اللابتوب'],           en:'I open the laptop.',                   theme:'💻 Tech'},
+    {ar:['هي','تشوف','الفيديو'],             en:'She watches the video.',               theme:'💻 Tech'},
+    // Car
+    {ar:['هو','يركب','السيارة'],             en:'He drives the car.',                   theme:'🔧 Car'},
+    {ar:['أنا','أفتح','الباب'],              en:'I open the door.',                     theme:'🔧 Car'},
+  ],
+  medium: [
+    // Negation (ما)
+    {ar:['عمر','ما','يتكلم','عربي','الحين'], en:'Omar does not speak Arabic now.',      theme:'🚫 Negation'},
+    {ar:['أنا','ما','أقدر','أجي','اليوم'],   en:'I cannot come today.',                 theme:'🚫 Negation'},
+    {ar:['هي','ما','تروح','السوق','وحدها'], en:'She does not go to the market alone.', theme:'🚫 Negation'},
+    {ar:['نحن','ما','نشرب','قهوة','الليل'], en:'We do not drink coffee at night.',      theme:'🚫 Negation'},
+    // Future (راح)
+    {ar:['الدرس','راح','يبدأ','الحين'],      en:'The lesson will start now.',           theme:'🔮 Future'},
+    {ar:['أنا','راح','أساعدك','بكرة'],       en:'I will help you tomorrow.',            theme:'🔮 Future'},
+    {ar:['هي','راح','تحاول','تتعلم'],        en:'She will try to learn.',               theme:'🔮 Future'},
+    {ar:['نحن','راح','نروح','السوق'],        en:'We will go to the market.',            theme:'🔮 Future'},
+    // Future (حـ)
+    {ar:['فاطمة','حتساعدك','في','المشروع'], en:'Fatima will help you in the project.', theme:'🔮 Future'},
+    {ar:['متى','بتجي','إلى','الجامعة'],      en:'When will you come to university?',    theme:'🔮 Future'},
+    // University medium
+    {ar:['هو','ما','يدرس','في','البيت'],     en:'He does not study at home.',           theme:'🎓 University'},
+    {ar:['أنا','راح','أكتب','الواجب'],       en:'I will write the homework.',           theme:'🎓 University'},
+  ],
+  hard: [
+    // Negative imperatives (لا)
+    {ar:['لا','تنام','الحين','يا','ولد'],    en:"Don't sleep now, boy.",                theme:'🛑 Don\'t!'},
+    {ar:['لا','تروح','السوق','بدون','إذن'], en:"Don't go to the market without permission.", theme:'🛑 Don\'t!'},
+    {ar:['لا','تكتب','على','الكتاب','الحين'],en:"Don't write in the book now.",         theme:'🛑 Don\'t!'},
+    {ar:['لا','تخليه','يروح','لحاله'],       en:"Don't let him go alone.",              theme:'🛑 Don\'t!'},
+    {ar:['لا','تحاول','تتكلم','معه','الحين'],en:"Don't try to talk to him now.",       theme:'🛑 Don\'t!'},
+    // Negative imperatives feminine (لا + ين)
+    {ar:['لا','تشتغلين','هنا','وحدك'],       en:"Don't work here alone (f).",           theme:'🛑 Don\'t!'},
+    {ar:['لا','تروحين','السوق','وحدك'],      en:"Don't go to the market alone (f).",   theme:'🛑 Don\'t!'},
+    // Hard university
+    {ar:['لا','تنسى','تسلّم','الواجب','بكرة'],en:"Don't forget to submit homework tomorrow.", theme:'🎓 University'},
+    // Hard cooking
+    {ar:['لا','تحرق','الكبدة','يا','رجل'],  en:"Don't burn the liver, man.",           theme:'🍳 Cooking'},
+    // Car
+    {ar:['لا','تركب','السيارة','بدون','تصريح'],en:"Don't drive the car without a license.", theme:'🔧 Car'},
+  ],
+  pro: [
+    // Compound + attached pronouns
+    {ar:['السيارة','الحمرا','خربانة','هو','راح','يوديها','للتصليح'],
+      en:'The red car is broken, he will take it for repair.',              theme:'🔧 Car'},
+    {ar:['الواجب','صعب','بس','أنا','راح','أحاول','أسويه','الليلة'],
+      en:'The homework is hard but I will try to do it tonight.',           theme:'🎓 University'},
+    {ar:['الكبدة','جاهزة','خليني','أتذوقها','قبل','ما','نرفعها'],
+      en:'The liver is ready, let me taste it before we serve it.',         theme:'🍳 Cooking'},
+    {ar:['البرنامج','ما','يشتغل','أنا','راح','أصلحه','الحين'],
+      en:'The program does not work, I will fix it now.',                   theme:'💻 Tech'},
+    {ar:['محمد','ما','قدر','يجي','الحين','بس','راح','يساعدنا','بكرة'],
+      en:'Mohammed could not come now but will help us tomorrow.',          theme:'🎓 University'},
+    {ar:['الفلافل','طازجة','خليها','تبرد','قبل','ما','تاكلها'],
+      en:'The falafel is fresh, let it cool before you eat it.',            theme:'🍳 Cooking'},
+    {ar:['الكود','فيه','أخطاء','لا','تنشره','قبل','ما','تراجعه'],
+      en:"The code has errors, don't publish it before reviewing it.",      theme:'💻 Tech'},
+    {ar:['السيارة','عندها','مشكلة','في','الكبح','خذها','للورشة','الحين'],
+      en:'The car has a braking problem, take it to the workshop now.',     theme:'🔧 Car'},
+  ],
+};
+
+/* ══════════════════════════════════════════
+   FEEDBACK MESSAGES (Saudi dialect)
+══════════════════════════════════════════ */
+const FEEDBACK = {
+  correct: [
+    {ar:'ممتاز! صح صح صح! 🎉',        en:'Excellent! Correct!'},
+    {ar:'والله زين! هذا صح! 👏',       en:'By God, good! That\'s right!'},
+    {ar:'ماشاالله عليك! صح! ✨',       en:'Mashallah! Correct!'},
+    {ar:'زين يا بطل! هذا صح! 🌟',     en:'Well done, champ! That\'s right!'},
+    {ar:'أحسنت! كمّل كذا! 💪',        en:'Well done! Keep it up!'},
+    {ar:'بالظبط! عرفتها! 🔥',          en:'Exactly! You got it!'},
+  ],
+  wrong: [
+    {ar:'لا، مو صح. حاول مرة ثانية! 💡',  en:'No, not right. Try again!'},
+    {ar:'مو كذا. شوف الترتيب! 🤔',        en:'Not like that. Look at the order!'},
+    {ar:'اقرب بس مو صح. راجع الجواب! 📖', en:'Close but not right. Review the answer!'},
+    {ar:'خطأ. شوف الجواب الصح! 👇',       en:'Wrong. Look at the correct answer!'},
+  ],
+};
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+let currentLevel = 'easy';
+let currentSentence = null;
+let droppedWords = [];
+let score = {correct:0, total:0, streak:0};
+let checked = false;
+let dragSrcIndex = null; // which word bank index being dragged
+let usedIndices = new Set();
+
+/* ══════════════════════════════════════════
+   LEVEL SWITCHING
+══════════════════════════════════════════ */
+function setLevel(level, btn) {
+  currentLevel = level;
+  document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  usedIndices.clear();
+  generateExercise(); // async — shows loading state immediately
+}
+
+/* ══════════════════════════════════════════
+   AI PROMPTS per level
+══════════════════════════════════════════ */
+const LEVEL_PROMPTS = {
+  easy: `Generate a simple Saudi Arabic (Najdi dialect) present-tense sentence for language learners.
+Rules:
+- Structure: Simple SVO (Subject-Verb-Object)
+- Length: exactly 3-4 words
+- Use basic present tense with prefixes: أ (I), نـ (we), تـ (you m), يـ (he), تـ (she)
+- If the imperative starts with اِ drop it in present tense (e.g. اِكتب → يكتب)
+- Topics: university, cooking, tech, daily life
+- Use natural Saudi Najdi dialect vocabulary
+
+Respond with ONLY valid JSON, no markdown, no explanation:
+{"ar":["word1","word2","word3"],"en":"English translation","theme":"emoji Topic"}
+
+Example: {"ar":["أنا","أشرب","قهوة"],"en":"I drink coffee.","theme":"☕ Daily Life"}`,
+
+  medium: `Generate a Saudi Arabic (Najdi dialect) sentence using negation OR future tense.
+Rules:
+- Length: exactly 5-6 words
+- Either: use مَا before the verb for negation (e.g. ما راح أقدر أجي اليوم)
+- Or: use راح / حـ / بـ before the present tense for future
+- Present tense prefixes: أ (I), نـ (we), تـ (you m), يـ (he), تـ (she)
+- Topics: university life, cooking (liver/falafel), tech/coding, car maintenance
+
+Respond with ONLY valid JSON, no markdown, no explanation:
+{"ar":["word1","word2","word3","word4","word5"],"en":"English translation","theme":"emoji Topic"}
+
+Example: {"ar":["أنا","راح","أروح","الجامعة","بكرة"],"en":"I will go to university tomorrow.","theme":"🎓 University"}`,
+
+  hard: `Generate a Saudi Arabic (Najdi dialect) negative imperative sentence using لَا.
+Rules:
+- Length: exactly 7-8 words
+- Use لَا + present tense verb for "Don't..."
+- When using لَا, optionally drop the ن from suffix (e.g. لا تنام or لا تنامين)
+- Can use feminine form (ين suffix) or plural (ون suffix)
+- Topics: university, cooking, car maintenance, tech
+- Include time/place words to reach 7-8 words
+
+Respond with ONLY valid JSON, no markdown, no explanation:
+{"ar":["word1","word2","word3","word4","word5","word6","word7"],"en":"English translation","theme":"emoji Topic"}
+
+Example: {"ar":["لا","تنام","الحين","لازم","تكتب","الواجب","أول"],"en":"Don't sleep now, you must write the homework first.","theme":"🎓 University"}`,
+
+  pro: `Generate a compound Saudi Arabic (Najdi dialect) sentence with attached pronouns.
+Rules:
+- Length: 9+ words (can be split as two connected clauses)
+- Use attached pronouns: ـه (him/it), ـها (her/it), ـني (me), ـنا (us), ـك (you)
+- Can combine: negation + future, or description + action
+- Natural Saudi Najdi phrasing
+- Topics: university projects, cooking, car repair, coding/tech
+
+Respond with ONLY valid JSON, no markdown, no explanation:
+{"ar":["word1","word2","word3","word4","word5","word6","word7","word8","word9"],"en":"English translation","theme":"emoji Topic"}
+
+Example: {"ar":["السيارة","خربانة","هو","راح","يوديها","للتصليح","الحين"],"en":"The car is broken, he will take it for repair now.","theme":"🔧 Car"}`
+};
+
+/* ══════════════════════════════════════════
+   GENERATE EXERCISE (AI-powered)
+══════════════════════════════════════════ */
+async function generateExercise() {
+  droppedWords = [];
+  checked = false;
+  showLoadingState();
+
+  try {
+    const sentence = await fetchAISentence(currentLevel);
+    currentSentence = sentence;
+    const shuffled = [...sentence.ar].sort(() => Math.random() - 0.5);
+    renderExercise(shuffled);
+  } catch (err) {
+    console.error('AI generation failed:', err);
+    // Fallback to static sentences
+    const pool = SENTENCES[currentLevel];
+    let availIdx = pool.map((_,i)=>i).filter(i=>!usedIndices.has(i));
+    if (!availIdx.length) { usedIndices.clear(); availIdx = pool.map((_,i)=>i); }
+    const idx = availIdx[Math.floor(Math.random()*availIdx.length)];
+    usedIndices.add(idx);
+    currentSentence = pool[idx];
+    const shuffled = [...currentSentence.ar].sort(() => Math.random() - 0.5);
+    renderExercise(shuffled);
+    showToast('Using offline sentences — check API connection');
+  }
+}
+
+async function fetchAISentence(level) {
+  const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCwg5FlSTixROfQJTsS9kWE5Ag0m7Vww0o', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{
+        parts: [{
+          text: `You are an expert Saudi Arabic (Najdi dialect) linguist. Always respond with ONLY valid JSON, no markdown, no explanation.\n\n` + LEVEL_PROMPTS[level]
+        }]
+      }],
+      generationConfig: {
+        maxOutputTokens: 300,
+        temperature: 0.9
+      }
+    })
+  });
+
+  if (!response.ok) throw new Error('API error: ' + response.status);
+
+  const data = await response.json();
+  const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+
+  // Clean and parse JSON
+  const cleaned = rawText.replace(/```json|```/g, '').trim();
+  const parsed = JSON.parse(cleaned);
+
+  // Validate structure
+  if (!Array.isArray(parsed.ar) || parsed.ar.length < 2) {
+    throw new Error('Invalid sentence structure from AI');
+  }
+
+  return {
+    ar: parsed.ar,
+    en: parsed.en || '',
+    theme: parsed.theme || '💬 Generated'
+  };
+}
+
+function showLoadingState() {
+  document.getElementById('exerciseArea').innerHTML = `
+    <div class="ex-card" style="min-height:200px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem">
+      <div class="loading-spinner"></div>
+      <div style="font-size:14px;color:var(--muted)">Generating a new sentence with AI…</div>
+      <div style="font-size:12px;color:var(--faint)">يولّد الذكاء الاصطناعي جملة جديدة</div>
+    </div>
+  `;
+}
+
+/* ══════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════ */
+function renderExercise(shuffled) {
+  const area = document.getElementById('exerciseArea');
+  const badgeClass = {easy:'badge-easy',medium:'badge-medium',hard:'badge-hard',pro:'badge-pro'}[currentLevel];
+  const levelLabel = {easy:'سهل — Easy',medium:'متوسط — Medium',hard:'صعب — Hard',pro:'محترف — Pro'}[currentLevel];
+
+  area.innerHTML = `
+    <div class="ex-card" id="exCard">
+      <div class="ex-header">
+        <div class="ex-meta">
+          <span class="ex-badge ${badgeClass}">${levelLabel}</span>
+          <span class="ex-theme">${currentSentence.theme}</span>
+        </div>
+      </div>
+
+      <div class="ex-prompt">
+        Arrange the words to form the correct Saudi Arabic sentence.<br>
+        <strong>Drag</strong> the words into the correct order — right to left ←
+      </div>
+
+      <!-- Drop zone -->
+      <div class="drop-zone" id="dropZone" dir="rtl">
+        <span class="drop-zone-hint" id="dzHint">← Drop words here</span>
+      </div>
+
+      <!-- Feedback -->
+      <div class="feedback-box" id="feedbackBox">
+        <div class="fb-ar" id="fbAr"></div>
+        <div class="fb-en" id="fbEn"></div>
+      </div>
+
+      <!-- Answer reveal -->
+      <div class="answer-reveal" id="answerReveal">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Correct answer:</div>
+        <div class="ar-answer">${currentSentence.ar.join(' ')}</div>
+        <div class="ar-translation">${currentSentence.en}</div>
+      </div>
+
+      <!-- Word bank -->
+      <div class="word-bank" id="wordBank" dir="rtl">
+        ${shuffled.map((w,i) => `
+          <div class="chip"
+            id="chip-${i}"
+            data-index="${i}"
+            data-word="${w}"
+            draggable="true"
+            ondragstart="onDragStart(event,${i})"
+            ondragend="onDragEnd(event)"
+            onclick="onChipClick(${i},'${w.replace(/'/g,"\\'")}')">
+            ${w}
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="ex-footer">
+        <div class="footer-left">
+          <button class="speak-btn" id="speakBtn" onclick="speakSentence()">
+            ${speakerSVG()} Listen
+          </button>
+          <button class="btn-outline" onclick="clearDropZone()" style="font-size:12px;padding:6px 12px">↩ Clear</button>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="check-btn" id="checkBtn" onclick="checkAnswer()">Check ✓</button>
+          <button class="next-btn" id="nextBtn" onclick="generateExercise()">
+            Next exercise →
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  setupDropZone();
+}
+
+/* ══════════════════════════════════════════
+   DRAG & DROP
+══════════════════════════════════════════ */
+function setupDropZone() {
+  const dz = document.getElementById('dropZone');
+  dz.addEventListener('dragover', e => {
+    e.preventDefault();
+    dz.classList.add('drag-over');
+  });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault();
+    dz.classList.remove('drag-over');
+    if (dragSrcIndex === null || checked) return;
+    const chip = document.getElementById('chip-' + dragSrcIndex);
+    if (!chip || chip.classList.contains('placed')) return;
+    placeWord(dragSrcIndex, chip.dataset.word);
+  });
+}
+
+function onDragStart(e, idx) {
+  if (checked) return;
+  dragSrcIndex = idx;
+  e.dataTransfer.effectAllowed = 'move';
+  document.getElementById('chip-' + idx).classList.add('dragging');
+}
+
+function onDragEnd(e) {
+  if (dragSrcIndex !== null) {
+    const chip = document.getElementById('chip-' + dragSrcIndex);
+    if (chip) chip.classList.remove('dragging');
+  }
+  dragSrcIndex = null;
+}
+
+// Click to place/remove
+function onChipClick(idx, word) {
+  if (checked) return;
+  const chip = document.getElementById('chip-' + idx);
+  if (chip.classList.contains('placed')) {
+    // Remove from drop zone
+    droppedWords = droppedWords.filter(w => !(w.idx === idx));
+    chip.classList.remove('placed');
+    updateDropZone();
+  } else {
+    placeWord(idx, word);
+  }
+}
+
+function placeWord(idx, word) {
+  droppedWords.push({idx, word});
+  document.getElementById('chip-' + idx).classList.add('placed');
+  updateDropZone();
+}
+
+function updateDropZone() {
+  const dz = document.getElementById('dropZone');
+  const hint = document.getElementById('dzHint');
+  if (!droppedWords.length) {
+    dz.innerHTML = '<span class="drop-zone-hint" id="dzHint">← Drop words here</span>';
+    return;
+  }
+  dz.innerHTML = droppedWords.map((w, i) => `
+    <div class="chip placed" onclick="removeFromDrop(${i})" title="Click to remove">${w.word}</div>
+  `).join('');
+}
+
+function removeFromDrop(i) {
+  if (checked) return;
+  const removed = droppedWords[i];
+  droppedWords.splice(i, 1);
+  const chip = document.getElementById('chip-' + removed.idx);
+  if (chip) chip.classList.remove('placed');
+  updateDropZone();
+}
+
+function clearDropZone() {
+  if (checked) return;
+  droppedWords = [];
+  document.querySelectorAll('.chip.placed').forEach(c => c.classList.remove('placed'));
+  updateDropZone();
+}
+
+/* ══════════════════════════════════════════
+   CHECK ANSWER
+══════════════════════════════════════════ */
+function checkAnswer() {
+  if (checked) return;
+  if (!droppedWords.length) { showToast('رتّب الكلمات أول! — Place some words first!'); return; }
+
+  const studentAnswer = droppedWords.map(w => w.word).join(' ');
+  const correctAnswer = currentSentence.ar.join(' ');
+  const isCorrect = studentAnswer === correctAnswer;
+
+  checked = true;
+  score.total++;
+  updateScoreDisplay();
+
+  const dz = document.getElementById('dropZone');
+  const fb = document.getElementById('feedbackBox');
+  const reveal = document.getElementById('answerReveal');
+  const checkBtn = document.getElementById('checkBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  // Style the drop zone
+  dz.classList.add(isCorrect ? 'correct' : 'incorrect');
+
+  // Color the chips in drop zone
+  dz.innerHTML = droppedWords.map((w, i) => {
+    const correctWord = currentSentence.ar[i];
+    const ok = w.word === correctWord;
+    return `<div class="chip ${ok ? 'correct-chip' : 'incorrect-chip'}">${w.word}</div>`;
+  }).join('');
+
+  // Show feedback
+  const pool = isCorrect ? FEEDBACK.correct : FEEDBACK.wrong;
+  const msg = pool[Math.floor(Math.random()*pool.length)];
+  document.getElementById('fbAr').textContent = msg.ar;
+  document.getElementById('fbEn').textContent = msg.en;
+  fb.classList.add('show', isCorrect ? 'correct-fb' : 'wrong-fb');
+
+  if (isCorrect) {
+    score.correct++;
+    score.streak++;
+  } else {
+    score.streak = 0;
+    reveal.classList.add('show');
+  }
+
+  updateScoreDisplay();
+  checkBtn.disabled = true;
+  nextBtn.classList.add('show');
+
+  // Disable all word bank chips
+  document.querySelectorAll('#wordBank .chip').forEach(c => c.setAttribute('draggable','false'));
+}
+
+/* ══════════════════════════════════════════
+   SCORE
+══════════════════════════════════════════ */
+function updateScoreDisplay() {
+  document.getElementById('scoreCorrect').textContent = score.correct;
+  document.getElementById('scoreTotal').textContent = score.total;
+  document.getElementById('scoreStreak').textContent = '🔥 ' + score.streak;
+  const pct = score.total ? Math.round(score.correct/score.total*100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+/* ══════════════════════════════════════════
+   SPEAK
+══════════════════════════════════════════ */
+let currentAudio = null;
+
+async function speakSentence() {
+  const text = currentSentence.ar.join(' ');
+  const btn = document.getElementById('speakBtn');
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; btn.innerHTML = speakerSVG() + ' Listen'; return; }
+  btn.innerHTML = spinnerSVG() + ' Loading…';
+  try {
+    const res = await fetch('/api/speak', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({text})});
+    if (!res.ok) throw new Error('no api');
+    const blob = await res.blob();
+    const audio = new Audio(URL.createObjectURL(blob));
+    currentAudio = audio;
+    btn.innerHTML = stopSVG() + ' Stop';
+    audio.play();
+    audio.onended = () => { currentAudio = null; btn.innerHTML = speakerSVG() + ' Listen'; };
+  } catch {
+    btn.innerHTML = speakerSVG() + ' Listen';
+    // Browser TTS fallback
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'ar-SA'; u.rate = 0.85;
+      window.speechSynthesis.speak(u);
+    }
+  }
+}
+
+/* ══════════════════════════════════════════
+   VERB REFERENCE
+══════════════════════════════════════════ */
+function renderVerbRef() {
+  document.getElementById('verbRef').innerHTML = VERBS.map(v => `
+    <div class="vr-chip">${v.present}<span>${v.en}</span></div>
+  `).join('');
+}
+
+/* ══════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ══════════════════════════════════════════
+   SVG HELPERS
+══════════════════════════════════════════ */
+function speakerSVG() {
+  return `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" width="12" height="12"><polygon points="3,3 3,13 10,8" fill="currentColor" stroke="none"/><path d="M12 5.5a4 4 0 0 1 0 5"/></svg>`;
+}
+function stopSVG() {
+  return `<svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12"><rect x="3" y="3" width="10" height="10" rx="2"/></svg>`;
+}
+function spinnerSVG() {
+  return `<svg viewBox="0 0 16 16" width="12" height="12" style="animation:spin .8s linear infinite"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="20 18"/></svg>`;
+}
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+renderVerbRef();
+generateExercise(); // async — shows loading spinner then renders
+</script>
+</body>
+</html>
