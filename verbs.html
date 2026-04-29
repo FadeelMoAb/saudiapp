@@ -234,7 +234,7 @@ const VERBS = [
   {imp:'كون',   present:'يكون',  en:'be'},
   {imp:'ساعد',  present:'يساعد', en:'help'},
   {imp:'جي',    present:'يجي',   en:'come'},
-  {imp:'اكل',   present:'يأكل',  en:'eat'},
+  {imp:'اكل',   present:'ياكل',  en:'eat'},
   {imp:'اشرب',  present:'يشرب',  en:'drink'},
   {imp:'فتح',   present:'يفتح',  en:'open'},
   {imp:'غلّق',  present:'يغلّق', en:'close'},
@@ -256,13 +256,13 @@ const SENTENCES = {
     {ar:['أنا','أدرس','في','الجامعة'],      en:'I study at the university.',           theme:'🎓 University'},
     {ar:['هو','يكتب','الواجب'],              en:'He writes the homework.',              theme:'🎓 University'},
     {ar:['هي','تقرا','الكتاب'],              en:'She reads the book.',                  theme:'🎓 University'},
-    {ar:['نحن','نتعلم','عربي'],              en:'We learn Arabic.',                     theme:'🎓 University'},
+    {ar:['حنَّا','نتعلم','عربي'],              en:'We learn Arabic.',                     theme:'🎓 University'},
     {ar:['إنت','تروح','الجامعة'],            en:'You go to the university.',            theme:'🎓 University'},
     // Cooking
     {ar:['أنا','أطبخ','كبدة'],               en:'I cook liver.',                        theme:'🍳 Cooking'},
     {ar:['هي','تحضّر','الفلافل'],            en:'She prepares falafel.',                theme:'🍳 Cooking'},
-    {ar:['هو','يأكل','الفطور'],              en:'He eats breakfast.',                   theme:'🍳 Cooking'},
-    {ar:['نحن','نشرب','قهوة'],               en:'We drink coffee.',                     theme:'🍳 Cooking'},
+    {ar:['هو','ياكل','الفطور'],              en:'He eats breakfast.',                   theme:'🍳 Cooking'},
+    {ar:['حنَّا','نشرب','قهوة'],               en:'We drink coffee.',                     theme:'🍳 Cooking'},
     // Tech
     {ar:['هو','يكتب','كود'],                 en:'He writes code.',                      theme:'💻 Tech'},
     {ar:['أنا','أفتح','اللابتوب'],           en:'I open the laptop.',                   theme:'💻 Tech'},
@@ -276,12 +276,12 @@ const SENTENCES = {
     {ar:['عمر','ما','يتكلم','عربي','الحين'], en:'Omar does not speak Arabic now.',      theme:'🚫 Negation'},
     {ar:['أنا','ما','أقدر','أجي','اليوم'],   en:'I cannot come today.',                 theme:'🚫 Negation'},
     {ar:['هي','ما','تروح','السوق','وحدها'], en:'She does not go to the market alone.', theme:'🚫 Negation'},
-    {ar:['نحن','ما','نشرب','قهوة','الليل'], en:'We do not drink coffee at night.',      theme:'🚫 Negation'},
+    {ar:['حنَّا','ما','نشرب','قهوة','الليل'], en:'We do not drink coffee at night.',      theme:'🚫 Negation'},
     // Future (راح)
     {ar:['الدرس','راح','يبدأ','الحين'],      en:'The lesson will start now.',           theme:'🔮 Future'},
     {ar:['أنا','راح','أساعدك','بكرة'],       en:'I will help you tomorrow.',            theme:'🔮 Future'},
     {ar:['هي','راح','تحاول','تتعلم'],        en:'She will try to learn.',               theme:'🔮 Future'},
-    {ar:['نحن','راح','نروح','السوق'],        en:'We will go to the market.',            theme:'🔮 Future'},
+    {ar:['حنَّا','راح','نروح','السوق'],        en:'We will go to the market.',            theme:'🔮 Future'},
     // Future (حـ)
     {ar:['فاطمة','حتساعدك','في','المشروع'], en:'Fatima will help you in the project.', theme:'🔮 Future'},
     {ar:['متى','بتجي','إلى','الجامعة'],      en:'When will you come to university?',    theme:'🔮 Future'},
@@ -304,7 +304,7 @@ const SENTENCES = {
     // Hard cooking
     {ar:['لا','تحرق','الكبدة','يا','رجل'],  en:"Don't burn the liver, man.",           theme:'🍳 Cooking'},
     // Car
-    {ar:['لا','تركب','السيارة','بدون','تصريح'],en:"Don't drive the car without a license.", theme:'🔧 Car'},
+    {ar:['لا','تسوق','السيارة','بدون','رخصة'],en:"Don't drive the car without a license.", theme:'🔧 Car'},
   ],
   pro: [
     // Compound + attached pronouns
@@ -312,7 +312,7 @@ const SENTENCES = {
       en:'The red car is broken, he will take it for repair.',              theme:'🔧 Car'},
     {ar:['الواجب','صعب','بس','أنا','راح','أحاول','أسويه','الليلة'],
       en:'The homework is hard but I will try to do it tonight.',           theme:'🎓 University'},
-    {ar:['الكبدة','جاهزة','خليني','أتذوقها','قبل','ما','نرفعها'],
+    {ar:['الكبدة','جاهزة','خليني','أتذوقها','قبل','ما','نقدمها'],
       en:'The liver is ready, let me taste it before we serve it.',         theme:'🍳 Cooking'},
     {ar:['البرنامج','ما','يشتغل','أنا','راح','أصلحه','الحين'],
       en:'The program does not work, I will fix it now.',                   theme:'💻 Tech'},
@@ -322,7 +322,7 @@ const SENTENCES = {
       en:'The falafel is fresh, let it cool before you eat it.',            theme:'🍳 Cooking'},
     {ar:['الكود','فيه','أخطاء','لا','تنشره','قبل','ما','تراجعه'],
       en:"The code has errors, don't publish it before reviewing it.",      theme:'💻 Tech'},
-    {ar:['السيارة','عندها','مشكلة','في','الكبح','خذها','للورشة','الحين'],
+    {ar:['السيارة','عندها','مشكلة','في','الفرامل','خذها','للصناعية','الحين'],
       en:'The car has a braking problem, take it to the workshop now.',     theme:'🔧 Car'},
   ],
 };
