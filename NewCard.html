@@ -221,52 +221,142 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
 @media(max-width:600px){
-  /* Hide desktop nav tabs */
+  /* Hide desktop nav tabs, center brand */
   .nav-tabs{display:none}
-  /* Center the brand */
   nav{justify-content:center;padding:0 1rem}
   .nav-brand{flex-direction:row;align-items:center;gap:8px}
   .nav-sub{display:none}
+  body{padding-bottom:0}
 
-  /* Add bottom padding so content clears the bottom tab bar */
-  body{padding-bottom:64px}
-
-  /* All pages fit the screen */
+  /* All pages: fixed height between top nav and bottom tabs */
   .page.active{
-    height:calc(100dvh - 58px - 64px);
+    height:calc(100dvh - 58px - 64px - env(safe-area-inset-bottom,0px));
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* Library + Progress: allow internal scroll */
+  #page-library.active,
+  #page-progress.active{
     overflow-y:auto;
     -webkit-overflow-scrolling:touch;
   }
-  .today-wrap,.quiz-wrap,.lib-wrap,.prog-wrap{padding:1rem 1rem 1.5rem}
-  .big-card{padding:1.75rem 1.25rem 1.5rem}
-  .quiz-options{grid-template-columns:1fr 1fr}
 
-  /* Practice fills screen exactly */
+  /* ── TODAY ── */
+  .today-wrap{
+    padding:.75rem 1rem;
+    height:100%;
+    display:flex;flex-direction:column;
+    justify-content:space-between;
+    overflow:hidden;
+    gap:.5rem;
+  }
+  .today-meta{margin-bottom:0;flex-shrink:0}
+  .big-card{
+    flex:1;
+    min-height:0;
+    padding:1rem 1rem .75rem;
+    display:flex;flex-direction:column;
+    justify-content:center;
+    overflow:hidden;
+  }
+  .big-card-top{margin-bottom:.75rem;flex-shrink:0}
+  .big-transliteration{font-size:10px;margin-bottom:.35rem}
+  .big-arabic{font-size:clamp(30px,9vw,52px);margin-bottom:.75rem}
+  .big-audio-btn{width:44px;height:44px;margin-bottom:.75rem}
+  .big-audio-btn svg{width:18px;height:18px}
+  .big-meaning{font-size:clamp(14px,4.5vw,20px);margin-bottom:.75rem}
+  .big-divider{margin:0 auto .75rem}
+  .big-sentence-label{margin-bottom:.35rem}
+  .big-sentence-ar{font-size:15px;margin-bottom:.2rem}
+  .big-sentence-en{font-size:12px;margin-bottom:.75rem}
+  /* hide saudi note on small screens to save space */
+  .saudi-note{font-size:11px;padding:5px 12px}
+
+  /* ── PRACTICE ── */
   .practice-wrap{
     padding:.75rem 1rem;
-    height:calc(100dvh - 58px - 64px);
-    min-height:0!important
+    height:100%;
+    display:flex;flex-direction:column;
     justify-content:space-between;
     overflow:hidden;
     gap:.75rem;
   }
   .practice-card{
     flex:1;
-    min-height:unset;
+    min-height:0!important;
     overflow:hidden;
-    padding:1.25rem 1rem;
-}
-  .practice-arabic{font-size:clamp(28px,8vw,46px);margin-bottom:.5rem}
-  .practice-transliteration{margin-bottom:.75rem}
-  .practice-audio-btn{margin-bottom:.5rem}
+    padding:1rem;
+    display:flex;flex-direction:column;
+    justify-content:center;
+  }
+  .practice-tag{margin-bottom:.75rem}
+  .practice-arabic{font-size:clamp(28px,9vw,50px);margin-bottom:.4rem}
+  .practice-transliteration{font-size:11px;margin-bottom:.75rem}
+  .practice-audio-btn{width:40px;height:40px;margin-bottom:.5rem}
+  .practice-audio-btn svg{width:15px;height:15px}
+  .practice-reveal-btn{padding:5px 16px;font-size:12px}
+  .practice-meaning{font-size:17px;margin-top:.75rem}
   .practice-action-bar{flex-direction:row;gap:10px;flex-shrink:0}
+  .practice-arrow{width:40px;height:40px}
+  .practice-shuffle{width:36px;height:36px}
+  .practice-mark-btn{padding:7px 14px;font-size:12px}
+
+  /* ── QUIZ ── */
+  .quiz-wrap{
+    padding:.75rem 1rem;
+    height:100%;
+    display:flex;flex-direction:column;
+    overflow:hidden;
+  }
+  #quiz-menu-view{
+    display:flex;flex-direction:column;
+    height:100%;overflow:hidden;
+  }
+  .quiz-menu{padding:.5rem 0 .75rem;flex-shrink:0}
+  .quiz-menu h2{font-size:22px}
+  .quiz-menu p{font-size:13px;margin-bottom:0}
+  .quiz-modes{
+    grid-template-columns:1fr;
+    flex:1;gap:8px;
+  }
+  .quiz-mode-card{padding:1rem 1.25rem}
+  .quiz-mode-title{font-size:14px}
+  .quiz-mode-desc{font-size:12px;margin-bottom:.5rem}
+  /* pool info at bottom of quiz menu */
+  #quiz-menu-view > div:last-child{flex-shrink:0;margin-top:auto;padding-top:.75rem}
+  /* active quiz */
+  #quiz-active{
+    display:none;flex-direction:column;
+    height:100%;overflow:hidden;
+  }
+  #quiz-active.show{display:flex}
+  .quiz-header{margin-bottom:1rem;flex-shrink:0}
+  .quiz-card{
+    flex:1;min-height:0;
+    display:flex;flex-direction:column;
+    justify-content:center;
+    padding:1.25rem 1rem;
+    overflow:hidden;
+  }
+  .quiz-prompt-ar{font-size:clamp(36px,10vw,56px)}
+  .quiz-prompt-en{font-size:20px}
+  .quiz-question{margin-bottom:1rem;font-size:12px}
+  .quiz-options{gap:8px;margin-bottom:.75rem}
+  .quiz-opt{padding:10px 12px;font-size:13px}
+  .quiz-opt[dir="rtl"]{font-size:16px}
+  .quiz-result{padding:1rem 0}
+  .quiz-result-score{font-size:40px}
+  .quiz-result h3{font-size:20px}
 
   /* BOTTOM TAB BAR */
   .bottom-nav{
     display:flex;
     position:fixed;bottom:0;left:0;right:0;
-    height:64px;
-    background:rgba(245,239,224,.96);
+    height:calc(64px + env(safe-area-inset-bottom,0px));
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    background:rgba(245,239,224,.97);
     backdrop-filter:blur(12px);
     -webkit-backdrop-filter:blur(12px);
     border-top:1px solid var(--border);
@@ -279,22 +369,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
     gap:3px;font-family:'DM Sans',sans-serif;
     font-size:10px;font-weight:500;color:var(--muted);
     cursor:pointer;transition:color .15s;
-    padding-bottom:env(safe-area-inset-bottom,0px);
   }
   .bottom-nav-tab svg{width:20px;height:20px;stroke-width:1.6}
   .bottom-nav-tab.active{color:var(--amber)}
   .bottom-nav-tab.active svg{stroke:var(--amber)}
-
-  .bottom-nav{
-  padding-bottom:env(safe-area-inset-bottom);
-  height:calc(64px + env(safe-area-inset-bottom));
 }
-  
-}
-/* Hide bottom nav on desktop */
-@media(min-width:601px){
-  .bottom-nav{display:none}
-}
+@media(min-width:601px){.bottom-nav{display:none}}
 
 </style>
 </head>
