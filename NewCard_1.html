@@ -1155,7 +1155,7 @@ function sDeleteTag(id){sExtraTags=sExtraTags.filter(t=>t.id!==id);sSelectedTags
 /* INIT */
 loadStorage();bumpStreak();
 document.getElementById('today-date-label').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}).toUpperCase();
-document.getElementById('suggest-fab').style.display='none';
+const _fab=document.getElementById('suggest-fab');if(_fab)_fab.style.display='none';
 fetchSheet();
 
 /* PWA SERVICE WORKER */
