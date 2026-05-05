@@ -403,6 +403,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
     <button class="nav-tab"         onclick="goTab('quiz',this)"     data-tab="quiz" id="quiz-nav-tab">Quiz</button>
     <button class="nav-tab"         onclick="goTab('library',this)"  data-tab="library">Library</button>
     <button class="nav-tab"         onclick="goTab('progress',this)" data-tab="progress">Progress</button>
+    <a href="/numbers.html" class="nav-tab" style="text-decoration:none">🔢 Numbers</a>
   </div>
 </nav>
 
@@ -1108,5 +1109,9 @@ if('serviceWorker' in navigator){
   });
 }
 </script>
+
+<a href="/numbers.html" style="position:fixed;bottom:80px;right:1.5rem;z-index:99;display:flex;align-items:center;gap:7px;background:var(--amber);color:#fff;border:none;border-radius:20px;padding:10px 18px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;text-decoration:none;box-shadow:0 4px 12px rgba(193,123,63,.35)">
+  🔢 Numbers
+</a>
 </body>
 </html>
