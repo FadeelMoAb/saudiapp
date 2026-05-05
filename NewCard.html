@@ -269,7 +269,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
   .bottom-nav-tab.active svg{stroke:var(--amber)}
 }
 /* Hide bottom nav on desktop */
-.bottom-nav{display:none}
+@media(min-width:601px){
+  .bottom-nav{display:none}
+}
 
 </style>
 </head>
