@@ -30,7 +30,6 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .nav-tab{border:none;background:none;padding:6px 14px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .18s;white-space:nowrap;position:relative}
 .nav-tab:hover{color:var(--text);background:var(--parch-deep)}
 .nav-tab.active{background:var(--amber);color:#fff;box-shadow:0 2px 8px rgba(193,123,63,.3)}
-.tab-badge{position:absolute;top:2px;right:4px;min-width:16px;height:16px;border-radius:8px;background:var(--sage);color:#fff;font-size:9px;font-weight:600;display:none;align-items:center;justify-content:center;padding:0 4px}
 
 /* PAGES */
 .page{display:none;position:relative;z-index:1}
@@ -109,9 +108,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .quiz-mode-title{font-size:15px;font-weight:500;margin-bottom:.3rem;color:var(--text)}
 .quiz-mode-desc{font-size:12.5px;color:var(--muted);margin-bottom:1rem;line-height:1.5}
 .quiz-mode-start{font-size:11.5px;font-weight:500;letter-spacing:.4px;color:var(--amber);display:flex;align-items:center;gap:4px}
-.quiz-active{display:none}
-.quiz-active.show{display:block}
-.quiz-menu-view.hide{display:none}
+#quiz-active{display:none}
+#quiz-active.show{display:block}
+#quiz-menu-view.hide{display:none}
 .quiz-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
 .quiz-counter{font-size:11.5px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
 .quiz-score-label{font-size:11.5px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;color:var(--amber)}
@@ -245,7 +244,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
   <div class="nav-tabs">
     <button class="nav-tab active"  onclick="goTab('today',this)">Today</button>
     <button class="nav-tab"         onclick="goTab('practice',this)">Practice</button>
-    <button class="nav-tab"         onclick="goTab('quiz',this)" id="quiz-nav-tab">Quiz<span class="tab-badge" id="quiz-tab-badge"></span></button>
+    <button class="nav-tab"         onclick="goTab('quiz',this)" id="quiz-nav-tab">Quiz</button>
     <button class="nav-tab"         onclick="goTab('library',this)">Library</button>
     <button class="nav-tab"         onclick="goTab('progress',this)">Progress</button>
   </div>
@@ -347,7 +346,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
         <div class="quiz-pool-bar">
           <div class="quiz-pool-pill" id="quiz-pool-pill">
             <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,7 5.5,11 12,3"/></svg>
-            <span id="quiz-pool-count">0 phrases</span> in your quiz pool
+            <span id="quiz-pool-count">0 phrases</span> marked as learned
           </div>
         </div>
         <div id="quiz-unlock-msg" class="quiz-unlock-msg" style="display:none">
@@ -400,7 +399,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
       <h2>Your vocabulary</h2>
       <div class="lib-tabs">
         <button class="lib-tab active" onclick="setLibTab('all',this)">All <span class="lib-tab-count" id="lib-count-all"></span></button>
-        <button class="lib-tab" onclick="setLibTab('learned',this)">In Quiz Pool <span class="lib-tab-count" id="lib-count-learned"></span></button>
+        <button class="lib-tab" onclick="setLibTab('learned',this)">Learned <span class="lib-tab-count" id="lib-count-learned"></span></button>
         <button class="lib-tab" onclick="setLibTab('seen',this)">Seen <span class="lib-tab-count" id="lib-count-seen"></span></button>
         <button class="lib-tab" onclick="setLibTab('favorites',this)">Favorites <span class="lib-tab-count" id="lib-count-fav"></span></button>
       </div>
@@ -423,7 +422,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
       <h3>Progress by Category</h3>
       <div class="prog-legend">
         <div class="prog-legend-item"><div class="prog-legend-dot" style="background:var(--seen)"></div>Seen</div>
-        <div class="prog-legend-item"><div class="prog-legend-dot" style="background:var(--sage)"></div>In Quiz Pool</div>
+        <div class="prog-legend-item"><div class="prog-legend-dot" style="background:var(--sage)"></div>Learned</div>
       </div>
       <div id="prog-bars"></div>
     </div>
@@ -523,11 +522,7 @@ function logActivity(text){
 }
 
 /* GLOBAL STATS */
-function updateGlobalStats(){
-  const l=[...learnedSet].filter(k=>phrases.find(p=>p.ar===k)).length;
-  const badge=document.getElementById('quiz-tab-badge');
-  badge.style.display=l>0?'flex':'none';
-}
+function updateGlobalStats(){}
 
 /* PHRASE STATE */
 function phraseState(ar){
@@ -575,8 +570,8 @@ function toggleTodayFav(){
 }
 function toggleTodayLearned(){
   const p=getTodayPhrase();if(!p)return;
-  if(learnedSet.has(p.ar)){learnedSet.delete(p.ar);showToast('Removed from quiz pool');}
-  else{learnedSet.add(p.ar);seenSet.add(p.ar);logActivity("Marked today's phrase as done");showToast('Added to quiz pool ✓');}
+  if(learnedSet.has(p.ar)){learnedSet.delete(p.ar);showToast('Unmarked');}
+  else{learnedSet.add(p.ar);seenSet.add(p.ar);logActivity("Marked today's phrase as learned");showToast('Marked as learned ✓');}
   saveStorage();updateTodayBtns();updateGlobalStats();renderQuizMenu();
 }
 
@@ -609,8 +604,8 @@ function updatePracticeMarkBtn(){
 }
 function togglePracticeMarkLearned(){
   const p=getPracticePhrase();if(!p)return;
-  if(learnedSet.has(p.ar)){learnedSet.delete(p.ar);showToast('Removed from quiz pool');}
-  else{learnedSet.add(p.ar);logActivity(`Marked as done: ${p.ar}`);showToast('Added to quiz pool ✓');}
+  if(learnedSet.has(p.ar)){learnedSet.delete(p.ar);showToast('Unmarked');}
+  else{learnedSet.add(p.ar);logActivity(`Marked as learned: ${p.ar}`);showToast('Marked as learned ✓');}
   saveStorage();renderPracticeCard();updateGlobalStats();renderQuizMenu();
 }
 function practiceReveal(){
@@ -767,7 +762,7 @@ function renderLibrary(){
   grid.innerHTML=visible.map((p,i)=>{
     const state=phraseState(p.ar);
     const badgeClass={unseen:'badge-unseen',seen:'badge-seen',learned:'badge-learned'}[state];
-    const badgeText={unseen:'Not seen',seen:'Seen',learned:'In Quiz Pool'}[state];
+    const badgeText={unseen:'Not seen',seen:'Seen',learned:'Learned'}[state];
     return`<div class="lib-card state-${state}">
       <button class="lib-speak" id="ls-${i}" onclick="speakPhrase('ls-${i}','${p.ar.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
@@ -803,8 +798,8 @@ function toggleLibFav(ar,btn){
   showToast(favsSet.has(ar)?'Added to favorites':'Removed from favorites');renderLibrary();
 }
 function toggleLibLearned(ar,btn){
-  if(learnedSet.has(ar)){learnedSet.delete(ar);showToast('Removed from quiz pool');}
-  else{learnedSet.add(ar);seenSet.add(ar);logActivity(`Added to quiz pool: ${ar}`);showToast('Added to quiz pool ✓');}
+  if(learnedSet.has(ar)){learnedSet.delete(ar);showToast('Unmarked');}
+  else{learnedSet.add(ar);seenSet.add(ar);logActivity(`Marked as learned: ${ar}`);showToast('Marked as learned ✓');}
   saveStorage();updateGlobalStats();renderLibrary();renderQuizMenu();
 }
 
@@ -830,7 +825,7 @@ function renderProgress(){
     const pL=tp.length?Math.round((tL/tp.length)*100):0;
     const label=tag.charAt(0).toUpperCase()+tag.slice(1).replace(/_/g,' ');
     return`<div class="prog-bar-wrap">
-      <div class="prog-bar-label"><span>${label}</span><span class="prog-bar-sublabel">${tL}/${tp.length} in quiz pool</span></div>
+      <div class="prog-bar-label"><span>${label}</span><span class="prog-bar-sublabel">${tL}/${tp.length} learned</span></div>
       <div class="prog-bar-bg"><div class="prog-bar-seen" style="width:${pS}%"></div><div class="prog-bar-learned" style="width:${pL}%"></div></div>
     </div>`;
   }).join('');
