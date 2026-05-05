@@ -238,11 +238,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 
   /* Practice fills screen */
   .practice-wrap{
-    padding:1rem 1rem 1.5rem;
-    min-height:calc(100vh - 58px - 64px);
+    padding:.75rem 1rem;
+    height:calc(100vh - 58px - 64px);
+    min-height:unset;
     justify-content:space-between;
+    overflow:hidden;
   }
-  .practice-action-bar{flex-direction:row;gap:10px}
+  .practice-card{
+    flex:1;
+    min-height:unset;
+    margin-bottom:.75rem;
+  }
+  .practice-action-bar{flex-direction:row;gap:10px;flex-shrink:0}
 
   /* BOTTOM TAB BAR */
   .bottom-nav{
