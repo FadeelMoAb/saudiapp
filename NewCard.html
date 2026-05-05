@@ -233,7 +233,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 
   /* All pages fit the screen */
   .page.active{
-    height:calc(100vh - 58px - 64px);
+    height:calc(100dvh - 58px - 64px);
     overflow-y:auto;
     -webkit-overflow-scrolling:touch;
   }
@@ -244,7 +244,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
   /* Practice fills screen exactly */
   .practice-wrap{
     padding:.75rem 1rem;
-    height:calc(100vh - 58px - 64px);
+    height:calc(100dvh - 58px - 64px);
     min-height:unset;
     justify-content:space-between;
     overflow:hidden;
@@ -255,7 +255,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
     min-height:unset;
     overflow:hidden;
     padding:1.25rem 1rem;
-  }
+}
   .practice-arabic{font-size:clamp(28px,8vw,46px);margin-bottom:.5rem}
   .practice-transliteration{margin-bottom:.75rem}
   .practice-audio-btn{margin-bottom:.5rem}
@@ -284,6 +284,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
   .bottom-nav-tab svg{width:20px;height:20px;stroke-width:1.6}
   .bottom-nav-tab.active{color:var(--amber)}
   .bottom-nav-tab.active svg{stroke:var(--amber)}
+
+  .bottom-nav{
+  padding-bottom:env(safe-area-inset-bottom);
+  height:calc(64px + env(safe-area-inset-bottom));
+}
+  
 }
 /* Hide bottom nav on desktop */
 @media(min-width:601px){
