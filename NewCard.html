@@ -64,24 +64,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .big-sentence-en{font-style:italic;font-size:13px;color:var(--muted);margin-bottom:1.5rem}
 .saudi-note{display:inline-flex;align-items:center;gap:7px;background:var(--gold-light);border:1px solid #E8CA8A;border-radius:20px;padding:7px 16px;font-size:12px;color:var(--text-2)}
 .saudi-note-label{font-size:10px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--gold);flex-shrink:0}
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:1.25rem}
-.stat-box{background:var(--parch);border:1px solid var(--border);border-radius:var(--rlg);padding:1rem 1.25rem}
-.stat-label{font-size:10px;font-weight:500;letter-spacing:.7px;text-transform:uppercase;color:var(--faint);margin-bottom:.4rem}
 .stat-val{font-family:'Lora',serif;font-size:26px;font-weight:500;color:var(--amber)}
 
 /* PRACTICE */
 .practice-wrap{max-width:680px;margin:0 auto;padding:2rem 1.5rem 3rem;display:flex;flex-direction:column;align-items:center}
-.practice-progress-bar-wrap{width:100%;margin-bottom:1.25rem}
-.practice-progress-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:.4rem}
-.practice-progress-bg{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
-.practice-progress-fill{height:100%;background:linear-gradient(90deg,var(--amber),var(--gold));border-radius:3px;transition:width .4s ease}
 .practice-card{width:100%;background:var(--parch);border:1px solid var(--border);border-radius:var(--rxl);padding:2.5rem 2rem 2rem;text-align:center;box-shadow:0 4px 32px rgba(44,36,22,.06);min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;transition:border-color .2s}
-.practice-card.is-seen{border-color:var(--seen);border-width:1.5px}
 .practice-card.is-learned{border-color:var(--sage);border-width:1.5px}
-.practice-state-pill{position:absolute;top:14px;left:14px;font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:3px 10px;border-radius:20px}
-.pill-unseen{background:var(--parch-deep);color:var(--faint)}
-.pill-seen{background:var(--seen-bg);color:var(--seen)}
-.pill-learned{background:var(--sage-bg);color:var(--sage)}
 .practice-tag{font-size:10px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem}
 .practice-arabic{font-size:clamp(36px,7vw,58px);direction:rtl;color:var(--text);line-height:1.3;margin-bottom:.75rem}
 .practice-transliteration{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--faint);margin-bottom:1.5rem}
@@ -306,28 +294,14 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
         <span id="today-note-text"></span>
       </div>
     </div>
-    <div class="stats-row">
-      <div class="stat-box"><div class="stat-label">Seen</div><div class="stat-val" id="stat-seen">0</div></div>
-      <div class="stat-box"><div class="stat-label">In Quiz</div><div class="stat-val" id="stat-learned">0</div></div>
-      <div class="stat-box"><div class="stat-label">Streak</div><div class="stat-val" id="stat-streak">0</div></div>
-    </div>
+
   </div>
 </div>
 
 <!-- PRACTICE -->
 <div class="page" id="page-practice">
   <div class="practice-wrap">
-    <div class="practice-progress-bar-wrap">
-      <div class="practice-progress-row">
-        <span id="prac-progress-label"></span>
-        <span id="prac-progress-pct" style="color:var(--amber);font-weight:500"></span>
-      </div>
-      <div class="practice-progress-bg">
-        <div class="practice-progress-fill" id="prac-progress-fill" style="width:0%"></div>
-      </div>
-    </div>
     <div class="practice-card" id="practice-card">
-      <div class="practice-state-pill pill-unseen" id="practice-state-pill">New</div>
       <div class="practice-tag" id="practice-tag">GREETING</div>
       <div class="practice-arabic" id="practice-ar"></div>
       <div class="practice-transliteration" id="practice-pr"></div>
@@ -367,6 +341,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
       <div class="quiz-menu">
         <h2>Test what you know</h2>
         <p>Only phrases you've marked as done in Practice appear here.</p>
+      </div>
+      <div class="quiz-modes" id="quiz-modes-grid"></div>
+      <div style="margin-top:2rem;text-align:center">
         <div class="quiz-pool-bar">
           <div class="quiz-pool-pill" id="quiz-pool-pill">
             <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,7 5.5,11 12,3"/></svg>
@@ -374,15 +351,20 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
           </div>
         </div>
         <div id="quiz-unlock-msg" class="quiz-unlock-msg" style="display:none">
-          You need at least <strong>4 phrases</strong> marked as done to unlock the quiz.<br>
+          Mark at least <strong>1 phrase</strong> as done in Practice to unlock the quiz.<br>
           <span style="color:var(--faint);font-size:12px">Go to Practice → tap through phrases → hit "Mark as done"</span>
         </div>
       </div>
-      <div class="quiz-modes" id="quiz-modes-grid"></div>
     </div>
     <div class="quiz-active" id="quiz-active">
       <div class="quiz-header">
-        <div class="quiz-counter" id="quiz-counter">QUESTION 1 OF 5</div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <button onclick="showQuizMenu()" style="background:none;border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s" onmouseover="this.style.borderColor='var(--amber)';this.style.color='var(--amber)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="8,2 4,6 8,10"/></svg>
+            Back
+          </button>
+          <div class="quiz-counter" id="quiz-counter">QUESTION 1 OF 5</div>
+        </div>
         <div class="quiz-score-label" id="quiz-score-label">SCORE · 0</div>
       </div>
       <div id="quiz-card-wrap">
@@ -392,9 +374,6 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
           <div id="quiz-prompt-en" class="quiz-prompt-en" style="display:none"></div>
           <div class="quiz-question" id="quiz-question"></div>
           <div class="quiz-options" id="quiz-options"></div>
-          <div id="quiz-spell-wrap" style="display:none">
-            <input class="quiz-spell-input" id="quiz-spell-input" placeholder="Type transliteration…" onkeydown="if(event.key==='Enter')checkQuiz()">
-          </div>
           <div class="quiz-feedback" id="quiz-feedback"></div>
           <div class="quiz-check">
             <button class="btn-check" id="quiz-check-btn" onclick="checkQuiz()" disabled>Check</button>
@@ -473,7 +452,7 @@ let phrases=[],seenSet=new Set(),learnedSet=new Set(),favsSet=new Set(),quizLog=
 let libTab='all',libFilter='all';
 let practiceIdx=0,practiceOrder=[],practiceRevd=false;
 let currentQuizMode='ar-en',quizQuestions=[],quizQIdx=0,quizScore=0,quizChecked=false;
-const QUIZ_LEN=5,QUIZ_MIN=4;
+const QUIZ_LEN=5;
 
 /* STORAGE */
 function loadSet(k){try{return new Set(JSON.parse(localStorage.getItem(k))||[]);}catch{return new Set();}}
@@ -545,13 +524,9 @@ function logActivity(text){
 
 /* GLOBAL STATS */
 function updateGlobalStats(){
-  const s=[...seenSet].filter(k=>phrases.find(p=>p.ar===k)).length;
   const l=[...learnedSet].filter(k=>phrases.find(p=>p.ar===k)).length;
-  document.getElementById('stat-seen').textContent=s;
-  document.getElementById('stat-learned').textContent=l;
-  document.getElementById('stat-streak').textContent=getStreak();
   const badge=document.getElementById('quiz-tab-badge');
-  badge.textContent=l;badge.style.display=l>=QUIZ_MIN?'flex':'none';
+  badge.style.display=l>0?'flex':'none';
 }
 
 /* PHRASE STATE */
@@ -573,8 +548,9 @@ function renderToday(){
   const idx=phrases.indexOf(p);
   document.getElementById('today-date-label').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}).toUpperCase();
   document.getElementById('today-streak-val').textContent=getStreak();
+  const lCount=[...learnedSet].filter(k=>phrases.find(p=>p.ar===k)).length;
   const tl=(p.tags[0]||'phrase');const tlabel=tl.charAt(0).toUpperCase()+tl.slice(1).replace(/_/g,' ');
-  document.getElementById('today-card-label').textContent=`WORD #${idx+1} · ${tlabel.toUpperCase()}`;
+  document.getElementById('today-card-label').textContent=`LEARNED ${lCount} · ${tlabel.toUpperCase()}`;
   document.getElementById('today-pr').textContent=p.pr?p.pr.toUpperCase():'';
   document.getElementById('today-ar').textContent=p.ar;
   document.getElementById('today-en').textContent=p.en;
@@ -612,18 +588,10 @@ function getPracticeAr(){const p=getPracticePhrase();return p?p.ar:'';}
 function renderPracticeCard(){
   practiceRevd=false;
   const p=getPracticePhrase();if(!p)return;
-  /* mark seen on view */
   if(!seenSet.has(p.ar)){seenSet.add(p.ar);saveStorage();logActivity(`Practiced: ${p.ar}`);updateGlobalStats();}
-  const state=phraseState(p.ar);
   const card=document.getElementById('practice-card');
-  card.classList.remove('is-seen','is-learned');
-  if(state==='seen')card.classList.add('is-seen');
-  if(state==='learned')card.classList.add('is-learned');
-  const pill=document.getElementById('practice-state-pill');
-  pill.className='practice-state-pill';
-  if(state==='unseen'){pill.classList.add('pill-unseen');pill.textContent='New';}
-  else if(state==='seen'){pill.classList.add('pill-seen');pill.textContent='Seen';}
-  else{pill.classList.add('pill-learned');pill.textContent='In Quiz Pool ✓';}
+  card.classList.remove('is-learned');
+  if(learnedSet.has(p.ar))card.classList.add('is-learned');
   const tl=(p.tags[0]||'phrase');
   document.getElementById('practice-tag').textContent=(tl.charAt(0).toUpperCase()+tl.slice(1).replace(/_/g,' ')).toUpperCase();
   document.getElementById('practice-ar').textContent=p.ar;
@@ -632,18 +600,12 @@ function renderPracticeCard(){
   document.getElementById('practice-meaning').textContent=p.en;
   document.getElementById('practice-reveal-btn').style.display='';
   updatePracticeMarkBtn();
-  /* progress bar */
-  const lc=[...learnedSet].filter(k=>phrases.find(ph=>ph.ar===k)).length;
-  const pct=phrases.length?Math.round((lc/phrases.length)*100):0;
-  document.getElementById('prac-progress-fill').style.width=pct+'%';
-  document.getElementById('prac-progress-label').textContent=`${lc} of ${phrases.length} in quiz pool`;
-  document.getElementById('prac-progress-pct').textContent=pct+'%';
 }
 function updatePracticeMarkBtn(){
   const p=getPracticePhrase();if(!p)return;
   const m=learnedSet.has(p.ar);
   document.getElementById('practice-mark-btn').classList.toggle('marked',m);
-  document.getElementById('practice-mark-label').textContent=m?'Done ✓ (tap to undo)':'Mark as done';
+  document.getElementById('practice-mark-label').textContent=m?'Learned':'Mark as done';
 }
 function togglePracticeMarkLearned(){
   const p=getPracticePhrase();if(!p)return;
@@ -668,7 +630,7 @@ function practiceShuffle(){
 /* QUIZ */
 function getQuizPool(){return phrases.filter(p=>learnedSet.has(p.ar));}
 function renderQuizMenu(){
-  const pool=getQuizPool(),cnt=pool.length,enough=cnt>=QUIZ_MIN;
+  const pool=getQuizPool(),cnt=pool.length,enough=cnt>=1;
   const pill=document.getElementById('quiz-pool-pill');
   pill.className='quiz-pool-pill'+(enough?'':' warn');
   document.getElementById('quiz-pool-count').textContent=`${cnt} phrase${cnt!==1?'s':''}`;
@@ -676,7 +638,6 @@ function renderQuizMenu(){
   document.getElementById('quiz-modes-grid').innerHTML=[
     {mode:'ar-en',title:'Arabic → English',desc:'See the word, pick the meaning'},
     {mode:'en-ar',title:'English → Arabic',desc:'See the meaning, pick the word'},
-    {mode:'spell',title:'Spell it',desc:'Type the transliteration'},
   ].map(m=>`<div class="quiz-mode-card${enough?'':' disabled'}" onclick="${enough?`startQuiz('${m.mode}')`:''}" >
     <div class="quiz-mode-title">${m.title}</div>
     <div class="quiz-mode-desc">${m.desc}</div>
@@ -684,16 +645,16 @@ function renderQuizMenu(){
   </div>`).join('');
 }
 function buildQuizQuestions(mode){
-  const pool=getQuizPool();if(pool.length<QUIZ_MIN)return[];
+  const pool=getQuizPool();if(!pool.length)return[];
   const shuffled=[...pool].sort(()=>Math.random()-.5);
   return shuffled.slice(0,Math.min(QUIZ_LEN,shuffled.length)).map(p=>{
-    const others=pool.filter(x=>x.ar!==p.ar).sort(()=>Math.random()-.5).slice(0,3);
+    const others=phrases.filter(x=>x.ar!==p.ar).sort(()=>Math.random()-.5).slice(0,3);
     return{p,opts:[p,...others].sort(()=>Math.random()-.5),mode};
   });
 }
 function startQuiz(mode){
   currentQuizMode=mode;quizQuestions=buildQuizQuestions(mode);
-  if(!quizQuestions.length){showToast('Not enough phrases in quiz pool.');return;}
+  if(!quizQuestions.length){showToast('Mark at least 1 phrase as done first.');return;}
   quizQIdx=0;quizScore=0;quizChecked=false;
   document.getElementById('quiz-menu-view').classList.add('hide');
   document.getElementById('quiz-active').classList.add('show');
@@ -720,22 +681,12 @@ function renderQuizQuestion(){
     arEl.style.display='block';arEl.textContent=q.p.ar;enEl.style.display='none';
     document.getElementById('quiz-prompt-label').textContent='ARABIC';
     document.getElementById('quiz-question').textContent='What does this mean?';
-    document.getElementById('quiz-spell-wrap').style.display='none';
     renderQuizOpts(q.opts.map(o=>o.en),q.p.en,false);
-  }else if(q.mode==='en-ar'){
+  }else{
     enEl.style.display='block';enEl.textContent=`"${q.p.en}"`;arEl.style.display='none';
     document.getElementById('quiz-prompt-label').textContent='MEANING';
     document.getElementById('quiz-question').textContent='Choose the Saudi word';
-    document.getElementById('quiz-spell-wrap').style.display='none';
     renderQuizOpts(q.opts.map(o=>o.ar),q.p.ar,true);
-  }else{
-    arEl.style.display='block';arEl.textContent=q.p.ar;enEl.style.display='none';
-    document.getElementById('quiz-prompt-label').textContent='ARABIC';
-    document.getElementById('quiz-question').textContent='Type the transliteration';
-    document.getElementById('quiz-options').innerHTML='';
-    document.getElementById('quiz-spell-wrap').style.display='block';
-    const inp=document.getElementById('quiz-spell-input');inp.value='';inp.className='quiz-spell-input';
-    cb.disabled=false;
   }
 }
 function renderQuizOpts(options,correct,isAr){
@@ -758,27 +709,17 @@ function checkQuiz(){
   cb.textContent=quizQIdx<quizQuestions.length-1?'Next →':'See Results';cb.disabled=false;
   const fb=document.getElementById('quiz-feedback');
   let ok=false;
-  if(q.mode==='spell'){
-    const inp=document.getElementById('quiz-spell-input');
-    const ans=inp.value.trim().toLowerCase(),cor=(q.p.pr||'').toLowerCase();
-    ok=ans===cor||(cor.includes(ans)&&ans.length>3);
-    inp.classList.add(ok?'correct':'wrong');
-    fb.className='quiz-feedback '+(ok?'correct':'wrong');
-    fb.textContent=ok?`✓ Correct! "${q.p.pr}"`:`✗ The answer is: "${q.p.pr}"`;
-    fb.style.display='block';
-  }else{
-    const correctVal=q.mode==='ar-en'?q.p.en:q.p.ar;
-    const sel=document.getElementById('quiz-options')._sel;
-    ok=sel===correctVal;
-    document.querySelectorAll('.quiz-opt').forEach(btn=>{
-      btn.disabled=true;
-      if(btn.dataset.val===correctVal||btn.textContent.trim()===correctVal.trim())btn.classList.add('reveal');
-      if(!ok&&btn.dataset.val===sel)btn.classList.add('wrong');
-    });
-    fb.className='quiz-feedback '+(ok?'correct':'wrong');
-    fb.textContent=ok?'✓ Correct!':'✗ Not quite — the highlighted answer is correct.';
-    fb.style.display='block';
-  }
+  const correctVal=q.mode==='ar-en'?q.p.en:q.p.ar;
+  const sel=document.getElementById('quiz-options')._sel;
+  ok=sel===correctVal;
+  document.querySelectorAll('.quiz-opt').forEach(btn=>{
+    btn.disabled=true;
+    if(btn.dataset.val===correctVal||btn.textContent.trim()===correctVal.trim())btn.classList.add('reveal');
+    if(!ok&&btn.dataset.val===sel)btn.classList.add('wrong');
+  });
+  fb.className='quiz-feedback '+(ok?'correct':'wrong');
+  fb.textContent=ok?'✓ Correct!':'✗ Not quite — the highlighted answer is correct.';
+  fb.style.display='block';
   if(ok)quizScore++;
   if(!quizLog[q.p.ar])quizLog[q.p.ar]={correct:0,wrong:0};
   ok?quizLog[q.p.ar].correct++:quizLog[q.p.ar].wrong++;
