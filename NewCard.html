@@ -385,6 +385,43 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 }
 @media(min-width:601px){.bottom-nav{display:none}}
 
+/* SUGGEST FAB */
+.suggest-fab{position:fixed;bottom:calc(64px + 1rem + env(safe-area-inset-bottom,0px));right:1.25rem;display:none;align-items:center;gap:8px;background:var(--amber);color:#fff;border:none;border-radius:24px;padding:12px 20px;font-size:13.5px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;box-shadow:0 4px 16px rgba(193,123,63,.4);transition:transform .15s,box-shadow .15s;z-index:90}
+.suggest-fab:hover{transform:translateY(-2px)}
+.suggest-fab svg{width:15px;height:15px}
+@media(min-width:601px){.suggest-fab{bottom:1.5rem}}
+/* MODALS */
+.s-backdrop{display:none;position:fixed;inset:0;background:rgba(44,36,22,.45);z-index:400;align-items:center;justify-content:center;padding:1rem}
+.s-backdrop.open{display:flex}
+.s-modal{background:var(--parch);border-radius:var(--rxl);padding:1.75rem;width:100%;max-width:500px;box-shadow:0 10px 40px rgba(44,36,22,.18);animation:pop .18s ease;max-height:90vh;overflow-y:auto}
+@keyframes pop{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.s-modal-title{font-family:'Lora',serif;font-size:20px;font-weight:600;margin-bottom:1.25rem;color:var(--text)}
+.s-fgg{margin-bottom:1rem}
+.s-fgg label{display:block;font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+.s-fgg input,.s-fgg textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--rlg);padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--sand);outline:none;transition:border-color .15s}
+.s-fgg input:focus,.s-fgg textarea:focus{border-color:var(--amber)}
+.s-fgg .ar-in{direction:rtl;font-size:20px;text-align:right}
+.s-fgg textarea{resize:vertical;min-height:80px;line-height:1.5}
+.s-err{font-size:12px;color:#C05050;margin-top:4px;display:none}
+.s-modal-actions{display:flex;gap:8px;margin-top:1.5rem;justify-content:flex-end}
+.s-btn-cancel{background:none;border:1px solid var(--border-med);border-radius:var(--rlg);padding:9px 20px;font-size:13.5px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted)}
+.s-btn-cancel:hover{background:var(--parch-deep)}
+.s-btn-save{background:var(--amber);border:none;border-radius:var(--rlg);padding:9px 24px;font-size:13.5px;font-family:'DM Sans',sans-serif;font-weight:500;color:#fff;cursor:pointer;box-shadow:0 3px 10px rgba(193,123,63,.3)}
+.s-btn-save:hover{opacity:.88}
+.s-tag-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.s-tag-opt{border-radius:20px;padding:5px 14px;font-size:12.5px;cursor:pointer;border:1.5px solid;transition:all .15s;user-select:none;font-family:'DM Sans',sans-serif}
+.s-tags-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
+.s-tag-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--rlg);background:var(--sand)}
+.s-tag-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.s-tag-name{flex:1;font-size:13.5px}
+.s-tag-count{font-size:12px;color:var(--faint);margin-right:4px}
+.s-tag-del{background:none;border:none;cursor:pointer;color:var(--faint);padding:3px;border-radius:6px;display:flex}
+.s-tag-del:hover{color:#C05050}
+.s-tag-del svg{width:13px;height:13px}
+.s-color-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px}
+.s-color-swatch{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .1s,border-color .1s}
+.s-color-swatch:hover{transform:scale(1.15)}
+.s-color-swatch.selected{border-color:var(--text)}
 </style>
 </head>
 <body>
@@ -694,6 +731,7 @@ function goTab(tab,btn){
   const twin=document.querySelector(`.bottom-nav-tab[data-tab="${tab}"], .nav-tab[data-tab="${tab}"]`);
   // sync all matching buttons
   document.querySelectorAll(`[data-tab="${tab}"]`).forEach(b=>b.classList.add('active'));
+  const fab=document.getElementById('suggest-fab');if(fab)fab.style.display=tab==='library'?'flex':'none';
   if(tab==='library')renderLibrary();if(tab==='progress')renderProgress();
   if(tab==='quiz')renderQuizMenu();if(tab==='today')renderToday();
   if(tab==='practice')renderPracticeCard();
@@ -1075,6 +1113,7 @@ document.addEventListener('keydown',e=>{
     if(e.key==='ArrowRight')practiceNav(1);
     if(e.key==='Enter')practiceReveal();
   }
+  if(e.key==='Escape'){closeSuggestModal();closeTagsModal();}
 });
 
 /* SWIPE on Practice card */
@@ -1095,9 +1134,28 @@ document.addEventListener('keydown',e=>{
   },{passive:true});
 })();
 
+/* SUGGEST MODAL */
+const BUILTIN_TAGS=[{id:'greet',label:'Greeting',color:'#5C7A5A',bg:'#E8F0E4',builtin:true},{id:'social',label:'Social',color:'#7A5C8A',bg:'#F0EAF7',builtin:true},{id:'daily',label:'Daily life',color:'#8C7B5E',bg:'#F5EFE0',builtin:true},{id:'express',label:'Expression',color:'#C17B3F',bg:'#F7EBD8',builtin:true},{id:'emotion',label:'Emotion',color:'#4A6B8A',bg:'#E4EFF7',builtin:true}];
+const S_COLORS=[{color:'#5C7A5A',bg:'#E8F0E4'},{color:'#7A5C8A',bg:'#F0EAF7'},{color:'#C17B3F',bg:'#F7EBD8'},{color:'#8C7B5E',bg:'#F5EFE0'},{color:'#4A6B8A',bg:'#E4EFF7'},{color:'#8B4513',bg:'#F7EBD8'},{color:'#5C4A2A',bg:'#FBF0D8'},{color:'#2C5A4A',bg:'#E4F0EC'},{color:'#6B4A8A',bg:'#F0EAF7'},{color:'#4A5C2A',bg:'#EAF0E0'}];
+let sSelectedTags=new Set(['greet']),sExtraTags=[],sColorIdx=0;
+function sAllTags(){return[...BUILTIN_TAGS,...sExtraTags];}
+function openSuggestModal(){sSelectedTags=new Set(['greet']);document.getElementById('sInAr').value='';document.getElementById('sInPr').value='';document.getElementById('sInEn').value='';document.getElementById('sErrAr').style.display='none';document.getElementById('sErrEn').style.display='none';buildSTagRow();document.getElementById('suggestBackdrop').classList.add('open');setTimeout(()=>document.getElementById('sInAr').focus(),120);}
+function closeSuggestModal(){document.getElementById('suggestBackdrop').classList.remove('open');}
+function buildSTagRow(){document.getElementById('sTagRow').innerHTML=sAllTags().map(t=>{const sel=sSelectedTags.has(t.id);return`<span class="s-tag-opt" style="background:${sel?t.color:t.bg};color:${sel?'#fff':t.color};border-color:${t.color}" onclick="sToggleTag('${t.id}')">${sel?'✓ ':''}${t.label}</span>`;}).join('')+`<span class="s-tag-opt" style="border-color:var(--amber);color:var(--amber);background:var(--amber-bg)" onclick="closeSuggestModal();openTagsModal()">+ New tag</span>`;}
+function sToggleTag(id){if(sSelectedTags.has(id)){if(sSelectedTags.size===1)return;sSelectedTags.delete(id);}else sSelectedTags.add(id);buildSTagRow();}
+async function submitSuggestion(){const ar=document.getElementById('sInAr').value.trim();const pr=document.getElementById('sInPr').value.trim();const en=document.getElementById('sInEn').value.trim();const tags=[...sSelectedTags];let ok=true;document.getElementById('sErrAr').style.display=ar?'none':'block';if(!ar)ok=false;document.getElementById('sErrEn').style.display=en?'none':'block';if(!en)ok=false;if(!ok)return;closeSuggestModal();showToast('Suggestion sent ✓');logActivity(`Suggested: ${ar}`);fetch('/api/suggest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ar,pr,en,tags})}).catch(()=>{});}
+function openTagsModal(){document.getElementById('sNewTagName').value='';document.getElementById('sErrTagName').style.display='none';sColorIdx=0;renderSColors();renderSTagsList();document.getElementById('tagsBackdrop').classList.add('open');}
+function closeTagsModal(){document.getElementById('tagsBackdrop').classList.remove('open');document.getElementById('suggestBackdrop').classList.add('open');buildSTagRow();}
+function renderSColors(){document.getElementById('sColorRow').innerHTML=S_COLORS.map((c,i)=>`<div class="s-color-swatch${sColorIdx===i?' selected':''}" style="background:${c.color}" onclick="sPickColor(${i})"></div>`).join('');}
+function sPickColor(i){sColorIdx=i;renderSColors();}
+function renderSTagsList(){document.getElementById('sTagsList').innerHTML=sAllTags().map(t=>{const cnt=phrases.filter(p=>p.tags.includes(t.id)).length;return`<div class="s-tag-item"><div class="s-tag-dot" style="background:${t.color}"></div><span class="s-tag-name" style="color:${t.color}">${t.label}</span><span class="s-tag-count">${cnt} phrase${cnt!==1?'s':''}</span>${t.builtin?`<span style="font-size:11px;color:var(--faint)">built-in</span>`:`<button class="s-tag-del" onclick="sDeleteTag('${t.id}')"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="2" y1="2" x2="12" y2="12"/><line x1="12" y1="2" x2="2" y2="12"/></svg></button>`}</div>`;}).join('');}
+function addCustomTag(){const name=document.getElementById('sNewTagName').value.trim();document.getElementById('sErrTagName').style.display=name?'none':'block';if(!name)return;const c=S_COLORS[sColorIdx];const id='c_'+name.toLowerCase().replace(/\s+/g,'_')+'_'+Date.now();sExtraTags.push({id,label:name,color:c.color,bg:c.bg});document.getElementById('sNewTagName').value='';renderSTagsList();renderSColors();showToast(`Tag "${name}" added!`);}
+function sDeleteTag(id){sExtraTags=sExtraTags.filter(t=>t.id!==id);sSelectedTags.delete(id);if(sSelectedTags.size===0)sSelectedTags.add('greet');renderSTagsList();showToast('Tag deleted.');}
+
 /* INIT */
 loadStorage();bumpStreak();
 document.getElementById('today-date-label').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}).toUpperCase();
+const _fab=document.getElementById('suggest-fab');if(_fab)_fab.style.display='none';
 fetchSheet();
 
 /* PWA SERVICE WORKER */
@@ -1110,8 +1168,35 @@ if('serviceWorker' in navigator){
 }
 </script>
 
-<a href="/numbers.html" style="position:fixed;bottom:80px;right:1.5rem;z-index:99;display:flex;align-items:center;gap:7px;background:var(--amber);color:#fff;border:none;border-radius:20px;padding:10px 18px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;text-decoration:none;box-shadow:0 4px 12px rgba(193,123,63,.35)">
-  🔢 Numbers
-</a>
+<!-- SUGGEST FAB (Library only) -->
+<button class="suggest-fab" id="suggest-fab" onclick="openSuggestModal()">
+  <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/></svg>
+  Add phrase
+</button>
+
+<!-- SUGGEST MODAL -->
+<div class="s-backdrop" id="suggestBackdrop" onclick="if(event.target===this)closeSuggestModal()">
+  <div class="s-modal">
+    <div class="s-modal-title">Add a new phrase</div>
+    <div class="s-fgg"><label>Arabic Phrase *</label><input type="text" class="ar-in" id="sInAr" placeholder="اكتب هنا…"><div class="s-err" id="sErrAr">Please enter the Arabic phrase.</div></div>
+    <div class="s-fgg"><label>Pronunciation <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px">(optional)</span></label><input type="text" id="sInPr" placeholder="e.g. Kayf ḥālik?"></div>
+    <div class="s-fgg"><label>English Meaning *</label><textarea id="sInEn" placeholder="What does it mean? When is it used?"></textarea><div class="s-err" id="sErrEn">Please enter the English meaning.</div></div>
+    <div class="s-fgg" style="margin-bottom:0"><label>Tags <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px">(pick one or more)</span></label><div class="s-tag-row" id="sTagRow"></div></div>
+    <div class="s-modal-actions"><button class="s-btn-cancel" onclick="closeSuggestModal()">Cancel</button><button class="s-btn-save" onclick="submitSuggestion()">Save</button></div>
+  </div>
+</div>
+
+<!-- TAGS MODAL -->
+<div class="s-backdrop" id="tagsBackdrop" onclick="if(event.target===this)closeTagsModal()">
+  <div class="s-modal">
+    <div class="s-modal-title">Manage tags</div>
+    <div class="s-tags-list" id="sTagsList"></div>
+    <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem">
+      <div class="s-fgg" style="margin-bottom:.75rem"><label>New Tag Name *</label><input type="text" id="sNewTagName" placeholder="e.g. Religion, Travel…" maxlength="30"><div class="s-err" id="sErrTagName">Please enter a tag name.</div></div>
+      <div class="s-fgg" style="margin-bottom:0"><label>Tag Color</label><div class="s-color-row" id="sColorRow"></div></div>
+    </div>
+    <div class="s-modal-actions"><button class="s-btn-cancel" onclick="closeTagsModal()">Close</button><button class="s-btn-save" onclick="addCustomTag()">Add tag</button></div>
+  </div>
+</div>
 </body>
 </html>
