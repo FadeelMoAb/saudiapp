@@ -221,14 +221,56 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
 @media(max-width:600px){
-  nav{padding:0 .75rem}
+  /* Hide desktop nav tabs */
+  .nav-tabs{display:none}
+  /* Center the brand */
+  nav{justify-content:center;padding:0 1rem}
+  .nav-brand{flex-direction:row;align-items:center;gap:8px}
   .nav-sub{display:none}
-  .nav-tab{padding:5px 9px;font-size:12px}
-  .today-wrap,.practice-wrap,.quiz-wrap,.lib-wrap,.prog-wrap{padding:1.25rem 1rem 3rem}
+
+  /* Add bottom padding so content clears the bottom tab bar */
+  body{padding-bottom:64px}
+
+  /* Page padding */
+  .today-wrap,.quiz-wrap,.lib-wrap,.prog-wrap{padding:1.25rem 1rem 1.5rem}
   .big-card{padding:1.75rem 1.25rem 1.5rem}
   .quiz-options{grid-template-columns:1fr 1fr}
-  .practice-action-bar{flex-direction:column;gap:14px}
+
+  /* Practice fills screen */
+  .practice-wrap{
+    padding:1rem 1rem 1.5rem;
+    min-height:calc(100vh - 58px - 64px);
+    justify-content:space-between;
+  }
+  .practice-action-bar{flex-direction:row;gap:10px}
+
+  /* BOTTOM TAB BAR */
+  .bottom-nav{
+    display:flex;
+    position:fixed;bottom:0;left:0;right:0;
+    height:64px;
+    background:rgba(245,239,224,.96);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+    border-top:1px solid var(--border);
+    z-index:200;
+    align-items:stretch;
+  }
+  .bottom-nav-tab{
+    flex:1;border:none;background:none;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:3px;font-family:'DM Sans',sans-serif;
+    font-size:10px;font-weight:500;color:var(--muted);
+    cursor:pointer;transition:color .15s;
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  .bottom-nav-tab svg{width:20px;height:20px;stroke-width:1.6}
+  .bottom-nav-tab.active{color:var(--amber)}
+  .bottom-nav-tab.active svg{stroke:var(--amber)}
 }
+/* Hide bottom nav on desktop */
+.bottom-nav{display:none}
+
 </style>
 </head>
 <body>
@@ -242,15 +284,47 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
     </div>
   </a>
   <div class="nav-tabs">
-    <button class="nav-tab active"  onclick="goTab('today',this)">Today</button>
-    <button class="nav-tab"         onclick="goTab('practice',this)">Practice</button>
-    <button class="nav-tab"         onclick="goTab('quiz',this)" id="quiz-nav-tab">Quiz</button>
-    <button class="nav-tab"         onclick="goTab('library',this)">Library</button>
-    <button class="nav-tab"         onclick="goTab('progress',this)">Progress</button>
+    <button class="nav-tab active"  onclick="goTab('today',this)"    data-tab="today">Today</button>
+    <button class="nav-tab"         onclick="goTab('practice',this)" data-tab="practice">Practice</button>
+    <button class="nav-tab"         onclick="goTab('quiz',this)"     data-tab="quiz" id="quiz-nav-tab">Quiz</button>
+    <button class="nav-tab"         onclick="goTab('library',this)"  data-tab="library">Library</button>
+    <button class="nav-tab"         onclick="goTab('progress',this)" data-tab="progress">Progress</button>
   </div>
 </nav>
 
-<!-- TODAY -->
+<!-- BOTTOM NAV (mobile only) -->
+<div class="bottom-nav" id="bottom-nav">
+  <button class="bottom-nav-tab active" onclick="goTab('today',this)" data-tab="today">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="5"/><line x1="16" y1="2" x2="16" y2="5"/>
+    </svg>
+    Today
+  </button>
+  <button class="bottom-nav-tab" onclick="goTab('practice',this)" data-tab="practice">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+    </svg>
+    Practice
+  </button>
+  <button class="bottom-nav-tab" onclick="goTab('quiz',this)" data-tab="quiz">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+    Quiz
+  </button>
+  <button class="bottom-nav-tab" onclick="goTab('library',this)" data-tab="library">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+    </svg>
+    Library
+  </button>
+  <button class="bottom-nav-tab" onclick="goTab('progress',this)" data-tab="progress">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+    </svg>
+    Progress
+  </button>
+</div>
 <div class="page active" id="page-today">
   <div class="today-wrap">
     <div class="today-meta">
@@ -498,7 +572,13 @@ function onLoaded(){
 function goTab(tab,btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
-  document.getElementById('page-'+tab).classList.add('active');btn.classList.add('active');
+  document.querySelectorAll('.bottom-nav-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+tab).classList.add('active');
+  btn.classList.add('active');
+  // sync the other nav (desktop or mobile)
+  const twin=document.querySelector(`.bottom-nav-tab[data-tab="${tab}"], .nav-tab[data-tab="${tab}"]`);
+  // sync all matching buttons
+  document.querySelectorAll(`[data-tab="${tab}"]`).forEach(b=>b.classList.add('active'));
   if(tab==='library')renderLibrary();if(tab==='progress')renderProgress();
   if(tab==='quiz')renderQuizMenu();if(tab==='today')renderToday();
   if(tab==='practice')renderPracticeCard();
@@ -881,6 +961,24 @@ document.addEventListener('keydown',e=>{
     if(e.key==='Enter')practiceReveal();
   }
 });
+
+/* SWIPE on Practice card */
+(function(){
+  let startX=0,startY=0;
+  const el=document.getElementById('page-practice');
+  el.addEventListener('touchstart',e=>{
+    startX=e.touches[0].clientX;
+    startY=e.touches[0].clientY;
+  },{passive:true});
+  el.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-startX;
+    const dy=e.changedTouches[0].clientY-startY;
+    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>40){
+      if(dx<0)practiceNav(1);   // swipe left → next
+      else     practiceNav(-1); // swipe right → prev
+    }
+  },{passive:true});
+})();
 
 /* INIT */
 loadStorage();bumpStreak();
