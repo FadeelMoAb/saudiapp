@@ -231,24 +231,34 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
   /* Add bottom padding so content clears the bottom tab bar */
   body{padding-bottom:64px}
 
-  /* Page padding */
-  .today-wrap,.quiz-wrap,.lib-wrap,.prog-wrap{padding:1.25rem 1rem 1.5rem}
+  /* All pages fit the screen */
+  .page.active{
+    height:calc(100vh - 58px - 64px);
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .today-wrap,.quiz-wrap,.lib-wrap,.prog-wrap{padding:1rem 1rem 1.5rem}
   .big-card{padding:1.75rem 1.25rem 1.5rem}
   .quiz-options{grid-template-columns:1fr 1fr}
 
-  /* Practice fills screen */
+  /* Practice fills screen exactly */
   .practice-wrap{
     padding:.75rem 1rem;
     height:calc(100vh - 58px - 64px);
     min-height:unset;
     justify-content:space-between;
     overflow:hidden;
+    gap:.75rem;
   }
   .practice-card{
     flex:1;
     min-height:unset;
-    margin-bottom:.75rem;
+    overflow:hidden;
+    padding:1.25rem 1rem;
   }
+  .practice-arabic{font-size:clamp(28px,8vw,46px);margin-bottom:.5rem}
+  .practice-transliteration{margin-bottom:.75rem}
+  .practice-audio-btn{margin-bottom:.5rem}
   .practice-action-bar{flex-direction:row;gap:10px;flex-shrink:0}
 
   /* BOTTOM TAB BAR */
