@@ -1,29 +1,17 @@
 // api/approve.js
-// POST approve a suggestion — copies to phrases, marks as approved
+// POST approve a suggestion — copies to phrases with edited fields, marks as approved
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { id } = req.body;
+  const { pwd, id, ar, pr, en, tags } = req.body;
+  if (pwd !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
   if (!id) return res.status(400).json({ error: 'id required' });
 
-  try {
-    // Get the suggestion
-    const getRes = await fetch(
-      `${process.env.SUPABASE_URL}/rest/v1/suggestions?id=eq.${id}&select=*`,
-      {
-        headers: {
-          'apikey': process.env.SUPABASE_SECRET_KEY,
-          'Authorization': `Bearer ${process.env.SUPABASE_SECRET_KEY}`,
-        },
-      }
-    );
-    const [suggestion] = await getRes.json();
-    if (!suggestion) return res.status(404).json({ error: 'Suggestion not found' });
+  const tagsStr = Array.isArray(tags) ? tags.join(',') : (tags || 'greet');
 
-    // Insert into phrases table
+  try {
+    // Insert into phrases table with admin-edited fields
     const insertRes = await fetch(
       `${process.env.SUPABASE_URL}/rest/v1/phrases`,
       {
@@ -34,12 +22,7 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json',
           'Prefer': 'return=representation',
         },
-        body: JSON.stringify({
-          arabic: suggestion.arabic,
-          pronunciation: suggestion.pronunciation,
-          english: suggestion.english,
-          tags: suggestion.tags,
-        }),
+        body: JSON.stringify({ arabic: ar, pronunciation: pr || '', english: en, tags: tagsStr }),
       }
     );
     if (!insertRes.ok) throw new Error(await insertRes.text());
@@ -59,7 +42,6 @@ export default async function handler(req, res) {
     );
 
     return res.status(200).json({ success: true });
-
   } catch (err) {
     console.error('approve error:', err);
     return res.status(500).json({ error: err.message });

@@ -1,10 +1,11 @@
 // api/suggestions.js
-// GET all pending suggestions (admin only)
+// GET all suggestions (admin only — password protected)
 
 export default async function handler(req, res) {
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+
+  const pwd = req.query.pwd || '';
+  if (pwd !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
 
   try {
     const response = await fetch(
@@ -16,12 +17,9 @@ export default async function handler(req, res) {
         },
       }
     );
-
     if (!response.ok) throw new Error(`Supabase error: ${response.status}`);
-
     const suggestions = await response.json();
     return res.status(200).json(suggestions);
-
   } catch (err) {
     console.error('suggestions fetch error:', err);
     return res.status(500).json({ error: err.message });
