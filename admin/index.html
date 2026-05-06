@@ -3,40 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin · Saudi Arabic</title>
+<title>Admin · Saudibia</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600&family=DM+Sans:opsz,wght@9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f7f5f0;--surface:#fff;--border:#e5e1d8;--border-med:#ccc8bc;
-  --text:#1c1a15;--muted:#7a7669;--faint:#b3ae9f;
-  --accent:#b85c1e;--accent-bg:#fdf0e6;
-  --green:#1a6b45;--green-bg:#e4f4ec;
+  --sand:#F5EFE0;--parch:#FDF8EE;--parch-deep:#F0E8D0;
+  --border:#DDD0B8;--border-med:#C8B898;
+  --text:#2C2416;--text-2:#5C4A2A;--muted:#8C7B5E;--faint:#B8A888;
+  --amber:#C17B3F;--amber-bg:#F7EBD8;
+  --sage:#5C7A5A;--sage-bg:#E8F0E4;
   --red:#922020;--red-bg:#faeae5;
-  --r:10px;--rlg:14px;
+  --r:10px;--rlg:16px;--rxl:22px;
 }
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+body{font-family:'DM Sans',sans-serif;background:var(--sand);color:var(--text);min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.5}
 
 /* LOGIN */
-.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem}
-.login-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:2rem;width:100%;max-width:360px;text-align:center}
-.login-title{font-family:'Lora',serif;font-size:20px;font-weight:600;margin-bottom:.5rem}
-.login-sub{font-size:13px;color:var(--muted);margin-bottom:1.5rem}
-.login-input{width:100%;border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);outline:none;margin-bottom:1rem;transition:border-color .15s;text-align:center;letter-spacing:2px}
-.login-input:focus{border-color:var(--accent)}
-.login-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--r);padding:10px;font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity .15s}
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:1rem;position:relative;z-index:1}
+.login-box{background:var(--parch);border:1px solid var(--border);border-radius:var(--rxl);padding:2.5rem;width:100%;max-width:380px;text-align:center;box-shadow:0 4px 32px rgba(44,36,22,.08)}
+.login-logo{width:48px;height:48px;border-radius:14px;background:var(--amber);display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-size:22px;color:#fff;font-weight:600;margin:0 auto 1.25rem}
+.login-title{font-family:'Lora',serif;font-size:22px;font-weight:600;margin-bottom:.35rem}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:1.75rem}
+.login-input{width:100%;border:1.5px solid var(--border);border-radius:var(--rlg);padding:11px 14px;font-size:16px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--sand);outline:none;margin-bottom:1rem;transition:border-color .15s;text-align:center;letter-spacing:3px}
+.login-input:focus{border-color:var(--amber)}
+.login-btn{width:100%;background:var(--amber);color:#fff;border:none;border-radius:var(--rlg);padding:11px;font-size:14px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity .15s;box-shadow:0 3px 12px rgba(193,123,63,.3)}
 .login-btn:hover{opacity:.88}
 .login-err{font-size:12px;color:var(--red);margin-top:.75rem;display:none}
 
 /* DASHBOARD */
-.dash{display:none}
-header{background:var(--surface);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50}
-.hd-left h1{font-family:'Lora',serif;font-size:17px;font-weight:600}
-.hd-left p{font-size:12px;color:var(--muted);margin-top:2px}
+.dash{display:none;position:relative;z-index:1}
+header{background:rgba(245,239,224,.93);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;height:58px}
+.hd-brand{display:flex;align-items:center;gap:10px}
+.hd-logo{width:32px;height:32px;border-radius:9px;background:var(--amber);display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-size:15px;color:#fff;font-weight:600}
+.hd-title{font-family:'Lora',serif;font-size:15px;font-weight:600;color:var(--text)}
+.hd-sub{font-size:10.5px;color:var(--muted)}
 .hd-right{display:flex;gap:8px;align-items:center}
 .btn-sm{background:none;border:1px solid var(--border-med);border-radius:var(--r);padding:6px 14px;font-size:12.5px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted);transition:all .15s}
-.btn-sm:hover{background:var(--bg);color:var(--text)}
-.badge{background:var(--accent);color:#fff;border-radius:20px;font-size:11px;padding:1px 8px;font-weight:500}
+.btn-sm:hover{background:var(--parch);color:var(--text)}
+.badge{background:var(--amber);color:#fff;border-radius:20px;font-size:11px;padding:2px 9px;font-weight:500;margin-left:6px}
+
+/* FILTER TABS */
+.filter-tabs{display:flex;gap:6px;padding:1rem 0 .5rem;flex-wrap:wrap}
+.ftab{border:1.5px solid var(--border);border-radius:20px;padding:5px 14px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;background:none;color:var(--muted);transition:all .15s}
+.ftab:hover{border-color:var(--border-med);color:var(--text)}
+.ftab.active{background:var(--amber);border-color:var(--amber);color:#fff}
 
 .container{max-width:1100px;margin:0 auto;padding:1.5rem}
 
@@ -47,45 +58,48 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:1
 
 /* SUGGESTION CARDS */
 .suggestions{display:flex;flex-direction:column;gap:12px}
-.sug-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem 1.4rem}
-.sug-meta{font-size:11px;color:var(--faint);margin-bottom:.75rem}
+.sug-card{background:var(--parch);border:1px solid var(--border);border-radius:var(--rxl);padding:1.25rem 1.4rem;box-shadow:0 2px 12px rgba(44,36,22,.04)}
+.sug-card.status-approved{border-left:4px solid var(--sage)}
+.sug-card.status-rejected{border-left:4px solid var(--red);opacity:.6}
+.sug-meta{font-size:11px;color:var(--faint);margin-bottom:.75rem;display:flex;justify-content:space-between;align-items:center}
+.sug-status{font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:.4px}
+.status-pill-pending{background:var(--amber-bg);color:var(--amber)}
+.status-pill-approved{background:var(--sage-bg);color:var(--sage)}
+.status-pill-rejected{background:var(--red-bg);color:var(--red)}
 .sug-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem}
 @media(max-width:600px){.sug-fields{grid-template-columns:1fr}}
 .field-group{display:flex;flex-direction:column;gap:4px}
-.field-group label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-.field-group input,.field-group textarea{border:1px solid var(--border);border-radius:var(--r);padding:8px 10px;font-size:13.5px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s;width:100%}
-.field-group input:focus,.field-group textarea:focus{border-color:var(--accent)}
-.ar-field{direction:rtl;text-align:right;font-size:18px}
+.field-group label{font-size:10.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.field-group input,.field-group textarea{border:1.5px solid var(--border);border-radius:var(--rlg);padding:9px 12px;font-size:13.5px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--sand);outline:none;transition:border-color .15s;width:100%}
+.field-group input:focus,.field-group textarea:focus{border-color:var(--amber)}
+.ar-field{direction:rtl;text-align:right;font-size:20px}
 .field-group textarea{resize:vertical;min-height:60px;line-height:1.5}
 .field-full{grid-column:1/-1}
-
-/* TAG SELECT */
 .tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
-.tag-pill{border:1px solid var(--border);border-radius:20px;padding:3px 11px;font-size:12px;cursor:pointer;background:var(--surface);color:var(--muted);transition:all .15s;user-select:none}
+.tag-pill{border:1.5px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer;background:var(--parch);color:var(--muted);transition:all .15s;user-select:none}
 .tag-pill:hover{border-color:var(--border-med);color:var(--text)}
 .tag-pill.sel{color:#fff;border-color:transparent}
-
-.sug-actions{display:flex;gap:8px;justify-content:flex-end}
-.btn-approve{background:var(--green);color:#fff;border:none;border-radius:var(--r);padding:8px 20px;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity .15s;display:flex;align-items:center;gap:6px}
+.sug-actions{display:flex;gap:8px;justify-content:flex-end;align-items:center}
+.btn-approve{background:var(--sage);color:#fff;border:none;border-radius:var(--rlg);padding:9px 22px;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity .15s;display:flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(92,122,90,.25)}
 .btn-approve:hover{opacity:.88}
 .btn-approve:disabled{opacity:.5;cursor:wait}
-.btn-reject{background:none;border:1px solid var(--border-med);border-radius:var(--r);padding:8px 16px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted);transition:all .15s}
+.btn-reject{background:none;border:1px solid var(--border-med);border-radius:var(--rlg);padding:9px 16px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--muted);transition:all .15s}
 .btn-reject:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
 
 /* TOAST */
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--text);color:#fff;padding:9px 20px;border-radius:var(--r);font-size:13px;opacity:0;transition:opacity .2s,transform .2s;z-index:300;pointer-events:none;white-space:nowrap}
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(16px);background:var(--text);color:var(--parch);padding:9px 20px;border-radius:var(--r);font-size:13px;opacity:0;transition:opacity .2s,transform .2s;z-index:300;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5rem;border-top:1px solid var(--border);margin-top:2rem}
+footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5rem;border-top:1px solid var(--border);margin-top:2rem;position:relative;z-index:1}
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN -->
 <div class="login-wrap" id="loginWrap">
   <div class="login-box">
+    <div class="login-logo">ع</div>
     <div class="login-title">Teacher Dashboard</div>
-    <p class="login-sub">Saudi Arabic Daily Sentences</p>
+    <p class="login-sub">Saudibia · Saudi Accent 🌴</p>
     <input type="password" class="login-input" id="pwdInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
     <button class="login-btn" onclick="login()">Sign in</button>
     <div class="login-err" id="loginErr">Wrong password. Try again.</div>
@@ -95,9 +109,12 @@ footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5r
 <!-- DASHBOARD -->
 <div class="dash" id="dash">
   <header>
-    <div class="hd-left">
-      <h1>Suggestions <span class="badge" id="badge">0</span></h1>
-      <p>Student-submitted phrases waiting for your review</p>
+    <div class="hd-brand">
+      <div class="hd-logo">ع</div>
+      <div>
+        <div class="hd-title">Suggestions <span class="badge" id="badge">0</span></div>
+        <div class="hd-sub">Review and approve student submissions</div>
+      </div>
     </div>
     <div class="hd-right">
       <button class="btn-sm" onclick="loadSuggestions()">↻ Refresh</button>
@@ -106,216 +123,219 @@ footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5r
   </header>
 
   <div class="container">
+    <div class="filter-tabs">
+      <button class="ftab active" onclick="setFilter('pending',this)">Pending</button>
+      <button class="ftab" onclick="setFilter('approved',this)">Approved</button>
+      <button class="ftab" onclick="setFilter('rejected',this)">Rejected</button>
+      <button class="ftab" onclick="setFilter('all',this)">All</button>
+    </div>
     <div id="sugList"></div>
   </div>
 </div>
 
-<footer style="display:none" id="footer">Saudi Arabic Daily Sentences · Teacher Dashboard</footer>
+<footer style="display:none" id="footer">Saudibia · Teacher Dashboard</footer>
 <div class="toast" id="toast"></div>
 
 <script>
-const BUILTIN_TAGS = [
-  {id:'greet',  label:'Greeting',   color:'#1a6b45'},
-  {id:'social', label:'Social',     color:'#4e3f96'},
-  {id:'daily',  label:'Daily life', color:'#7a5010'},
-  {id:'express',label:'Expression', color:'#923020'},
-  {id:'emotion',label:'Emotion',    color:'#255230'},
+const BUILTIN_TAGS=[
+  {id:'greet',  label:'Greeting',   color:'#5C7A5A'},
+  {id:'social', label:'Social',     color:'#7A5C8A'},
+  {id:'daily',  label:'Daily life', color:'#8C7B5E'},
+  {id:'express',label:'Expression', color:'#C17B3F'},
+  {id:'emotion',label:'Emotion',    color:'#4A6B8A'},
 ];
 
-let pwd = '';
-let suggestions = [];
+let pwd='';
+let suggestions=[];
+let currentFilter='pending';
 
-/* ── LOGIN ── */
-function login() {
-  const val = document.getElementById('pwdInput').value;
-  if (!val) return;
-  pwd = val;
-  // Try fetching suggestions — if 401, wrong password
+/* LOGIN */
+function login(){
+  const val=document.getElementById('pwdInput').value;
+  if(!val)return;
+  pwd=val;
   loadSuggestions(true);
 }
-
-function logout() {
-  pwd = '';
-  document.getElementById('loginWrap').style.display = 'flex';
-  document.getElementById('dash').style.display = 'none';
-  document.getElementById('footer').style.display = 'none';
-  document.getElementById('pwdInput').value = '';
+function logout(){
+  pwd='';
+  document.getElementById('loginWrap').style.display='flex';
+  document.getElementById('dash').style.display='none';
+  document.getElementById('footer').style.display='none';
+  document.getElementById('pwdInput').value='';
 }
 
-/* ── LOAD SUGGESTIONS ── */
-async function loadSuggestions(isLogin = false) {
-  try {
-    const res = await fetch(`/api/suggestions?pwd=${encodeURIComponent(pwd)}`);
-    if (res.status === 401) {
-      if (isLogin) {
-        document.getElementById('loginErr').style.display = 'block';
-        pwd = '';
-      }
+/* FILTER */
+function setFilter(f,btn){
+  currentFilter=f;
+  document.querySelectorAll('.ftab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSuggestions();
+}
+
+/* LOAD */
+async function loadSuggestions(isLogin=false){
+  try{
+    const res=await fetch(`/api/suggestions?pwd=${encodeURIComponent(pwd)}`);
+    if(res.status===401){
+      if(isLogin){document.getElementById('loginErr').style.display='block';pwd='';}
       return;
     }
-
-    if (isLogin) {
-      document.getElementById('loginWrap').style.display = 'none';
-      document.getElementById('dash').style.display = 'block';
-      document.getElementById('footer').style.display = 'block';
-      document.getElementById('loginErr').style.display = 'none';
+    if(isLogin){
+      document.getElementById('loginWrap').style.display='none';
+      document.getElementById('dash').style.display='block';
+      document.getElementById('footer').style.display='block';
+      document.getElementById('loginErr').style.display='none';
     }
-
-    const raw = await res.json();
-    // Upstash wraps stored objects in { value: "..." } or { value: {...} } — unwrap it
-    suggestions = raw.map(item => {
-      if (item && item.value !== undefined && !item.ar) {
-        return typeof item.value === 'string' ? JSON.parse(item.value) : item.value;
-      }
-      return item;
-    });
+    suggestions=await res.json();
     renderSuggestions();
-  } catch (err) {
+  }catch(err){
     console.error(err);
     showToast('Failed to load suggestions');
   }
 }
 
-/* ── RENDER ── */
-function renderSuggestions() {
-  const list = document.getElementById('sugList');
-  document.getElementById('badge').textContent = suggestions.length;
+/* RENDER */
+function renderSuggestions(){
+  const visible=currentFilter==='all'
+    ?suggestions
+    :suggestions.filter(s=>s.status===currentFilter);
 
-  if (!suggestions.length) {
-    list.innerHTML = `<div class="empty">
+  const pending=suggestions.filter(s=>s.status==='pending').length;
+  document.getElementById('badge').textContent=pending;
+
+  const list=document.getElementById('sugList');
+  if(!visible.length){
+    list.innerHTML=`<div class="empty">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      <p>No pending suggestions — all clear!</p>
+      <p>${currentFilter==='pending'?'No pending suggestions — all clear!':'Nothing here yet.'}</p>
     </div>`;
     return;
   }
-
-  list.innerHTML = `<div class="suggestions">${suggestions.map(s => renderCard(s)).join('')}</div>`;
+  list.innerHTML=`<div class="suggestions">${visible.map(s=>renderCard(s)).join('')}</div>`;
 }
 
-function tagPillsHTML(sId, selectedTags) {
-  return BUILTIN_TAGS.map(t => {
-    const sel = selectedTags.includes(t.id);
-    return `<span class="tag-pill ${sel?'sel':''}" id="tp-${sId}-${t.id}"
-      style="${sel?`background:${t.color};border-color:${t.color}`:''}"
-      onclick="toggleTagPill('${sId}','${t.id}','${t.color}')">${t.label}</span>`;
-  }).join('');
-}
+function renderCard(s){
+  const date=new Date(s.created_at).toLocaleString();
+  const tags=s.tags?s.tags.split(',').map(t=>t.trim()):['greet'];
+  const isPending=s.status==='pending';
+  const statusClass={pending:'status-pill-pending',approved:'status-pill-approved',rejected:'status-pill-rejected'}[s.status]||'status-pill-pending';
+  const statusLabel={pending:'Pending ⏳',approved:'Approved ✓',rejected:'Rejected ✕'}[s.status]||s.status;
 
-function renderCard(s) {
-  const date = new Date(s.submittedAt).toLocaleString();
-  const tags = Array.isArray(s.tags) ? s.tags : [s.tags];
-  return `
-  <div class="sug-card" id="card-${s.id}">
-    <div class="sug-meta">Submitted ${date}</div>
+  return`<div class="sug-card status-${s.status}" id="card-${s.id}">
+    <div class="sug-meta">
+      <span>Submitted ${date}</span>
+      <span class="sug-status ${statusClass}">${statusLabel}</span>
+    </div>
     <div class="sug-fields">
       <div class="field-group field-full">
         <label>Arabic phrase</label>
-        <input type="text" class="ar-field" id="ar-${s.id}" value="${escHtml(s.ar)}">
+        <input type="text" class="ar-field" id="ar-${s.id}" value="${escHtml(s.arabic)}" ${!isPending?'readonly':''}>
       </div>
       <div class="field-group">
         <label>Pronunciation</label>
-        <input type="text" id="pr-${s.id}" value="${escHtml(s.pr||'')}">
+        <input type="text" id="pr-${s.id}" value="${escHtml(s.pronunciation||'')}" ${!isPending?'readonly':''}>
       </div>
       <div class="field-group">
         <label>English meaning</label>
-        <textarea id="en-${s.id}">${escHtml(s.en)}</textarea>
+        <textarea id="en-${s.id}" ${!isPending?'readonly':''}>${escHtml(s.english)}</textarea>
       </div>
       <div class="field-group field-full">
         <label>Tags</label>
-        <div class="tag-row" id="tags-${s.id}">${tagPillsHTML(s.id, tags)}</div>
+        <div class="tag-row" id="tags-${s.id}">${tagPillsHTML(s.id,tags,isPending)}</div>
       </div>
     </div>
-    <div class="sug-actions">
+    ${isPending?`<div class="sug-actions">
       <button class="btn-reject" onclick="reject('${s.id}')">✕ Reject</button>
       <button class="btn-approve" id="appbtn-${s.id}" onclick="approve('${s.id}')">
         <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2,7 6,11 12,3"/></svg>
-        Publish to sheet
+        Approve & Publish
       </button>
-    </div>
+    </div>`:''}
   </div>`;
 }
 
-function escHtml(str) {
-  return (str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function tagPillsHTML(sId,selectedTags,interactive){
+  return BUILTIN_TAGS.map(t=>{
+    const sel=selectedTags.includes(t.id);
+    return`<span class="tag-pill ${sel?'sel':''}"
+      id="tp-${sId}-${t.id}"
+      style="${sel?`background:${t.color};border-color:${t.color}`:''}"
+      ${interactive?`onclick="toggleTagPill('${sId}','${t.id}','${t.color}')"`:''}
+    >${t.label}</span>`;
+  }).join('');
 }
 
-/* ── TAG TOGGLE ── */
-function toggleTagPill(sId, tagId, color) {
-  const el = document.getElementById(`tp-${sId}-${tagId}`);
-  const isSel = el.classList.contains('sel');
-  // count currently selected
-  const row = document.getElementById(`tags-${sId}`);
-  const selCount = row.querySelectorAll('.sel').length;
-  if (isSel && selCount === 1) return; // must keep at least one
-  el.classList.toggle('sel', !isSel);
-  el.style.background = !isSel ? color : '';
-  el.style.borderColor = !isSel ? color : '';
+function escHtml(str){return(str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function toggleTagPill(sId,tagId,color){
+  const el=document.getElementById(`tp-${sId}-${tagId}`);
+  const row=document.getElementById(`tags-${sId}`);
+  const selCount=row.querySelectorAll('.sel').length;
+  const isSel=el.classList.contains('sel');
+  if(isSel&&selCount===1)return;
+  el.classList.toggle('sel',!isSel);
+  el.style.background=!isSel?color:'';
+  el.style.borderColor=!isSel?color:'';
 }
 
-function getSelectedTags(sId) {
-  const row = document.getElementById(`tags-${sId}`);
-  return [...row.querySelectorAll('.sel')].map(el => el.id.replace(`tp-${sId}-`,''));
+function getSelectedTags(sId){
+  const row=document.getElementById(`tags-${sId}`);
+  return[...row.querySelectorAll('.sel')].map(el=>el.id.replace(`tp-${sId}-`,''));
 }
 
-/* ── APPROVE ── */
-async function approve(id) {
-  const btn = document.getElementById(`appbtn-${id}`);
-  btn.disabled = true;
-  btn.textContent = 'Publishing…';
-
-  const ar   = document.getElementById(`ar-${id}`).value.trim();
-  const pr   = document.getElementById(`pr-${id}`).value.trim();
-  const en   = document.getElementById(`en-${id}`).value.trim();
-  const tags = getSelectedTags(id);
-
-  if (!ar || !en) { showToast('Arabic and meaning are required'); btn.disabled=false; btn.innerHTML='Publish to sheet'; return; }
-
-  try {
-    const res = await fetch('/api/approve', {
+/* APPROVE */
+async function approve(id){
+  const btn=document.getElementById(`appbtn-${id}`);
+  btn.disabled=true;btn.textContent='Publishing…';
+  const ar=document.getElementById(`ar-${id}`).value.trim();
+  const pr=document.getElementById(`pr-${id}`).value.trim();
+  const en=document.getElementById(`en-${id}`).value.trim();
+  const tags=getSelectedTags(id);
+  if(!ar||!en){showToast('Arabic and meaning are required');btn.disabled=false;btn.innerHTML='Approve & Publish';return;}
+  try{
+    const res=await fetch('/api/approve',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ pwd, id, ar, pr, en, tags }),
+      body:JSON.stringify({pwd,id,ar,pr,en,tags}),
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error);
-
-    // Remove from list
-    suggestions = suggestions.filter(s => s.id !== id);
-    document.getElementById(`card-${id}`).remove();
-    document.getElementById('badge').textContent = suggestions.length;
-    if (!suggestions.length) renderSuggestions();
-    showToast('Published to sheet!');
-  } catch (err) {
-    showToast('Error: ' + err.message);
-    btn.disabled = false;
-    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2,7 6,11 12,3"/></svg> Publish to sheet';
+    const data=await res.json();
+    if(!res.ok)throw new Error(data.error);
+    // Update locally
+    const idx=suggestions.findIndex(s=>s.id==id);
+    if(idx>=0)suggestions[idx].status='approved';
+    renderSuggestions();
+    showToast('Published to library ✓');
+  }catch(err){
+    showToast('Error: '+err.message);
+    btn.disabled=false;
+    btn.innerHTML='<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2,7 6,11 12,3"/></svg> Approve & Publish';
   }
 }
 
-/* ── REJECT ── */
-async function reject(id) {
-  if (!confirm('Reject and delete this suggestion?')) return;
-  try {
-    await fetch('/api/reject', {
+/* REJECT */
+async function reject(id){
+  if(!confirm('Reject and delete this suggestion?'))return;
+  try{
+    const res=await fetch('/api/reject',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ pwd, id }),
+      body:JSON.stringify({pwd,id}),
     });
-    suggestions = suggestions.filter(s => s.id !== id);
-    document.getElementById(`card-${id}`).remove();
-    document.getElementById('badge').textContent = suggestions.length;
-    if (!suggestions.length) renderSuggestions();
+    if(!res.ok)throw new Error('Failed');
+    const idx=suggestions.findIndex(s=>s.id==id);
+    if(idx>=0)suggestions[idx].status='rejected';
+    renderSuggestions();
     showToast('Suggestion rejected.');
-  } catch { showToast('Error rejecting.'); }
+  }catch{showToast('Error rejecting.');}
 }
 
-/* ── TOAST ── */
+/* TOAST */
 let toastTimer;
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2500);
 }
 
 document.getElementById('pwdInput').focus();
