@@ -1,40 +1,29 @@
+// api/suggestions.js
+// GET all pending suggestions (admin only)
+
 export default async function handler(req, res) {
-  if (req.method !== 'GET') return res.status(405).end();
-
-  const { pwd } = req.query;
-  if (pwd !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
-
-  const KV_URL   = process.env.KV_REST_API_URL;
-  const KV_TOKEN = process.env.KV_REST_API_TOKEN;
-
-  async function kvGet(key) {
-    const r = await fetch(`${KV_URL}/get/${encodeURIComponent(key)}`, {
-      headers: { Authorization: `Bearer ${KV_TOKEN}` }
-    });
-    const d = await r.json();
-    if (!d.result) return null;
-    // Upstash may return already-parsed object or a JSON string — handle both
-    if (typeof d.result === 'string') {
-      try { return JSON.parse(d.result); } catch { return null; }
-    }
-    return d.result;
-  }
-
-  async function kvKeys(prefix) {
-    const r = await fetch(`${KV_URL}/keys/${encodeURIComponent(prefix + '*')}`, {
-      headers: { Authorization: `Bearer ${KV_TOKEN}` }
-    });
-    const d = await r.json();
-    return d.result || [];
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const keys = await kvKeys('suggestion:');
-    const items = await Promise.all(keys.map(k => kvGet(k)));
-    const valid = items.filter(Boolean).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
-    res.status(200).json(valid);
+    const response = await fetch(
+      `${process.env.SUPABASE_URL}/rest/v1/suggestions?select=*&order=created_at.desc`,
+      {
+        headers: {
+          'apikey': process.env.SUPABASE_SECRET_KEY,
+          'Authorization': `Bearer ${process.env.SUPABASE_SECRET_KEY}`,
+        },
+      }
+    );
+
+    if (!response.ok) throw new Error(`Supabase error: ${response.status}`);
+
+    const suggestions = await response.json();
+    return res.status(200).json(suggestions);
+
   } catch (err) {
-    console.error('suggestions error:', err);
-    res.status(500).json({ error: err.message });
+    console.error('suggestions fetch error:', err);
+    return res.status(500).json({ error: err.message });
   }
 }
