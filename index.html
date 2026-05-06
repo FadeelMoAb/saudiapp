@@ -703,6 +703,11 @@ async function fetchSheet(){
     const res=await fetch('/api/phrases');
     if(!res.ok)throw new Error('API error '+res.status);
     phrases=await res.json();
+    // Auto-cleanup: remove pending phrases that are now approved in DB
+    const approvedArs=new Set(phrases.map(p=>normalizeArClient(p.ar)));
+    const before=pendingPhrases.length;
+    pendingPhrases=pendingPhrases.filter(p=>!approvedArs.has(normalizeArClient(p.ar)));
+    if(pendingPhrases.length<before){saveStorage();showToast('Your suggestion was approved! ✓');}
     localStorage.setItem(SK.cache,JSON.stringify(phrases));
     onLoaded();
   }catch(e){console.warn('Phrases fetch failed',e);if(!phrases.length)showToast('Could not load phrases.');}
