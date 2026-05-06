@@ -1,4 +1,4 @@
-const CACHE = 'saudibia-v5';
+const CACHE = 'saudibia-v6';
 const ASSETS = [
   '/',
   '/index.html',
@@ -20,14 +20,16 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Network first for the Google Sheet CSV (always fresh data)
-  if (e.request.url.includes('docs.google.com')) {
-    e.respondWith(
-      fetch(e.request).catch(() => caches.match(e.request))
-    );
-    return;
-  }
-  // Cache first for everything else
+  // Never cache POST, PUT, DELETE, PATCH requests
+  if (e.request.method !== 'GET') return;
+
+  // Never cache API calls — always fresh
+  if (e.request.url.includes('/api/')) return;
+
+  // Never cache Supabase calls
+  if (e.request.url.includes('supabase.co')) return;
+
+  // Cache first for static assets
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
