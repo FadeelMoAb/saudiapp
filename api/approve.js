@@ -1,5 +1,9 @@
-// api/approve.js
-// POST approve a suggestion — copies to phrases with edited fields, marks as approved
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseAdmin = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SECRET_KEY
+);
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -10,40 +14,21 @@ export default async function handler(req, res) {
 
   const tagsStr = Array.isArray(tags) ? tags.join(',') : (tags || 'greet');
 
-  try {
-    // Insert into phrases table with admin-edited fields
-    const insertRes = await fetch(
-      `${process.env.SUPABASE_URL}/rest/v1/phrases`,
-      {
-        method: 'POST',
-        headers: {
-          'apikey': process.env.SUPABASE_SECRET_KEY,
-          'Authorization': `Bearer ${process.env.SUPABASE_SECRET_KEY}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=representation',
-        },
-        body: JSON.stringify({ arabic: ar, pronunciation: pr || '', english: en, tags: tagsStr }),
-      }
-    );
-    if (!insertRes.ok) throw new Error(await insertRes.text());
+  // Insert into phrases
+  const { error: insertError } = await supabaseAdmin.from('phrases').insert({
+    arabic: ar,
+    pronunciation: pr || '',
+    english: en,
+    tags: tagsStr,
+  });
+  if (insertError) return res.status(500).json({ error: insertError.message });
 
-    // Mark suggestion as approved
-    await fetch(
-      `${process.env.SUPABASE_URL}/rest/v1/suggestions?id=eq.${id}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'apikey': process.env.SUPABASE_SECRET_KEY,
-          'Authorization': `Bearer ${process.env.SUPABASE_SECRET_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: 'approved' }),
-      }
-    );
+  // Mark suggestion as approved
+  const { error: updateError } = await supabaseAdmin
+    .from('suggestions')
+    .update({ status: 'approved' })
+    .eq('id', id);
+  if (updateError) return res.status(500).json({ error: updateError.message });
 
-    return res.status(200).json({ success: true });
-  } catch (err) {
-    console.error('approve error:', err);
-    return res.status(500).json({ error: err.message });
-  }
+  return res.status(200).json({ success: true });
 }
