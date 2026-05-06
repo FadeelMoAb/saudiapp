@@ -187,6 +187,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .badge-unseen{background:var(--parch-deep);color:var(--faint)}
 .badge-seen{background:var(--seen-bg);color:var(--seen)}
 .badge-learned{background:var(--sage-bg);color:var(--sage)}
+.badge-pending{background:var(--amber-bg);color:var(--amber)}
 .lib-actions{display:flex;gap:6px;flex-shrink:0}
 .lib-icon{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;cursor:pointer;color:var(--faint);display:flex;align-items:center;justify-content:center;transition:all .15s}
 .lib-icon:hover{border-color:var(--border-med);color:var(--muted)}
@@ -628,6 +629,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
         <button class="lib-tab" onclick="setLibTab('learned',this)">Learned <span class="lib-tab-count" id="lib-count-learned"></span></button>
         <button class="lib-tab" onclick="setLibTab('seen',this)">Seen <span class="lib-tab-count" id="lib-count-seen"></span></button>
         <button class="lib-tab" onclick="setLibTab('favorites',this)">Favorites <span class="lib-tab-count" id="lib-count-fav"></span></button>
+        <button class="lib-tab" onclick="setLibTab('pending',this)">Pending ⏳ <span class="lib-tab-count" id="lib-count-pending"></span></button>
       </div>
       <div class="lib-search-wrap">
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="4.5"/><line x1="10" y1="10" x2="14" y2="14"/></svg>
@@ -667,13 +669,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 
 <script>
 /* CONFIG */
-const SHEET_CSV_URL='https://docs.google.com/spreadsheets/d/e/2PACX-1vR1Njge1j5a2Tx3uQ_oKigzplPDhIZDyq1jKZkad48OHQAtNdK8HOM4PKtvQiDz3GBtgYvp1j_bLzQ4/pub?gid=627851250&single=true&output=csv';
-
 /* STORAGE KEYS */
-const SK={cache:'saudi_sheet_cache',seen:'saudi_seen_v1',learned:'saudi_learned_v1',favs:'saudi_favs_v1',quizLog:'saudi_quiz_log_v1',streak:'saudi_streak_v1',lastDay:'saudi_last_day',bestStr:'saudi_best_streak',activity:'saudi_activity_v1'};
+const SK={cache:'saudi_sheet_cache',seen:'saudi_seen_v1',learned:'saudi_learned_v1',favs:'saudi_favs_v1',quizLog:'saudi_quiz_log_v1',streak:'saudi_streak_v1',lastDay:'saudi_last_day',bestStr:'saudi_best_streak',activity:'saudi_activity_v1',pending:'saudi_pending_v1'};
 
 /* STATE */
 let phrases=[],seenSet=new Set(),learnedSet=new Set(),favsSet=new Set(),quizLog={};
+let pendingPhrases=[]; // student's own suggestions, locally stored
 let libTab='all',libFilter='all';
 let practiceIdx=0,practiceOrder=[],practiceRevd=false;
 let currentQuizMode='ar-en',quizQuestions=[],quizQIdx=0,quizScore=0,quizChecked=false;
@@ -684,36 +685,27 @@ function loadSet(k){try{return new Set(JSON.parse(localStorage.getItem(k))||[]);
 function loadStorage(){
   seenSet=loadSet(SK.seen);learnedSet=loadSet(SK.learned);favsSet=loadSet(SK.favs);
   try{quizLog=JSON.parse(localStorage.getItem(SK.quizLog))||{};}catch{quizLog={};}
+  try{pendingPhrases=JSON.parse(localStorage.getItem(SK.pending))||[];}catch{pendingPhrases=[];}
 }
 function saveStorage(){
   localStorage.setItem(SK.seen,JSON.stringify([...seenSet]));
   localStorage.setItem(SK.learned,JSON.stringify([...learnedSet]));
   localStorage.setItem(SK.favs,JSON.stringify([...favsSet]));
   localStorage.setItem(SK.quizLog,JSON.stringify(quizLog));
+  localStorage.setItem(SK.pending,JSON.stringify(pendingPhrases));
 }
 
-/* CSV */
-function parseCSV(text){
-  const rows=[];const lines=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n');
-  for(const line of lines){if(!line.trim())continue;const cols=[];let cur='',inQ=false;
-    for(let i=0;i<line.length;i++){const ch=line[i];
-      if(ch==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
-      else if(ch===','&&!inQ){cols.push(cur.trim());cur='';}else cur+=ch;}
-    cols.push(cur.trim());rows.push(cols);}return rows;
-}
-function csvToPhrase(cols,i){
-  const[ar='',pr='',en='',tr='']=cols;if(!ar||!en)return null;
-  const tags=tr.split(',').map(t=>t.trim().toLowerCase()).filter(Boolean);
-  return{ar:ar.trim(),pr:pr.trim(),en:en.trim(),tags:tags.length?tags:['greet'],idx:i};
-}
+/* FETCH FROM SUPABASE via /api/phrases */
 async function fetchSheet(){
   const c=localStorage.getItem(SK.cache);
   if(c){try{phrases=JSON.parse(c);onLoaded();}catch{}}
   try{
-    const res=await fetch(SHEET_CSV_URL);const text=await res.text();
-    phrases=parseCSV(text).slice(1).map((r,i)=>csvToPhrase(r,i)).filter(Boolean);
-    localStorage.setItem(SK.cache,JSON.stringify(phrases));onLoaded();
-  }catch(e){console.warn('Sheet fetch failed',e);if(!phrases.length)showToast('Could not load phrases.');}
+    const res=await fetch('/api/phrases');
+    if(!res.ok)throw new Error('API error '+res.status);
+    phrases=await res.json();
+    localStorage.setItem(SK.cache,JSON.stringify(phrases));
+    onLoaded();
+  }catch(e){console.warn('Phrases fetch failed',e);if(!phrases.length)showToast('Could not load phrases.');}
 }
 function onLoaded(){
   initPracticeOrder();renderToday();renderPracticeCard();
@@ -759,6 +751,7 @@ function updateGlobalStats(){}
 
 /* PHRASE STATE */
 function phraseState(ar){
+  if(pendingPhrases.find(p=>p.ar===ar))return'pending';
   if(learnedSet.has(ar))return'learned';
   if(seenSet.has(ar))return'seen';
   return'unseen';
@@ -974,18 +967,22 @@ function setLibTab(tab,btn){
   libTab=tab;document.querySelectorAll('.lib-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderLibrary();
 }
 function renderLibrary(){
-  document.getElementById('lib-count-all').textContent=phrases.length;
+  const allPhrases=[...phrases,...pendingPhrases];
+  document.getElementById('lib-count-all').textContent=allPhrases.length;
   document.getElementById('lib-count-learned').textContent=[...learnedSet].filter(k=>phrases.find(p=>p.ar===k)).length;
   document.getElementById('lib-count-seen').textContent=[...seenSet].filter(k=>phrases.find(p=>p.ar===k)&&!learnedSet.has(k)).length;
-  document.getElementById('lib-count-fav').textContent=[...favsSet].filter(k=>phrases.find(p=>p.ar===k)).length;
+  document.getElementById('lib-count-fav').textContent=[...favsSet].filter(k=>allPhrases.find(p=>p.ar===k)).length;
+  document.getElementById('lib-count-pending').textContent=pendingPhrases.length;
   const allTags=[...new Set(phrases.flatMap(p=>p.tags))];
   document.getElementById('lib-filter-bar').innerHTML=`<button class="fb ${libFilter==='all'?'active':''}" onclick="setLibFilter('all',this)">All</button>`
     +allTags.map(t=>`<button class="fb ${libFilter===t?'active':''}" onclick="setLibFilter('${t}',this)">${t.charAt(0).toUpperCase()+t.slice(1).replace(/_/g,' ')}</button>`).join('');
   const q=(document.getElementById('lib-search')||{value:''}).value.trim().toLowerCase();
-  const visible=phrases.filter(p=>{
+  const visible=allPhrases.filter(p=>{
+    const isPending=!!pendingPhrases.find(x=>x.ar===p.ar);
     if(libTab==='learned'&&!learnedSet.has(p.ar))return false;
-    if(libTab==='seen'&&(learnedSet.has(p.ar)||!seenSet.has(p.ar)))return false;
+    if(libTab==='seen'&&(learnedSet.has(p.ar)||!seenSet.has(p.ar)||isPending))return false;
     if(libTab==='favorites'&&!favsSet.has(p.ar))return false;
+    if(libTab==='pending'&&!isPending)return false;
     if(libFilter!=='all'&&!p.tags.includes(libFilter))return false;
     if(q&&!p.ar.includes(q)&&!p.en.toLowerCase().includes(q)&&!(p.pr||'').toLowerCase().includes(q))return false;
     return true;
@@ -993,10 +990,11 @@ function renderLibrary(){
   const grid=document.getElementById('lib-grid');
   if(!visible.length){grid.innerHTML='<div class="prog-empty">No phrases found.</div>';return;}
   grid.innerHTML=visible.map((p,i)=>{
-    const state=phraseState(p.ar);
-    const badgeClass={unseen:'badge-unseen',seen:'badge-seen',learned:'badge-learned'}[state];
-    const badgeText={unseen:'Not seen',seen:'Seen',learned:'Learned'}[state];
-    return`<div class="lib-card state-${state}">
+    const isPending=!!pendingPhrases.find(x=>x.ar===p.ar);
+    const state=isPending?'pending':phraseState(p.ar);
+    const badgeClass={unseen:'badge-unseen',seen:'badge-seen',learned:'badge-learned',pending:'badge-pending'}[state];
+    const badgeText={unseen:'Not seen',seen:'Seen',learned:'Learned',pending:'Pending ⏳'}[state];
+    return`<div class="lib-card state-${state==='pending'?'seen':state}">
       <button class="lib-speak" id="ls-${i}" onclick="speakPhrase('ls-${i}','${p.ar.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
           <polygon points="4,4 4,16 13,10" fill="currentColor" stroke="none"/>
@@ -1015,9 +1013,9 @@ function renderLibrary(){
         <button class="lib-icon${favsSet.has(p.ar)?' fav':''}" onclick="toggleLibFav('${p.ar.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}',this)" title="Favorite">
           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M7 12s-5-3.5-5-6.5A3 3 0 017 3.5 3 3 0 0112 5.5C12 8.5 7 12 7 12z"/></svg>
         </button>
-        <button class="lib-icon${learnedSet.has(p.ar)?' learned':''}" onclick="toggleLibLearned('${p.ar.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}',this)" title="Toggle quiz pool">
+        ${!isPending?`<button class="lib-icon${learnedSet.has(p.ar)?' learned':''}" onclick="toggleLibLearned('${p.ar.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}',this)" title="Toggle learned">
           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,7 5.5,11 12,3"/></svg>
-        </button>
+        </button>`:''}
       </div>
     </div>`;
   }).join('');
@@ -1143,7 +1141,70 @@ function openSuggestModal(){sSelectedTags=new Set(['greet']);document.getElement
 function closeSuggestModal(){document.getElementById('suggestBackdrop').classList.remove('open');}
 function buildSTagRow(){document.getElementById('sTagRow').innerHTML=sAllTags().map(t=>{const sel=sSelectedTags.has(t.id);return`<span class="s-tag-opt" style="background:${sel?t.color:t.bg};color:${sel?'#fff':t.color};border-color:${t.color}" onclick="sToggleTag('${t.id}')">${sel?'✓ ':''}${t.label}</span>`;}).join('')+`<span class="s-tag-opt" style="border-color:var(--amber);color:var(--amber);background:var(--amber-bg)" onclick="closeSuggestModal();openTagsModal()">+ New tag</span>`;}
 function sToggleTag(id){if(sSelectedTags.has(id)){if(sSelectedTags.size===1)return;sSelectedTags.delete(id);}else sSelectedTags.add(id);buildSTagRow();}
-async function submitSuggestion(){const ar=document.getElementById('sInAr').value.trim();const pr=document.getElementById('sInPr').value.trim();const en=document.getElementById('sInEn').value.trim();const tags=[...sSelectedTags];let ok=true;document.getElementById('sErrAr').style.display=ar?'none':'block';if(!ar)ok=false;document.getElementById('sErrEn').style.display=en?'none':'block';if(!en)ok=false;if(!ok)return;closeSuggestModal();showToast('Suggestion sent ✓');logActivity(`Suggested: ${ar}`);fetch('/api/suggest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ar,pr,en,tags})}).catch(()=>{});}
+async function submitSuggestion(){
+  const ar=document.getElementById('sInAr').value.trim();
+  const pr=document.getElementById('sInPr').value.trim();
+  const en=document.getElementById('sInEn').value.trim();
+  const tags=[...sSelectedTags];
+  let ok=true;
+  document.getElementById('sErrAr').style.display=ar?'none':'block';if(!ar)ok=false;
+  document.getElementById('sErrEn').style.display=en?'none':'block';if(!en)ok=false;
+  if(!ok)return;
+
+  // Client-side duplicate check first
+  const normNew=normalizeArClient(ar);
+  for(const p of [...phrases,...pendingPhrases]){
+    if(normalizeArClient(p.ar)===normNew){
+      document.getElementById('sErrAr').style.display='block';
+      document.getElementById('sErrAr').textContent='This phrase already exists in the library.';
+      return;
+    }
+  }
+
+  closeSuggestModal();
+
+  // Save locally as pending immediately
+  const newPhrase={ar,pr,en,tags,_pending:true};
+  pendingPhrases.push(newPhrase);
+  saveStorage();
+  renderLibrary();
+  showToast('Added to your library ⏳ Waiting for approval');
+  logActivity(`Suggested: ${ar}`);
+
+  // Send to API
+  try{
+    const res=await fetch('/api/suggest',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ar,pr,en,tags})
+    });
+    const data=await res.json();
+    if(res.status===409){
+      // Duplicate found on server — remove from pending
+      if(data.error==='duplicate'){
+        pendingPhrases=pendingPhrases.filter(p=>p.ar!==ar);
+        saveStorage();renderLibrary();
+        showToast('Already exists in the library');
+      } else if(data.error==='similar'){
+        showToast(`Similar to existing phrase: "${data.similar}"`);
+      }
+    }
+  }catch(e){
+    console.warn('Suggest API error:',e);
+    // Keep in pending even if API fails, will retry on next visit
+  }
+}
+
+function normalizeArClient(str){
+  return str
+    .replace(/[\u064B-\u065F\u0670]/g,'')
+    .replace(/\u0640/g,'')
+    .replace(/[إأآا]/g,'ا')
+    .replace(/ى/g,'ي')
+    .replace(/ة/g,'ه')
+    .replace(/[^\u0621-\u064A]/g,'')
+    .trim();
+}
 function openTagsModal(){document.getElementById('sNewTagName').value='';document.getElementById('sErrTagName').style.display='none';sColorIdx=0;renderSColors();renderSTagsList();document.getElementById('tagsBackdrop').classList.add('open');}
 function closeTagsModal(){document.getElementById('tagsBackdrop').classList.remove('open');document.getElementById('suggestBackdrop').classList.add('open');buildSTagRow();}
 function renderSColors(){document.getElementById('sColorRow').innerHTML=S_COLORS.map((c,i)=>`<div class="s-color-swatch${sColorIdx===i?' selected':''}" style="background:${c.color}" onclick="sPickColor(${i})"></div>`).join('');}
