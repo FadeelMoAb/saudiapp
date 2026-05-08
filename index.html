@@ -537,6 +537,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
         <div class="big-transliteration" id="today-pr"></div>
         <div class="big-arabic" id="today-ar"></div>
         <div class="big-meaning" id="today-en"></div>
+        <button class="big-audio-btn" id="today-audio-btn" onclick="speakPhrase('today-audio-btn',getTodayAr())">
+          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="4,4 4,16 13,10" fill="currentColor" stroke="none"/>
+            <path d="M15 7a4 4 0 0 1 0 6"/><path d="M17 4.5a8 8 0 0 1 0 11"/>
+          </svg>
+        </button>
         <div class="big-divider"></div>
         <div class="big-sentence-label">IN A SENTENCE</div>
         <div class="big-sentence-ar" id="today-sentence-ar"></div>
@@ -545,12 +551,6 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
       <div class="big-card-bottom">
         <div class="big-card-label" id="today-card-label">WORD #1 · GREETING</div>
         <div class="big-card-actions">
-          <button class="big-audio-btn" id="today-audio-btn" onclick="speakPhrase('today-audio-btn',getTodayAr())">
-            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-              <polygon points="4,4 4,16 13,10" fill="currentColor" stroke="none"/>
-              <path d="M15 7a4 4 0 0 1 0 6"/><path d="M17 4.5a8 8 0 0 1 0 11"/>
-            </svg>
-          </button>
           <button class="icon-action" id="today-fav-btn" onclick="toggleTodayFav()" title="Favorite">
             <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M7 12s-5-3.5-5-6.5A3 3 0 017 3.5 3 3 0 0112 5.5C12 8.5 7 12 7 12z"/></svg>
           </button>
