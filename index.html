@@ -257,19 +257,17 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
   /* ── TODAY ── */
   .today-wrap{
     padding:.75rem 1rem;
-    height:100%;
+    flex:1;
+    min-height:0;
     display:flex;flex-direction:column;
-    justify-content:space-between;
     overflow:hidden;
-    gap:.5rem;
   }
-  .today-meta{margin-bottom:0;flex-shrink:0}
+  .today-meta{margin-bottom:.5rem;flex-shrink:0}
   .big-card{
     flex:1;
     min-height:0;
     padding:1rem 1rem .75rem;
     display:flex;flex-direction:column;
-    justify-content:center;
     overflow:hidden;
   }
   .big-card-top{margin-bottom:.75rem;flex-shrink:0}
@@ -518,17 +516,17 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 </div>
 <div class="page active" id="page-today">
   <div class="today-wrap">
-    <div class="today-meta">
-      <div class="today-date">
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2" y="3" width="12" height="12" rx="2"/><line x1="2" y1="7" x2="14" y2="7"/><line x1="5" y1="1" x2="5" y2="4"/><line x1="11" y1="1" x2="11" y2="4"/></svg>
-        <span id="today-date-label"></span>
-      </div>
-      <div class="today-streak">
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1s-5 4.5-5 8a5 5 0 0010 0C13 5.5 8 1 8 1zm0 11.5a3.5 3.5 0 01-3.5-3.5c0-1.8 1.8-4 3.5-5.8 1.7 1.8 3.5 4 3.5 5.8A3.5 3.5 0 018 12.5z"/></svg>
-        STREAK · <span id="today-streak-val">0</span>
-      </div>
-    </div>
     <div class="big-card">
+      <div class="today-meta">
+        <div class="today-date">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><rect x="2" y="3" width="12" height="12" rx="2"/><line x1="2" y1="7" x2="14" y2="7"/><line x1="5" y1="1" x2="5" y2="4"/><line x1="11" y1="1" x2="11" y2="4"/></svg>
+          <span id="today-date-label"></span>
+        </div>
+        <div class="today-streak">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1s-5 4.5-5 8a5 5 0 0010 0C13 5.5 8 1 8 1zm0 11.5a3.5 3.5 0 01-3.5-3.5c0-1.8 1.8-4 3.5-5.8 1.7 1.8 3.5 4 3.5 5.8A3.5 3.5 0 018 12.5z"/></svg>
+          STREAK · <span id="today-streak-val">0</span>
+        </div>
+      </div>
       <div class="big-card-top">
         <div class="big-card-label" id="today-card-label">WORD #1 · GREETING</div>
         <div class="big-card-actions">
