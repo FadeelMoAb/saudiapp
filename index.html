@@ -79,8 +79,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .stat-val{font-family:'Lora',serif;font-size:26px;font-weight:500;color:var(--amber)}
 
 /* PRACTICE */
-.practice-wrap{max-width:680px;margin:0 auto;padding:2rem 1.5rem 3rem;display:flex;flex-direction:column;align-items:center}
-.practice-card{width:100%;background:var(--parch);border:1px solid var(--border);border-radius:var(--rxl);padding:2.5rem 2rem 2rem;text-align:center;box-shadow:0 4px 32px rgba(44,36,22,.06);min-height:300px;display:flex;flex-direction:column;align-items:center;position:relative;transition:border-color .2s}
+#page-practice.active{display:flex;flex-direction:column;height:calc(100vh - 58px);overflow:hidden}
+.practice-wrap{width:100%;max-width:680px;margin:0 auto;padding:1.75rem 1.5rem 2rem;display:flex;flex-direction:column;flex:1;min-height:0;box-sizing:border-box}
+.practice-card{width:100%;background:var(--parch);border:1px solid var(--border);border-radius:var(--rxl);padding:2.5rem 2rem 2rem;text-align:center;box-shadow:0 4px 32px rgba(44,36,22,.06);display:flex;flex-direction:column;align-items:center;position:relative;transition:border-color .2s;flex:1;min-height:0;overflow:hidden}
 .practice-card.is-learned{border-color:var(--sage);border-width:1.5px}
 .practice-card-content{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%}
 .practice-tag{font-size:10px;font-weight:500;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:1.25rem}
