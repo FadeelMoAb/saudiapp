@@ -1045,15 +1045,17 @@ function renderLibrary(){
   document.getElementById('lib-type-bar').innerHTML=`<button class="fb ${libTypeFilter==='all'?'active':''}" onclick="setTypeFilter('all',this)">All</button>`
     +WORD_TYPES.map(t=>`<button class="fb ${libTypeFilter===t.id?'active':''}" onclick="setTypeFilter('${t.id}',this)">${t.label}</button>`).join('');
   // Topic filter bar
-  const relevantTopics=libTypeFilter==='all'?Object.values(TOPICS_BY_TYPE).flat():(TOPICS_BY_TYPE[libTypeFilter]||[]);
-  const relevantCustom=libTypeFilter==='all'?sExtraTags:sExtraTags.filter(t=>t.typeId===libTypeFilter);
-  const topicsWithCustom=[...relevantTopics,...relevantCustom];
   const topicBar=document.getElementById('lib-filter-bar');
-  if(topicsWithCustom.length>0){
-    topicBar.style.display='';
-    topicBar.innerHTML=`<button class="fb ${libTopicFilter==='all'?'active':''}" onclick="setTopicFilter('all',this)">All</button>`
-      +topicsWithCustom.map(t=>`<button class="fb ${libTopicFilter===t.id?'active':''}" onclick="setTopicFilter('${t.id}',this)">${t.label}</button>`).join('');
-  }else{topicBar.style.display='none';}
+  if(libTypeFilter==='all'){topicBar.style.display='none';}else{
+    const relevantTopics=TOPICS_BY_TYPE[libTypeFilter]||[];
+    const relevantCustom=sExtraTags.filter(t=>t.typeId===libTypeFilter);
+    const topicsWithCustom=[...relevantTopics,...relevantCustom];
+    if(topicsWithCustom.length>0){
+      topicBar.style.display='';
+      topicBar.innerHTML=`<button class="fb ${libTopicFilter==='all'?'active':''}" onclick="setTopicFilter('all',this)">All</button>`
+        +topicsWithCustom.map(t=>`<button class="fb ${libTopicFilter===t.id?'active':''}" onclick="setTopicFilter('${t.id}',this)">${t.label}</button>`).join('');
+    }else{topicBar.style.display='none';}
+  }
   const q=(document.getElementById('lib-search')||{value:''}).value.trim().toLowerCase();
   const qNorm=normalizeArClient(q);
   const visible=allPhrases.filter(p=>{
@@ -1103,6 +1105,7 @@ function renderLibrary(){
   }).join('');
 }
 function setTypeFilter(type,btn){libTypeFilter=type;libTopicFilter='all';document.querySelectorAll('#lib-type-bar .fb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderLibrary();}
+
 function setTopicFilter(topic,btn){libTopicFilter=topic;document.querySelectorAll('#lib-filter-bar .fb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderLibrary();}
 function setLibFilter(tag,btn){
 }
