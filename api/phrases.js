@@ -19,7 +19,8 @@ export default async function handler(req, res) {
     ar: p.arabic,
     pr: p.pronunciation || '',
     en: p.english,
-    tags: p.tags ? p.tags.split(',').map(t => t.trim()) : ['greet'],
+    tags: p.tags ? p.tags.split(',').map(t => t.trim()).filter(t => t) : [],
+    type: p.type || 'phrase',
     id: p.id,
   }));
 

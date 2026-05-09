@@ -43,7 +43,7 @@ function similarity(a, b) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { ar, pr, en, tags } = req.body;
+  const { ar, pr, en, tags, type } = req.body;
   if (!ar || !en) return res.status(400).json({ error: 'Arabic and English are required' });
 
   const normNew = normalizeAr(ar);
@@ -87,12 +87,13 @@ export default async function handler(req, res) {
     }
 
     // Insert suggestion
-    const tagsStr = Array.isArray(tags) ? tags.join(',') : (tags || 'greet');
+    const tagsStr = Array.isArray(tags) && tags.length ? tags.join(',') : null;
     const { data, error } = await supabaseAdmin.from('suggestions').insert({
       arabic: ar,
       pronunciation: pr || '',
       english: en,
       tags: tagsStr,
+      type: type || 'phrase',
       status: 'pending',
     }).select();
 

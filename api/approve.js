@@ -8,11 +8,11 @@ const supabaseAdmin = createClient(
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { pwd, id, ar, pr, en, tags } = req.body;
+  const { pwd, id, ar, pr, en, tags, type } = req.body;
   if (pwd !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
   if (!id) return res.status(400).json({ error: 'id required' });
 
-  const tagsStr = Array.isArray(tags) ? tags.join(',') : (tags || 'greet');
+  const tagsStr = Array.isArray(tags) && tags.length ? tags.join(',') : null;
 
   // Insert into phrases
   const { error: insertError } = await supabaseAdmin.from('phrases').insert({
@@ -20,6 +20,7 @@ export default async function handler(req, res) {
     pronunciation: pr || '',
     english: en,
     tags: tagsStr,
+    type: type || 'phrase',
   });
   if (insertError) return res.status(500).json({ error: insertError.message });
 

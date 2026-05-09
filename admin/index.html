@@ -137,13 +137,30 @@ footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5r
 <div class="toast" id="toast"></div>
 
 <script>
-const BUILTIN_TAGS=[
-  {id:'greet',  label:'Greeting',   color:'#5C7A5A'},
-  {id:'social', label:'Social',     color:'#7A5C8A'},
-  {id:'daily',  label:'Daily life', color:'#8C7B5E'},
-  {id:'express',label:'Expression', color:'#C17B3F'},
-  {id:'emotion',label:'Emotion',    color:'#4A6B8A'},
+const WORD_TYPES=[
+  {id:'phrase',    label:'Phrase',    color:'#C17B3F'},
+  {id:'verb',      label:'Verb',      color:'#5C7A5A'},
+  {id:'noun',      label:'Noun',      color:'#4A6B8A'},
+  {id:'adjective', label:'Adjective', color:'#7A5C8A'},
 ];
+const TOPICS_BY_TYPE={
+  phrase:[
+    {id:'greet',  label:'Greeting',   color:'#5C7A5A'},
+    {id:'social', label:'Social',     color:'#7A5C8A'},
+    {id:'daily',  label:'Daily life', color:'#8C7B5E'},
+    {id:'express',label:'Expression', color:'#C17B3F'},
+    {id:'emotion',label:'Emotion',    color:'#4A6B8A'},
+  ],
+  noun:[
+    {id:'kitchen',    label:'Kitchen',     color:'#8B4513'},
+    {id:'office',     label:'Office',      color:'#5C4A2A'},
+    {id:'house',      label:'House',       color:'#2C5A4A'},
+    {id:'coffeeshop', label:'Coffee Shop', color:'#A05A2C'},
+    {id:'restaurant', label:'Restaurant',  color:'#3A6B6B'},
+  ],
+  verb:[],
+  adjective:[],
+};
 
 let pwd='';
 let suggestions=[];
@@ -216,10 +233,12 @@ function renderSuggestions(){
 
 function renderCard(s){
   const date=new Date(s.created_at).toLocaleString();
-  const tags=s.tags?s.tags.split(',').map(t=>t.trim()):['greet'];
+  const tags=s.tags?s.tags.split(',').map(t=>t.trim()).filter(t=>t):[];
+  const type=s.type||'phrase';
   const isPending=s.status==='pending';
   const statusClass={pending:'status-pill-pending',approved:'status-pill-approved',rejected:'status-pill-rejected'}[s.status]||'status-pill-pending';
   const statusLabel={pending:'Pending ⏳',approved:'Approved ✓',rejected:'Rejected ✕'}[s.status]||s.status;
+  const topics=TOPICS_BY_TYPE[type]||[];
 
   return`<div class="sug-card status-${s.status}" id="card-${s.id}">
     <div class="sug-meta">
@@ -240,9 +259,13 @@ function renderCard(s){
         <textarea id="en-${s.id}" ${!isPending?'readonly':''}>${escHtml(s.english)}</textarea>
       </div>
       <div class="field-group field-full">
-        <label>Tags</label>
-        <div class="tag-row" id="tags-${s.id}">${tagPillsHTML(s.id,tags,isPending)}</div>
+        <label>Word Type</label>
+        <div class="tag-row" id="type-${s.id}">${typePillsHTML(s.id,type,isPending)}</div>
       </div>
+      ${topics.length?`<div class="field-group field-full">
+        <label>Topic</label>
+        <div class="tag-row" id="tags-${s.id}">${tagPillsHTML(s.id,tags,type,isPending)}</div>
+      </div>`:`<div id="tags-${s.id}" style="display:none"></div>`}
     </div>
     ${isPending?`<div class="sug-actions">
       <button class="btn-reject" onclick="reject('${s.id}')">✕ Reject</button>
@@ -254,8 +277,21 @@ function renderCard(s){
   </div>`;
 }
 
-function tagPillsHTML(sId,selectedTags,interactive){
-  return BUILTIN_TAGS.map(t=>{
+function typePillsHTML(sId,selectedType,interactive){
+  return WORD_TYPES.map(t=>{
+    const sel=selectedType===t.id;
+    return`<span class="tag-pill ${sel?'sel':''}"
+      id="tt-${sId}-${t.id}"
+      style="${sel?`background:${t.color};border-color:${t.color}`:''}"
+      ${interactive?`onclick="selectType('${sId}','${t.id}','${t.color}')"`:''}
+    >${t.label}</span>`;
+  }).join('');
+}
+
+function tagPillsHTML(sId,selectedTags,type,interactive){
+  const topics=TOPICS_BY_TYPE[type]||[];
+  if(!topics.length)return'';
+  return topics.map(t=>{
     const sel=selectedTags.includes(t.id);
     return`<span class="tag-pill ${sel?'sel':''}"
       id="tp-${sId}-${t.id}"
@@ -267,15 +303,41 @@ function tagPillsHTML(sId,selectedTags,interactive){
 
 function escHtml(str){return(str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
+function selectType(sId,typeId,color){
+  // Deselect old type pills
+  WORD_TYPES.forEach(t=>{
+    const el=document.getElementById(`tt-${sId}-${t.id}`);
+    if(!el)return;
+    el.classList.remove('sel');el.style.background='';el.style.borderColor='';
+  });
+  // Select new
+  const el=document.getElementById(`tt-${sId}-${typeId}`);
+  el.classList.add('sel');el.style.background=color;el.style.borderColor=color;
+  // Re-render topic row
+  const topics=TOPICS_BY_TYPE[typeId]||[];
+  const tagsRow=document.getElementById(`tags-${sId}`);
+  if(topics.length){
+    tagsRow.style.display='';
+    tagsRow.innerHTML=tagPillsHTML(sId,[],typeId,true);
+    // Show topic label
+    const lbl=tagsRow.previousElementSibling;
+    if(lbl&&lbl.tagName==='LABEL')lbl.style.display='';
+  }else{
+    tagsRow.style.display='none';
+  }
+}
+
 function toggleTagPill(sId,tagId,color){
   const el=document.getElementById(`tp-${sId}-${tagId}`);
-  const row=document.getElementById(`tags-${sId}`);
-  const selCount=row.querySelectorAll('.sel').length;
-  const isSel=el.classList.contains('sel');
-  if(isSel&&selCount===1)return;
-  el.classList.toggle('sel',!isSel);
-  el.style.background=!isSel?color:'';
-  el.style.borderColor=!isSel?color:'';
+  el.classList.toggle('sel');
+  el.style.background=el.classList.contains('sel')?color:'';
+  el.style.borderColor=el.classList.contains('sel')?color:'';
+}
+
+function getSelectedType(sId){
+  const row=document.getElementById(`type-${sId}`);
+  const sel=row.querySelector('.sel');
+  return sel?sel.id.replace(`tt-${sId}-`,''):'phrase';
 }
 
 function getSelectedTags(sId){
@@ -290,13 +352,14 @@ async function approve(id){
   const ar=document.getElementById(`ar-${id}`).value.trim();
   const pr=document.getElementById(`pr-${id}`).value.trim();
   const en=document.getElementById(`en-${id}`).value.trim();
+  const type=getSelectedType(id);
   const tags=getSelectedTags(id);
   if(!ar||!en){showToast('Arabic and meaning are required');btn.disabled=false;btn.innerHTML='Approve & Publish';return;}
   try{
     const res=await fetch('/api/approve',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({pwd,id,ar,pr,en,tags}),
+      body:JSON.stringify({pwd,id,ar,pr,en,tags,type}),
     });
     const data=await res.json();
     if(!res.ok)throw new Error(data.error);

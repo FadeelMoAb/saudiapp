@@ -694,6 +694,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="6.5" cy="6.5" r="4.5"/><line x1="10" y1="10" x2="14" y2="14"/></svg>
         <input class="lib-search" id="lib-search" placeholder="Search Arabic, transliteration, or English…" oninput="renderLibrary()">
       </div>
+      <div class="filter-bar" id="lib-type-bar"></div>
       <div class="filter-bar" id="lib-filter-bar"></div>
     </div>
     <div class="lib-grid" id="lib-grid"></div>
@@ -734,7 +735,7 @@ const SK={cache:'saudi_sheet_cache',seen:'saudi_seen_v1',learned:'saudi_learned_
 /* STATE */
 let phrases=[],seenSet=new Set(),learnedSet=new Set(),favsSet=new Set(),quizLog={};
 let pendingPhrases=[]; // student's own suggestions, locally stored
-let libTab='all',libFilter='all';
+let libTab='all',libTypeFilter='all',libTopicFilter='all';
 let practiceIdx=0,practiceOrder=[],practiceRevd=false;
 let currentQuizMode='ar-en',quizQuestions=[],quizQIdx=0,quizScore=0,quizChecked=false;
 const QUIZ_LEN=5;
@@ -1032,6 +1033,7 @@ function showQuizResult(){
 function setLibTab(tab,btn){
   libTab=tab;document.querySelectorAll('.lib-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderLibrary();
 }
+function getPhraseType(p){return p.type||'phrase';}
 function renderLibrary(){
   const allPhrases=[...phrases,...pendingPhrases];
   document.getElementById('lib-count-all').textContent=allPhrases.length;
@@ -1039,10 +1041,19 @@ function renderLibrary(){
   document.getElementById('lib-count-seen').textContent=[...seenSet].filter(k=>phrases.find(p=>p.ar===k)&&!learnedSet.has(k)).length;
   document.getElementById('lib-count-fav').textContent=[...favsSet].filter(k=>allPhrases.find(p=>p.ar===k)).length;
   document.getElementById('lib-count-pending').textContent=pendingPhrases.length;
-  const allTags=[...new Set([...phrases,...pendingPhrases].flatMap(p=>p.tags))];
-  const tagLabel=id=>{const found=sAllTags().find(t=>t.id===id);return found?found.label:id.charAt(0).toUpperCase()+id.slice(1).replace(/_/g,' ');};
-  document.getElementById('lib-filter-bar').innerHTML=`<button class="fb ${libFilter==='all'?'active':''}" onclick="setLibFilter('all',this)">All</button>`
-    +allTags.map(t=>`<button class="fb ${libFilter===t?'active':''}" onclick="setLibFilter('${t}',this)">${tagLabel(t)}</button>`).join('');
+  // Type filter bar
+  document.getElementById('lib-type-bar').innerHTML=`<button class="fb ${libTypeFilter==='all'?'active':''}" onclick="setTypeFilter('all',this)">All</button>`
+    +WORD_TYPES.map(t=>`<button class="fb ${libTypeFilter===t.id?'active':''}" onclick="setTypeFilter('${t.id}',this)">${t.label}</button>`).join('');
+  // Topic filter bar
+  const relevantTopics=libTypeFilter==='all'?Object.values(TOPICS_BY_TYPE).flat():(TOPICS_BY_TYPE[libTypeFilter]||[]);
+  const relevantCustom=libTypeFilter==='all'?sExtraTags:sExtraTags.filter(t=>t.typeId===libTypeFilter);
+  const topicsWithCustom=[...relevantTopics,...relevantCustom];
+  const topicBar=document.getElementById('lib-filter-bar');
+  if(topicsWithCustom.length>0){
+    topicBar.style.display='';
+    topicBar.innerHTML=`<button class="fb ${libTopicFilter==='all'?'active':''}" onclick="setTopicFilter('all',this)">All</button>`
+      +topicsWithCustom.map(t=>`<button class="fb ${libTopicFilter===t.id?'active':''}" onclick="setTopicFilter('${t.id}',this)">${t.label}</button>`).join('');
+  }else{topicBar.style.display='none';}
   const q=(document.getElementById('lib-search')||{value:''}).value.trim().toLowerCase();
   const qNorm=normalizeArClient(q);
   const visible=allPhrases.filter(p=>{
@@ -1051,7 +1062,8 @@ function renderLibrary(){
     if(libTab==='seen'&&(learnedSet.has(p.ar)||!seenSet.has(p.ar)||isPending))return false;
     if(libTab==='favorites'&&!favsSet.has(p.ar))return false;
     if(libTab==='pending'&&!isPending)return false;
-    if(libFilter!=='all'&&!p.tags.includes(libFilter))return false;
+    if(libTypeFilter!=='all'&&getPhraseType(p)!==libTypeFilter)return false;
+    if(libTopicFilter!=='all'&&!p.tags.includes(libTopicFilter))return false;
     if(q&&!normalizeArClient(p.ar).includes(qNorm)&&!p.en.toLowerCase().includes(q)&&!(p.pr||'').toLowerCase().includes(q))return false;
     return true;
   });
@@ -1090,8 +1102,9 @@ function renderLibrary(){
     </div>`;
   }).join('');
 }
+function setTypeFilter(type,btn){libTypeFilter=type;libTopicFilter='all';document.querySelectorAll('#lib-type-bar .fb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderLibrary();}
+function setTopicFilter(topic,btn){libTopicFilter=topic;document.querySelectorAll('#lib-filter-bar .fb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderLibrary();}
 function setLibFilter(tag,btn){
-  libFilter=tag;document.querySelectorAll('#lib-filter-bar .fb').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderLibrary();
 }
 function toggleLibFav(ar,btn){
   favsSet.has(ar)?favsSet.delete(ar):favsSet.add(ar);
@@ -1203,15 +1216,19 @@ document.addEventListener('keydown',e=>{
 })();
 
 /* SUGGEST MODAL */
-const BUILTIN_TAGS=[{id:'greet',label:'Greeting',color:'#5C7A5A',bg:'#E8F0E4',builtin:true},{id:'social',label:'Social',color:'#7A5C8A',bg:'#F0EAF7',builtin:true},{id:'daily',label:'Daily life',color:'#8C7B5E',bg:'#F5EFE0',builtin:true},{id:'express',label:'Expression',color:'#C17B3F',bg:'#F7EBD8',builtin:true},{id:'emotion',label:'Emotion',color:'#4A6B8A',bg:'#E4EFF7',builtin:true}];
+const WORD_TYPES=[{id:'phrase',label:'Phrase',color:'#C17B3F',bg:'#F7EBD8'},{id:'verb',label:'Verb',color:'#5C7A5A',bg:'#E8F0E4'},{id:'noun',label:'Noun',color:'#4A6B8A',bg:'#E4EFF7'},{id:'adjective',label:'Adjective',color:'#7A5C8A',bg:'#F0EAF7'}];
+const TOPICS_BY_TYPE={phrase:[{id:'greet',label:'Greeting',color:'#5C7A5A',bg:'#E8F0E4',builtin:true},{id:'social',label:'Social',color:'#7A5C8A',bg:'#F0EAF7',builtin:true},{id:'daily',label:'Daily life',color:'#8C7B5E',bg:'#F5EFE0',builtin:true},{id:'express',label:'Expression',color:'#C17B3F',bg:'#F7EBD8',builtin:true},{id:'emotion',label:'Emotion',color:'#4A6B8A',bg:'#E4EFF7',builtin:true}],noun:[{id:'kitchen',label:'Kitchen',color:'#8B4513',bg:'#FAEBD7',builtin:true},{id:'office',label:'Office',color:'#5C4A2A',bg:'#FBF0D8',builtin:true},{id:'house',label:'House',color:'#2C5A4A',bg:'#E4F0EC',builtin:true},{id:'coffeeshop',label:'Coffee Shop',color:'#A05A2C',bg:'#F8EBD8',builtin:true},{id:'restaurant',label:'Restaurant',color:'#3A6B6B',bg:'#E0EEEE',builtin:true}],verb:[],adjective:[]};
+const BUILTIN_TAGS=Object.values(TOPICS_BY_TYPE).flat();
+
 const S_COLORS=[{color:'#5C7A5A',bg:'#E8F0E4'},{color:'#7A5C8A',bg:'#F0EAF7'},{color:'#C17B3F',bg:'#F7EBD8'},{color:'#8C7B5E',bg:'#F5EFE0'},{color:'#4A6B8A',bg:'#E4EFF7'},{color:'#8B4513',bg:'#FAEBD7'},{color:'#5C4A2A',bg:'#FBF0D8'},{color:'#2C5A4A',bg:'#E4F0EC'},{color:'#6B4A8A',bg:'#F0EAF7'},{color:'#4A5C2A',bg:'#EAF0E0'},{color:'#A05A2C',bg:'#F8EBD8'},{color:'#3A6B6B',bg:'#E0EEEE'},{color:'#8A6B2C',bg:'#F8F0D8'},{color:'#5A3A6B',bg:'#EDE4F5'},{color:'#6B2C3A',bg:'#F5E0E4'}];
-let sSelectedTags=new Set(['greet']),sExtraTags=[],sColorIdx=0,sTagsFromSuggest=false,sEditMode=false,sEditingAr=null;
-function sAllTags(){return[...BUILTIN_TAGS,...sExtraTags];}
-function openSuggestModal(){sEditMode=false;sEditingAr=null;document.getElementById('sModalTitle').textContent='Add a new phrase';document.getElementById('sSaveBtn').textContent='Save';sSelectedTags=new Set(['greet']);document.getElementById('sInAr').value='';document.getElementById('sInPr').value='';document.getElementById('sInEn').value='';document.getElementById('sErrAr').style.display='none';document.getElementById('sErrEn').style.display='none';buildSTagRow();document.getElementById('suggestBackdrop').classList.add('open');setTimeout(()=>document.getElementById('sInAr').focus(),120);}
-function openEditModal(ar){const p=pendingPhrases.find(x=>x.ar===ar);if(!p)return;sEditMode=true;sEditingAr=ar;document.getElementById('sModalTitle').textContent='Edit phrase';document.getElementById('sSaveBtn').textContent='Save changes';document.getElementById('sInAr').value=p.ar;document.getElementById('sInPr').value=p.pr||'';document.getElementById('sInEn').value=p.en||'';sSelectedTags=new Set(Array.isArray(p.tags)?p.tags:['greet']);document.getElementById('sErrAr').style.display='none';document.getElementById('sErrEn').style.display='none';buildSTagRow();document.getElementById('suggestBackdrop').classList.add('open');setTimeout(()=>document.getElementById('sInAr').focus(),120);}
+let sSelectedTags=new Set(),sSelectedType='phrase',sExtraTags=[],sColorIdx=0,sNewTagType='phrase',sTagsFromSuggest=false,sEditMode=false,sEditingAr=null;
+function openSuggestModal(){sEditMode=false;sEditingAr=null;document.getElementById('sModalTitle').textContent='Add a new phrase';document.getElementById('sSaveBtn').textContent='Save';sSelectedType='phrase';sSelectedTags=new Set();document.getElementById('sInAr').value='';document.getElementById('sInPr').value='';document.getElementById('sInEn').value='';document.getElementById('sErrAr').style.display='none';document.getElementById('sErrEn').style.display='none';buildSTypeRow();buildSTagRow();document.getElementById('suggestBackdrop').classList.add('open');setTimeout(()=>document.getElementById('sInAr').focus(),120);}
+function openEditModal(ar){const p=pendingPhrases.find(x=>x.ar===ar);if(!p)return;sEditMode=true;sEditingAr=ar;document.getElementById('sModalTitle').textContent='Edit phrase';document.getElementById('sSaveBtn').textContent='Save changes';document.getElementById('sInAr').value=p.ar;document.getElementById('sInPr').value=p.pr||'';document.getElementById('sInEn').value=p.en||'';const allTags=Array.isArray(p.tags)?p.tags:[];sSelectedType=p.type||'phrase';sSelectedTags=new Set(allTags);document.getElementById('sErrAr').style.display='none';document.getElementById('sErrEn').style.display='none';buildSTypeRow();buildSTagRow();document.getElementById('suggestBackdrop').classList.add('open');setTimeout(()=>document.getElementById('sInAr').focus(),120);}
 function closeSuggestModal(){document.getElementById('suggestBackdrop').classList.remove('open');}
-function buildSTagRow(){document.getElementById('sTagRow').innerHTML=sAllTags().map(t=>{const sel=sSelectedTags.has(t.id);return`<span class="s-tag-opt" style="background:${sel?t.color:t.bg};color:${sel?'#fff':t.color};border-color:${t.color}" onclick="sToggleTag('${t.id}')">${sel?'✓ ':''}${t.label}</span>`;}).join('')+`<span class="s-tag-opt" style="border-color:var(--amber);color:var(--amber);background:var(--amber-bg)" onclick="closeSuggestModal();openTagsModal()">+ New tag</span>`;}
-function sToggleTag(id){if(sSelectedTags.has(id)){if(sSelectedTags.size===1)return;sSelectedTags.delete(id);}else sSelectedTags.add(id);buildSTagRow();}
+function buildSTypeRow(){document.getElementById('sTypeRow').innerHTML=WORD_TYPES.map(t=>{const sel=sSelectedType===t.id;return`<span class="s-tag-opt" style="background:${sel?t.color:t.bg};color:${sel?'#fff':t.color};border-color:${t.color}" onclick="sSelectType('${t.id}')">${sel?'✓ ':''}${t.label}</span>`;}).join('');}
+function sSelectType(id){sSelectedType=id;sSelectedTags=new Set();buildSTypeRow();buildSTagRow();}
+function buildSTagRow(){const builtins=TOPICS_BY_TYPE[sSelectedType]||[];const customs=sExtraTags.filter(t=>t.typeId===sSelectedType);const topics=[...builtins,...customs];const topicGroup=document.getElementById('sTopicGroup');if(topics.length===0){topicGroup.style.display='none';return;}topicGroup.style.display='';document.getElementById('sTagRow').innerHTML=topics.map(t=>{const sel=sSelectedTags.has(t.id);return`<span class="s-tag-opt" style="background:${sel?t.color:t.bg};color:${sel?'#fff':t.color};border-color:${t.color}" onclick="sToggleTag('${t.id}')">${sel?'✓ ':''}${t.label}</span>`;}).join('')+`<span class="s-tag-opt" style="border-color:var(--amber);color:var(--amber);background:var(--amber-bg)" onclick="closeSuggestModal();openTagsModal()">+ New tag</span>`;}
+function sToggleTag(id){if(sSelectedTags.has(id))sSelectedTags.delete(id);else sSelectedTags.add(id);buildSTagRow();}
 async function submitSuggestion(){
   if(sEditMode){await saveEdit();return;}
   const ar=document.getElementById('sInAr').value.trim();
@@ -1248,7 +1265,7 @@ async function submitSuggestion(){
     const res=await fetch('/api/suggest',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ar,pr,en,tags})
+      body:JSON.stringify({ar,pr,en,tags,type:sSelectedType})
     });
     const data=await res.json();
     if(res.ok&&data.id){
@@ -1289,7 +1306,7 @@ async function saveEdit(){
       await fetch('/api/update-suggestion',{
         method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({id:oldId,ar,pr,en,tags})
+        body:JSON.stringify({id:oldId,ar,pr,en,tags,type:sSelectedType})
       });
     }catch(e){console.warn('Update suggestion API error:',e);}
   }
@@ -1305,16 +1322,18 @@ function normalizeArClient(str){
     .replace(/[^\u0621-\u064A]/g,'')
     .trim();
 }
-function openTagsModal(){sTagsFromSuggest=true;document.getElementById('sNewTagName').value='';document.getElementById('sErrTagName').style.display='none';sColorIdx=0;renderSColors();renderSTagsList();document.getElementById('tagsBackdrop').classList.add('open');}
-function openTagsModalDirect(){sTagsFromSuggest=false;document.getElementById('sNewTagName').value='';document.getElementById('sErrTagName').style.display='none';sColorIdx=0;renderSColors();renderSTagsList();document.getElementById('tagsBackdrop').classList.add('open');}
+function openTagsModal(){sTagsFromSuggest=true;document.getElementById('sNewTagName').value='';document.getElementById('sErrTagName').style.display='none';sColorIdx=0;sNewTagType='phrase';renderSColors();buildNewTagTypeRow();renderSTagsList();document.getElementById('tagsBackdrop').classList.add('open');}
+function openTagsModalDirect(){sTagsFromSuggest=false;document.getElementById('sNewTagName').value='';document.getElementById('sErrTagName').style.display='none';sColorIdx=0;sNewTagType='phrase';renderSColors();buildNewTagTypeRow();renderSTagsList();document.getElementById('tagsBackdrop').classList.add('open');}
+function buildNewTagTypeRow(){document.getElementById('sNewTagTypeRow').innerHTML=WORD_TYPES.map(t=>{const sel=sNewTagType===t.id;return`<span class="s-tag-opt" style="background:${sel?t.color:t.bg};color:${sel?'#fff':t.color};border-color:${t.color}" onclick="sPickNewTagType('${t.id}')">${sel?'✓ ':''}${t.label}</span>`;}).join('');}
+function sPickNewTagType(id){sNewTagType=id;buildNewTagTypeRow();}
 function closeTagsModal(){document.getElementById('tagsBackdrop').classList.remove('open');if(sTagsFromSuggest){document.getElementById('suggestBackdrop').classList.add('open');buildSTagRow();}}
 function renderSColors(){document.getElementById('sColorRow').innerHTML=S_COLORS.map((c,i)=>`<div class="s-color-swatch${sColorIdx===i?' selected':''}" style="background:${c.color}" onclick="sPickColor(${i})"></div>`).join('');}
 function sPickColor(i){sColorIdx=i;renderSColors();}
-function renderSTagsList(){document.getElementById('sTagsList').innerHTML=sAllTags().map(t=>{const cnt=[...phrases,...pendingPhrases].filter(p=>p.tags.includes(t.id)).length;const editId='edit_'+t.id.replace(/[^a-z0-9]/gi,'_');return`<div class="s-tag-item" id="item_${editId}"><div class="s-tag-dot" style="background:${t.color}"></div><span class="s-tag-name" style="color:${t.color}">${t.label}</span><span class="s-tag-count">${cnt} phrase${cnt!==1?'s':''}</span>${t.builtin?`<span style="font-size:11px;color:var(--faint)">built-in</span>`:`<button class="s-tag-edit" onclick="sStartRename('${t.id}')" title="Rename"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z"/></svg></button><button class="s-tag-del" onclick="sDeleteTag('${t.id}')" title="Delete"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="2" y1="2" x2="12" y2="12"/><line x1="12" y1="2" x2="2" y2="12"/></svg></button>`}</div>`;}).join('');}
+function renderSTagsList(){const allPhrases=[...phrases,...pendingPhrases];document.getElementById('sTagsList').innerHTML=WORD_TYPES.map(type=>{const builtins=(TOPICS_BY_TYPE[type.id]||[]);const customs=sExtraTags.filter(t=>t.typeId===type.id);const allTopics=[...builtins,...customs];const rows=allTopics.map(t=>{const cnt=allPhrases.filter(p=>p.tags.includes(t.id)).length;const editId='edit_'+t.id.replace(/[^a-z0-9]/gi,'_');return`<div class="s-tag-item" id="item_${editId}"><div class="s-tag-dot" style="background:${t.color}"></div><span class="s-tag-name" style="color:${t.color}">${t.label}</span><span class="s-tag-count">${cnt} phrase${cnt!==1?'s':''}</span>${t.builtin?`<span style="font-size:11px;color:var(--faint)">built-in</span>`:`<button class="s-tag-edit" onclick="sStartRename('${t.id}')" title="Rename"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z"/></svg></button><button class="s-tag-del" onclick="sDeleteTag('${t.id}')" title="Delete"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="2" y1="2" x2="12" y2="12"/><line x1="12" y1="2" x2="2" y2="12"/></svg></button>`}</div>`;}).join('');return`<div style="margin-bottom:.75rem"><div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:${type.color};padding:.25rem 0 .4rem;border-bottom:1px solid var(--border);margin-bottom:.35rem">${type.label}</div>${rows||`<div style="font-size:12px;color:var(--faint);padding:.25rem 0">No topics yet</div>`}</div>`;}).join('');}
 function sStartRename(id){const t=sExtraTags.find(x=>x.id===id);if(!t)return;const editId='edit_'+id.replace(/[^a-z0-9]/gi,'_');const item=document.getElementById('item_'+editId);if(!item)return;item.innerHTML=`<div class="s-tag-dot" style="background:${t.color}"></div><div class="s-tag-rename-wrap"><input class="s-tag-rename-in" id="ren_${editId}" value="${t.label}" maxlength="30"><button class="s-tag-rename-ok" onclick="sConfirmRename('${id}')">Save</button></div>`;setTimeout(()=>{const inp=document.getElementById('ren_'+editId);if(inp){inp.focus();inp.select();}},50);}
 function sConfirmRename(id){const editId='edit_'+id.replace(/[^a-z0-9]/gi,'_');const inp=document.getElementById('ren_'+editId);if(!inp)return;const name=inp.value.trim();if(!name)return;const t=sExtraTags.find(x=>x.id===id);if(!t)return;t.label=name;saveCustomTags();renderSTagsList();showToast(`Tag renamed to "${name}"`);}
-function addCustomTag(){const name=document.getElementById('sNewTagName').value.trim();document.getElementById('sErrTagName').style.display=name?'none':'block';if(!name)return;const c=S_COLORS[sColorIdx];const id='c_'+name.toLowerCase().replace(/\s+/g,'_')+'_'+Date.now();sExtraTags.push({id,label:name,color:c.color,bg:c.bg});saveCustomTags();document.getElementById('sNewTagName').value='';renderSTagsList();renderSColors();showToast(`Tag "${name}" added!`);}
-function sDeleteTag(id){sExtraTags=sExtraTags.filter(t=>t.id!==id);sSelectedTags.delete(id);if(sSelectedTags.size===0)sSelectedTags.add('greet');saveCustomTags();renderSTagsList();showToast('Tag deleted.');}
+function addCustomTag(){const name=document.getElementById('sNewTagName').value.trim();document.getElementById('sErrTagName').style.display=name?'none':'block';if(!name)return;const c=S_COLORS[sColorIdx];const id='c_'+name.toLowerCase().replace(/\s+/g,'_')+'_'+Date.now();sExtraTags.push({id,label:name,color:c.color,bg:c.bg,typeId:sNewTagType});saveCustomTags();document.getElementById('sNewTagName').value='';renderSTagsList();renderSColors();showToast(`Tag "${name}" added under ${WORD_TYPES.find(t=>t.id===sNewTagType)?.label||sNewTagType}!`);}
+function sDeleteTag(id){sExtraTags=sExtraTags.filter(t=>t.id!==id);sSelectedTags.delete(id);saveCustomTags();renderSTagsList();showToast('Tag deleted.');}
 
 /* INIT */
 loadStorage();bumpStreak();
@@ -1351,7 +1370,8 @@ if('serviceWorker' in navigator){
     <div class="s-fgg"><label>Arabic Phrase *</label><input type="text" class="ar-in" id="sInAr" placeholder="اكتب هنا…"><div class="s-err" id="sErrAr">Please enter the Arabic phrase.</div></div>
     <div class="s-fgg"><label>Pronunciation <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px">(optional)</span></label><input type="text" id="sInPr" placeholder="e.g. Kayf ḥālik?"></div>
     <div class="s-fgg"><label>English Meaning *</label><textarea id="sInEn" placeholder="What does it mean? When is it used?"></textarea><div class="s-err" id="sErrEn">Please enter the English meaning.</div></div>
-    <div class="s-fgg" style="margin-bottom:0"><label>Tags <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px">(pick one or more)</span></label><div class="s-tag-row" id="sTagRow"></div></div>
+    <div class="s-fgg"><label>Word Type *</label><div class="s-tag-row" id="sTypeRow"></div></div>
+    <div class="s-fgg" style="margin-bottom:0" id="sTopicGroup"><label>Topic <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px">(optional)</span></label><div class="s-tag-row" id="sTagRow"></div></div>
     <div class="s-modal-actions"><button class="s-btn-cancel" onclick="closeSuggestModal()">Cancel</button><button class="s-btn-save" id="sSaveBtn" onclick="submitSuggestion()">Save</button></div>
   </div>
 </div>
@@ -1362,6 +1382,7 @@ if('serviceWorker' in navigator){
     <div class="s-modal-title">Manage tags</div>
     <div class="s-tags-list" id="sTagsList"></div>
     <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem">
+      <div class="s-fgg" style="margin-bottom:.75rem"><label>Under which type? *</label><div class="s-tag-row" id="sNewTagTypeRow"></div></div>
       <div class="s-fgg" style="margin-bottom:.75rem"><label>New Tag Name *</label><input type="text" id="sNewTagName" placeholder="e.g. Religion, Travel…" maxlength="30"><div class="s-err" id="sErrTagName">Please enter a tag name.</div></div>
       <div class="s-fgg" style="margin-bottom:0"><label>Tag Color</label><div class="s-color-row" id="sColorRow"></div></div>
     </div>
