@@ -259,22 +259,23 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 
   /* ── TODAY ── */
   .today-wrap{
-    padding:0;
     flex:1;
     min-height:0;
+    width:100%;
+    margin:0;
     display:flex;flex-direction:column;
     overflow:hidden;
+    padding:0;
   }
   .today-meta{margin-bottom:.5rem;flex-shrink:0}
   .big-card{
     flex:1;
     min-height:0;
+    width:100%;
+    box-sizing:border-box;
     padding:1rem 1rem .75rem;
     display:flex;flex-direction:column;
     overflow:hidden;
-    border-radius:0;
-    border-left:none;
-    border-right:none;
   }
   .big-card-content{flex:1;min-height:0;overflow:hidden}
   .big-card-bottom{margin-top:.75rem}
@@ -302,6 +303,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
     overflow:hidden;
     gap:.75rem;
     box-sizing:border-box;
+    width:100%;
   }
   .practice-card{
     flex:1;
