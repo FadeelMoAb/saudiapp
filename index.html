@@ -837,8 +837,8 @@ function renderToday(){
   document.getElementById('today-date-label').textContent=new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}).toUpperCase();
   document.getElementById('today-streak-val').textContent=getStreak();
   const lCount=[...learnedSet].filter(k=>phrases.find(p=>p.ar===k)).length;
-  const tl=(p.tags[0]||'phrase');const tlabel=tl.charAt(0).toUpperCase()+tl.slice(1).replace(/_/g,' ');
-  document.getElementById('today-card-label').textContent=`LEARNED ${lCount} · ${tlabel.toUpperCase()}`;
+  const tl=WORD_TYPES.find(t=>t.id===(p.type||'phrase'))||WORD_TYPES[0];
+  document.getElementById('today-card-label').textContent=`LEARNED ${lCount} · ${tl.label.toUpperCase()}`;
   document.getElementById('today-pr').textContent=p.pr?p.pr.toUpperCase():'';
   document.getElementById('today-ar').textContent=p.ar;
   document.getElementById('today-en').textContent=p.en;
@@ -880,8 +880,8 @@ function renderPracticeCard(){
   const card=document.getElementById('practice-card');
   card.classList.remove('is-learned');
   if(learnedSet.has(p.ar))card.classList.add('is-learned');
-  const tl=(p.tags[0]||'phrase');
-  document.getElementById('practice-tag').textContent=(tl.charAt(0).toUpperCase()+tl.slice(1).replace(/_/g,' ')).toUpperCase();
+  const tl=WORD_TYPES.find(t=>t.id===(p.type||'phrase'))||WORD_TYPES[0];
+  document.getElementById('practice-tag').textContent=tl.label.toUpperCase();
   document.getElementById('practice-ar').textContent=p.ar;
   document.getElementById('practice-pr').textContent=p.pr?p.pr.toUpperCase():'';
   document.getElementById('practice-meaning').style.display='none';
