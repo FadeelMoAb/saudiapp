@@ -1156,7 +1156,13 @@ function practiceRepeat(){
   renderPracticeCard();
 }
 function practiceAddFive(){
-  practiceSessionGoal=Math.min(practiceSessionGoal+5,practiceOrder.length);
+  const remaining=practiceOrder.length-practiceSessionGoal;
+  if(remaining<=0){
+    showToast("You've practiced all available words! 🎯");
+    return;
+  }
+  const add=Math.min(5,remaining);
+  practiceSessionGoal+=add;
   document.getElementById('practice-goal-total').textContent=practiceSessionGoal;
   updateGoalBar(practiceSessionCount);
   document.getElementById('practice-done').style.display='none';
