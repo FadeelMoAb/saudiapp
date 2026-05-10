@@ -106,7 +106,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .practice-mark-btn.marked{border-color:var(--sage);background:var(--sage-bg);color:var(--sage)}
 .practice-mark-btn svg{width:14px;height:14px}
 .practice-session{flex:1;min-height:0;display:flex;flex-direction:column;width:100%}
-.practice-setup{width:100%;max-width:680px;margin:0 auto;padding:1.75rem 1.5rem 1.5rem;flex:1;min-height:0;display:flex;flex-direction:column;box-sizing:border-box;overflow-y:auto;gap:1.1rem}
+.practice-setup{width:100%;max-width:680px;margin:0 auto;padding:0;flex:1;min-height:0;display:flex;flex-direction:column;box-sizing:border-box}
+.setup-scroll{flex:1;min-height:0;overflow-y:auto;padding:1.75rem 1.5rem 1rem;display:flex;flex-direction:column;gap:1.1rem;box-sizing:border-box}
+.setup-footer{flex-shrink:0;padding:.75rem 1.5rem 1.25rem;background:transparent}
 .setup-title{font-family:'Lora',serif;font-size:20px;font-weight:600;color:var(--text)}
 .setup-section{display:flex;flex-direction:column;gap:.5rem}
 .setup-label{font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--muted)}
@@ -117,7 +119,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .setup-goal-input{border:1.5px solid var(--border);border-radius:20px;padding:5px 14px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--sand);outline:none;width:80px;transition:border-color .15s}
 .setup-goal-input::-webkit-inner-spin-button,.setup-goal-input::-webkit-outer-spin-button{-webkit-appearance:none}
 .setup-goal-input:focus{border-color:var(--amber)}
-.setup-start-btn{width:100%;background:var(--amber);color:#fff;border:none;border-radius:var(--rxl);padding:14px;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity .15s;box-shadow:0 3px 16px rgba(193,123,63,.3);margin-top:auto;flex-shrink:0}
+.setup-start-btn{width:100%;background:var(--amber);color:#fff;border:none;border-radius:var(--rxl);padding:14px;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity .15s;box-shadow:0 3px 16px rgba(193,123,63,.3)}
 .setup-start-btn:hover{opacity:.88}
 .setup-start-btn:disabled{opacity:.45;cursor:not-allowed}
 .practice-goal-bar-wrap{padding:.6rem 1.5rem .2rem;flex-shrink:0}
@@ -361,7 +363,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
   .practice-arrow{width:40px;height:40px}
   .practice-shuffle{width:36px;height:36px}
   .practice-mark-btn{padding:7px 14px;font-size:12px}
-  .practice-setup{padding:1rem 1rem 1rem;gap:.75rem}
+  .setup-scroll{padding:1rem 1rem .75rem;gap:.75rem}
+  .setup-footer{padding:.5rem 1rem .75rem}
   .setup-start-btn{padding:12px;font-size:14px}
   .practice-goal-bar-wrap{padding:.4rem 1rem .15rem}
 
@@ -613,6 +616,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 
   <!-- SETUP SCREEN -->
   <div class="practice-setup" id="practice-setup">
+    <div class="setup-scroll">
     <div class="setup-title">Practice Setup</div>
 
     <div class="setup-section">
@@ -656,7 +660,10 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
       </div>
     </div>
 
-    <button class="setup-start-btn" id="setup-start-btn" onclick="startPracticeSession()">Start Practice</button>
+    </div><!-- end setup-scroll -->
+    <div class="setup-footer">
+      <button class="setup-start-btn" id="setup-start-btn" onclick="startPracticeSession()">Start Practice</button>
+    </div>
   </div>
 
   <!-- SESSION VIEW -->
