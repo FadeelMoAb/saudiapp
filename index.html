@@ -131,6 +131,15 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .practice-goal-count{font-size:11px;color:var(--muted)}
 .practice-back-btn{font-size:11.5px;color:var(--muted);background:none;border:none;cursor:pointer;padding:0;font-family:'DM Sans',sans-serif}
 .practice-back-btn:hover{color:var(--text);text-decoration:underline}
+.practice-done-wrap{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;gap:1.25rem}
+.practice-done-icon{font-size:48px;line-height:1}
+.practice-done-title{font-family:'Lora',serif;font-size:22px;font-weight:600;color:var(--text)}
+.practice-done-sub{font-size:14px;color:var(--muted);line-height:1.5}
+.practice-done-actions{display:flex;gap:12px;margin-top:.5rem}
+.practice-done-btn{border:1.5px solid var(--border);border-radius:22px;padding:10px 24px;font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--parch);color:var(--text);transition:all .2s}
+.practice-done-btn:hover{border-color:var(--amber);color:var(--amber)}
+.practice-done-btn.primary{background:var(--amber);border-color:var(--amber);color:#fff}
+.practice-done-btn.primary:hover{opacity:.88}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* QUIZ */
@@ -670,6 +679,17 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 
   <!-- SESSION VIEW -->
   <div class="practice-session" id="practice-session" style="display:none">
+    <!-- COMPLETION SCREEN -->
+    <div class="practice-done-wrap" id="practice-done" style="display:none">
+      <div class="practice-done-icon">🎉</div>
+      <div class="practice-done-title">Great job!</div>
+      <div class="practice-done-sub" id="practice-done-sub"></div>
+      <div class="practice-done-actions">
+        <button class="practice-done-btn" onclick="backToSetup()">← Setup</button>
+        <button class="practice-done-btn" onclick="practiceAddFive()">+ 5 more</button>
+        <button class="practice-done-btn primary" onclick="practiceRepeat()">Repeat</button>
+      </div>
+    </div>
     <div class="practice-goal-bar-wrap" id="practice-goal-bar-wrap" style="display:none">
       <div class="practice-goal-bar-track"><div class="practice-goal-bar-fill" id="practice-goal-bar-fill" style="width:0%"></div></div>
       <div class="practice-goal-meta">
@@ -1118,9 +1138,30 @@ function practiceNav(dir){
   renderPracticeCard();
 }
 function bumpSessionCount(){
-  practiceSessionCount=Math.min(practiceSessionCount+1,practiceSessionGoal);
+  if(practiceSessionCount>=practiceSessionGoal)return;
+  practiceSessionCount++;
   updateGoalBar(practiceSessionCount);
-  if(practiceSessionCount>=practiceSessionGoal)setTimeout(()=>showToast(`Goal reached! 🎉 ${practiceSessionGoal} words practiced`),350);
+  if(practiceSessionCount>=practiceSessionGoal)showPracticeDone();
+}
+function showPracticeDone(){
+  document.getElementById('practice-done-sub').textContent=`You practiced ${practiceSessionGoal} word${practiceSessionGoal!==1?'s':''} this session.`;
+  document.getElementById('practice-done').style.display='flex';
+  document.getElementById('practice-wrap').style.display='none';
+}
+function practiceRepeat(){
+  practiceSessionCount=0;practiceIdx=0;
+  updateGoalBar(0);
+  document.getElementById('practice-done').style.display='none';
+  document.getElementById('practice-wrap').style.display='';
+  renderPracticeCard();
+}
+function practiceAddFive(){
+  practiceSessionGoal=Math.min(practiceSessionGoal+5,practiceOrder.length);
+  document.getElementById('practice-goal-total').textContent=practiceSessionGoal;
+  updateGoalBar(practiceSessionCount);
+  document.getElementById('practice-done').style.display='none';
+  document.getElementById('practice-wrap').style.display='';
+  practiceNav(1);
 }
 function practiceShuffle(){
   shuffleArr(practiceOrder);practiceIdx=0;renderPracticeCard();showToast('Shuffled!');
