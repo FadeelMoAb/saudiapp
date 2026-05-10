@@ -1012,7 +1012,7 @@ function renderSetupTopicOpts(){
 const DIFF_NOTES={
   easy:'Arabic word + transliteration shown. Tap to reveal the meaning.',
   medium:'Arabic word shown, transliteration hidden. Tap to reveal the meaning.',
-  hard:'Audio plays automatically. Arabic hidden — tap reveal to see it.',
+  hard:'Arabic hidden. Tap the audio button to hear it, then reveal.',
 };
 function renderDiffNote(){const el=document.getElementById('setup-diff-note');if(el)el.textContent=DIFF_NOTES[practiceSetupDiff]||'';}
 function setSetupOpt(group,val,el){
@@ -1093,7 +1093,6 @@ function renderPracticeCard(){
   document.getElementById('practice-meaning').textContent=p.en;
   document.getElementById('practice-reveal-btn').style.display='';
   updatePracticeMarkBtn();
-  if(practiceSetupDiff==='hard')setTimeout(()=>speakPhrase('practice-audio-btn',p.ar),300);
 }
 function updatePracticeMarkBtn(){
   const p=getPracticePhrase();if(!p)return;
@@ -1194,7 +1193,6 @@ function renderQuizQuestion(){
     document.getElementById('quiz-prompt-label').textContent='LISTENING';
     document.getElementById('quiz-question').textContent='What did you hear?';
     renderQuizOpts(q.opts.map(o=>o.en),q.p.en,false);
-    setTimeout(()=>speakPhrase('quiz-audio-btn',q.p.ar),400);
   }
 }
 function renderQuizOpts(options,correct,isAr){

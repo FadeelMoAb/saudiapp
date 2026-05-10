@@ -1,4 +1,4 @@
-const CACHE = 'saudibia-v34';
+const CACHE = 'saudibia-v35';
 const ASSETS = [
   '/',
   '/index.html',
