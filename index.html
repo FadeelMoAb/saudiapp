@@ -105,6 +105,28 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .practice-mark-btn:hover{border-color:var(--sage);color:var(--sage);background:var(--sage-bg)}
 .practice-mark-btn.marked{border-color:var(--sage);background:var(--sage-bg);color:var(--sage)}
 .practice-mark-btn svg{width:14px;height:14px}
+.practice-session{flex:1;min-height:0;display:flex;flex-direction:column;width:100%}
+.practice-setup{width:100%;max-width:680px;margin:0 auto;padding:1.75rem 1.5rem 1.5rem;flex:1;min-height:0;display:flex;flex-direction:column;box-sizing:border-box;overflow-y:auto;gap:1.1rem}
+.setup-title{font-family:'Lora',serif;font-size:20px;font-weight:600;color:var(--text)}
+.setup-section{display:flex;flex-direction:column;gap:.5rem}
+.setup-label{font-size:10.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--muted)}
+.setup-opts{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.setup-opt{border:1.5px solid var(--border);border-radius:20px;padding:6px 16px;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--parch);color:var(--muted);transition:all .15s;user-select:none}
+.setup-opt:hover{border-color:var(--border-med);color:var(--text)}
+.setup-opt.sel{background:var(--amber);border-color:var(--amber);color:#fff}
+.setup-goal-input{border:1.5px solid var(--border);border-radius:20px;padding:5px 14px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--sand);outline:none;width:80px;transition:border-color .15s}
+.setup-goal-input::-webkit-inner-spin-button,.setup-goal-input::-webkit-outer-spin-button{-webkit-appearance:none}
+.setup-goal-input:focus{border-color:var(--amber)}
+.setup-start-btn{width:100%;background:var(--amber);color:#fff;border:none;border-radius:var(--rxl);padding:14px;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity .15s;box-shadow:0 3px 16px rgba(193,123,63,.3);margin-top:auto;flex-shrink:0}
+.setup-start-btn:hover{opacity:.88}
+.setup-start-btn:disabled{opacity:.45;cursor:not-allowed}
+.practice-goal-bar-wrap{padding:.6rem 1.5rem .2rem;flex-shrink:0}
+.practice-goal-bar-track{height:3px;background:var(--border);border-radius:4px;overflow:hidden}
+.practice-goal-bar-fill{height:100%;background:var(--amber);border-radius:4px;transition:width .35s ease}
+.practice-goal-meta{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
+.practice-goal-count{font-size:11px;color:var(--muted)}
+.practice-back-btn{font-size:11.5px;color:var(--muted);background:none;border:none;cursor:pointer;padding:0;font-family:'DM Sans',sans-serif}
+.practice-back-btn:hover{color:var(--text);text-decoration:underline}
 @keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* QUIZ */
@@ -339,6 +361,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
   .practice-arrow{width:40px;height:40px}
   .practice-shuffle{width:36px;height:36px}
   .practice-mark-btn{padding:7px 14px;font-size:12px}
+  .practice-setup{padding:1rem 1rem 1rem;gap:.75rem}
+  .setup-start-btn{padding:12px;font-size:14px}
+  .practice-goal-bar-wrap{padding:.4rem 1rem .15rem}
 
   /* ── QUIZ ── */
   .quiz-wrap{
@@ -585,40 +610,107 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 
 <!-- PRACTICE -->
 <div class="page" id="page-practice">
-  <div class="practice-wrap">
-    <div class="practice-card" id="practice-card">
-      <div class="practice-card-content">
-        <div class="practice-tag" id="practice-tag">GREETING</div>
-        <div class="practice-arabic" id="practice-ar"></div>
-        <div class="practice-transliteration" id="practice-pr"></div>
-        <button class="practice-audio-btn" id="practice-audio-btn" onclick="speakPhrase('practice-audio-btn',getPracticeAr())">
-          <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="4,4 4,16 13,10" fill="currentColor" stroke="none"/>
-            <path d="M15 7a4 4 0 0 1 0 6"/>
-          </svg>
-        </button>
-        <button class="practice-reveal-btn" id="practice-reveal-btn" onclick="practiceReveal()">Tap to reveal meaning</button>
-        <div class="practice-meaning" id="practice-meaning" style="display:none"></div>
+
+  <!-- SETUP SCREEN -->
+  <div class="practice-setup" id="practice-setup">
+    <div class="setup-title">Practice Setup</div>
+
+    <div class="setup-section">
+      <div class="setup-label">Mode</div>
+      <div class="setup-opts">
+        <span class="setup-opt sel" id="sopt-mode-flashcard" onclick="setSetupOpt('mode','flashcard',this)">Flashcard</span>
+        <span class="setup-opt" id="sopt-mode-listening" onclick="setSetupOpt('mode','listening',this)">Listening</span>
       </div>
-      <div class="practice-action-bar">
-        <div class="practice-nav">
-          <button class="practice-arrow" onclick="practiceNav(-1)" title="Previous">
-            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="11,4 6,9 11,14"/></svg>
+    </div>
+
+    <div class="setup-section">
+      <div class="setup-label">Difficulty</div>
+      <div class="setup-opts">
+        <span class="setup-opt sel" id="sopt-diff-easy" onclick="setSetupOpt('diff','easy',this)">Easy</span>
+        <span class="setup-opt" id="sopt-diff-medium" onclick="setSetupOpt('diff','medium',this)">Medium</span>
+        <span class="setup-opt" id="sopt-diff-hard" onclick="setSetupOpt('diff','hard',this)">Hard</span>
+      </div>
+    </div>
+
+    <div class="setup-section">
+      <div class="setup-label">Words</div>
+      <div class="setup-opts">
+        <span class="setup-opt sel" id="sopt-prog-all" onclick="setSetupOpt('prog','all',this)">All</span>
+        <span class="setup-opt" id="sopt-prog-new" onclick="setSetupOpt('prog','new',this)">New only</span>
+        <span class="setup-opt" id="sopt-prog-inprogress" onclick="setSetupOpt('prog','inprogress',this)">In progress</span>
+        <span class="setup-opt" id="sopt-prog-mastered" onclick="setSetupOpt('prog','mastered',this)">Mastered</span>
+      </div>
+    </div>
+
+    <div class="setup-section">
+      <div class="setup-label">Type</div>
+      <div class="setup-opts" id="setup-type-opts"></div>
+    </div>
+
+    <div class="setup-section" id="setup-topic-section" style="display:none">
+      <div class="setup-label">Topic</div>
+      <div class="setup-opts" id="setup-topic-opts"></div>
+    </div>
+
+    <div class="setup-section">
+      <div class="setup-label">Daily Goal</div>
+      <div class="setup-opts">
+        <span class="setup-opt" id="sopt-goal-5" onclick="setGoalOpt(5,this)">5</span>
+        <span class="setup-opt sel" id="sopt-goal-10" onclick="setGoalOpt(10,this)">10</span>
+        <span class="setup-opt" id="sopt-goal-20" onclick="setGoalOpt(20,this)">20</span>
+        <span class="setup-opt" id="sopt-goal-all" onclick="setGoalOpt('all',this)">All</span>
+        <input type="number" class="setup-goal-input" id="setup-goal-input" placeholder="Custom" min="1" max="999" oninput="setGoalCustom(this.value)">
+      </div>
+    </div>
+
+    <button class="setup-start-btn" id="setup-start-btn" onclick="startPracticeSession()">Start Practice</button>
+  </div>
+
+  <!-- SESSION VIEW -->
+  <div class="practice-session" id="practice-session" style="display:none">
+    <div class="practice-goal-bar-wrap" id="practice-goal-bar-wrap" style="display:none">
+      <div class="practice-goal-bar-track"><div class="practice-goal-bar-fill" id="practice-goal-bar-fill" style="width:0%"></div></div>
+      <div class="practice-goal-meta">
+        <button class="practice-back-btn" onclick="backToSetup()">← Setup</button>
+        <span class="practice-goal-count"><span id="practice-goal-done">0</span> / <span id="practice-goal-total">10</span></span>
+      </div>
+    </div>
+    <div class="practice-wrap">
+      <div class="practice-card" id="practice-card">
+        <div class="practice-card-content">
+          <div class="practice-tag" id="practice-tag">PHRASE</div>
+          <div class="practice-arabic" id="practice-ar"></div>
+          <div class="practice-transliteration" id="practice-pr"></div>
+          <button class="practice-audio-btn" id="practice-audio-btn" onclick="speakPhrase('practice-audio-btn',getPracticeAr())">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="4,4 4,16 13,10" fill="currentColor" stroke="none"/>
+              <path d="M15 7a4 4 0 0 1 0 6"/>
+            </svg>
           </button>
-          <button class="practice-shuffle" onclick="practiceShuffle()" title="Shuffle">
-            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h2a4 4 0 014 4 4 4 0 004 4h4M2 12h2a4 4 0 004-4 4 4 0 014-4h4M13 3l3 3-3 3M13 9l3 3-3 3"/></svg>
-          </button>
-          <button class="practice-arrow" onclick="practiceNav(1)" title="Next">
-            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="7,4 12,9 7,14"/></svg>
+          <button class="practice-reveal-btn" id="practice-reveal-btn" onclick="practiceReveal()">Tap to reveal meaning</button>
+          <div class="practice-meaning" id="practice-meaning" style="display:none"></div>
+        </div>
+        <div class="practice-action-bar">
+          <div class="practice-nav">
+            <button class="practice-arrow" onclick="practiceNav(-1)" title="Previous">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="11,4 6,9 11,14"/></svg>
+            </button>
+            <button class="practice-shuffle" onclick="practiceShuffle()" title="Shuffle">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h2a4 4 0 014 4 4 4 0 004 4h4M2 12h2a4 4 0 004-4 4 4 0 014-4h4M13 3l3 3-3 3M13 9l3 3-3 3"/></svg>
+            </button>
+            <button class="practice-arrow" onclick="practiceNav(1)" title="Next">
+              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="7,4 12,9 7,14"/></svg>
+            </button>
+          </div>
+          <button class="practice-mark-btn" id="practice-mark-btn" onclick="togglePracticeMarkLearned()">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,7 5.5,11 12,3"/></svg>
+            <span id="practice-mark-label">Mark as done</span>
           </button>
         </div>
-        <button class="practice-mark-btn" id="practice-mark-btn" onclick="togglePracticeMarkLearned()">
-          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,7 5.5,11 12,3"/></svg>
-          <span id="practice-mark-label">Mark as done</span>
-        </button>
       </div>
     </div>
   </div>
+
 </div>
 
 <!-- QUIZ -->
@@ -741,6 +833,9 @@ let phrases=[],seenSet=new Set(),learnedSet=new Set(),favsSet=new Set(),quizLog=
 let pendingPhrases=[]; // student's own suggestions, locally stored
 let libTab='all',libTypeFilter='all',libTopicFilter='all';
 let practiceIdx=0,practiceOrder=[],practiceRevd=false;
+let practiceSetupMode='flashcard',practiceSetupDiff='easy',practiceSetupProg='all';
+let practiceSetupType='all',practiceSetupTopic='all',practiceSetupGoal=10;
+let practiceSessionActive=false,practiceSessionCount=0,practiceSessionGoal=10;
 let currentQuizMode='ar-en',quizQuestions=[],quizQIdx=0,quizScore=0,quizChecked=false;
 const QUIZ_LEN=5;
 
@@ -797,7 +892,7 @@ function goTab(tab,btn){
   const fab=document.getElementById('fab-stack');if(fab)fab.style.display=tab==='library'?'flex':'none';
   if(tab==='library')renderLibrary();if(tab==='progress')renderProgress();
   if(tab==='quiz')renderQuizMenu();if(tab==='today')renderToday();
-  if(tab==='practice')renderPracticeCard();
+  if(tab==='practice'){if(practiceSessionActive)renderPracticeCard();else openPracticeSetup();}
 }
 
 /* STREAK */
@@ -875,12 +970,101 @@ function toggleTodayLearned(){
   saveStorage();updateTodayBtns();updateGlobalStats();renderQuizMenu();
 }
 
+/* PRACTICE SETUP */
+function shuffleArr(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+function getFilteredPhrases(){
+  return phrases.filter(p=>{
+    if(practiceSetupProg==='new'&&seenSet.has(p.ar))return false;
+    if(practiceSetupProg==='inprogress'&&(!seenSet.has(p.ar)||learnedSet.has(p.ar)))return false;
+    if(practiceSetupProg==='mastered'&&!learnedSet.has(p.ar))return false;
+    if(practiceSetupType!=='all'&&getPhraseType(p)!==practiceSetupType)return false;
+    if(practiceSetupTopic!=='all'&&!p.tags.includes(practiceSetupTopic))return false;
+    return true;
+  });
+}
+function updateStartBtn(){
+  const count=getFilteredPhrases().length;
+  const btn=document.getElementById('setup-start-btn');
+  if(!btn)return;
+  btn.textContent=count?`Start Practice — ${count} word${count!==1?'s':''}`:'No words match these filters';
+  btn.disabled=count===0;
+}
+function renderSetupTypeOpts(){
+  document.getElementById('setup-type-opts').innerHTML=
+    `<span class="setup-opt${practiceSetupType==='all'?' sel':''}" onclick="setSetupType('all',this)">All</span>`+
+    WORD_TYPES.map(t=>`<span class="setup-opt${practiceSetupType===t.id?' sel':''}" onclick="setSetupType('${t.id}',this)">${t.label}</span>`).join('');
+}
+function renderSetupTopicOpts(){
+  const section=document.getElementById('setup-topic-section');
+  if(practiceSetupType==='all'){section.style.display='none';return;}
+  const topics=[...(TOPICS_BY_TYPE[practiceSetupType]||[]),...sExtraTags.filter(t=>t.typeId===practiceSetupType)];
+  if(!topics.length){section.style.display='none';return;}
+  section.style.display='';
+  document.getElementById('setup-topic-opts').innerHTML=
+    `<span class="setup-opt${practiceSetupTopic==='all'?' sel':''}" onclick="setSetupTopic('all',this)">All</span>`+
+    topics.map(t=>`<span class="setup-opt${practiceSetupTopic===t.id?' sel':''}" onclick="setSetupTopic('${t.id}',this)">${t.label}</span>`).join('');
+}
+function setSetupOpt(group,val,el){
+  if(group==='mode')practiceSetupMode=val;
+  else if(group==='diff')practiceSetupDiff=val;
+  else if(group==='prog')practiceSetupProg=val;
+  el.closest('.setup-opts').querySelectorAll('.setup-opt').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  updateStartBtn();
+}
+function setSetupType(id,el){
+  practiceSetupType=id;practiceSetupTopic='all';
+  document.getElementById('setup-type-opts').querySelectorAll('.setup-opt').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  renderSetupTopicOpts();updateStartBtn();
+}
+function setSetupTopic(id,el){
+  practiceSetupTopic=id;
+  document.getElementById('setup-topic-opts').querySelectorAll('.setup-opt').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  updateStartBtn();
+}
+function setGoalOpt(val,el){
+  practiceSetupGoal=val;
+  document.getElementById('setup-goal-input').value='';
+  document.querySelectorAll('#sopt-goal-5,#sopt-goal-10,#sopt-goal-20,#sopt-goal-all').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+}
+function setGoalCustom(val){
+  const n=parseInt(val);
+  if(n>0){practiceSetupGoal=n;document.querySelectorAll('#sopt-goal-5,#sopt-goal-10,#sopt-goal-20,#sopt-goal-all').forEach(b=>b.classList.remove('sel'));}
+}
+function openPracticeSetup(){
+  practiceSessionActive=false;
+  document.getElementById('practice-setup').style.display='';
+  document.getElementById('practice-session').style.display='none';
+  renderSetupTypeOpts();renderSetupTopicOpts();updateStartBtn();
+}
+function startPracticeSession(){
+  const filtered=getFilteredPhrases();if(!filtered.length)return;
+  practiceOrder=shuffleArr(filtered.map(p=>phrases.indexOf(p)));
+  practiceIdx=0;practiceRevd=false;practiceSessionCount=0;
+  practiceSessionGoal=practiceSetupGoal==='all'?practiceOrder.length:Math.min(practiceSetupGoal,practiceOrder.length);
+  const goalBar=document.getElementById('practice-goal-bar-wrap');
+  goalBar.style.display='';
+  document.getElementById('practice-goal-total').textContent=practiceSessionGoal;
+  updateGoalBar(0);
+  practiceSessionActive=true;
+  document.getElementById('practice-setup').style.display='none';
+  document.getElementById('practice-session').style.display='flex';
+  renderPracticeCard();
+}
+function backToSetup(){practiceSessionActive=false;openPracticeSetup();}
+function updateGoalBar(done){
+  document.getElementById('practice-goal-done').textContent=done;
+  document.getElementById('practice-goal-bar-fill').style.width=`${Math.min(100,(done/practiceSessionGoal)*100)}%`;
+}
+
 /* PRACTICE */
-function initPracticeOrder(){practiceOrder=phrases.map((_,i)=>i);practiceIdx=0;practiceRevd=false;}
 function getPracticePhrase(){if(!practiceOrder.length||!phrases.length)return null;return phrases[practiceOrder[practiceIdx%practiceOrder.length]];}
 function getPracticeAr(){const p=getPracticePhrase();return p?p.ar:'';}
-
 function renderPracticeCard(){
+  if(!practiceSessionActive)return;
   practiceRevd=false;
   const p=getPracticePhrase();if(!p)return;
   if(!seenSet.has(p.ar)){seenSet.add(p.ar);saveStorage();logActivity(`Practiced: ${p.ar}`);updateGlobalStats();}
@@ -890,11 +1074,17 @@ function renderPracticeCard(){
   const tl=WORD_TYPES.find(t=>t.id===(p.type||'phrase'))||WORD_TYPES[0];
   document.getElementById('practice-tag').textContent=tl.label.toUpperCase();
   document.getElementById('practice-ar').textContent=p.ar;
-  document.getElementById('practice-pr').textContent=p.pr?p.pr.toUpperCase():'';
+  const prEl=document.getElementById('practice-pr');
+  prEl.textContent=p.pr?p.pr.toUpperCase():'';
+  prEl.style.display=practiceSetupDiff==='medium'||practiceSetupDiff==='hard'?'none':'';
+  document.getElementById('practice-ar').style.opacity=practiceSetupDiff==='hard'?'0':'1';
   document.getElementById('practice-meaning').style.display='none';
   document.getElementById('practice-meaning').textContent=p.en;
   document.getElementById('practice-reveal-btn').style.display='';
   updatePracticeMarkBtn();
+  if(practiceSetupMode==='listening'||practiceSetupDiff==='hard'){
+    setTimeout(()=>speakPhrase('practice-audio-btn',p.ar),300);
+  }
 }
 function updatePracticeMarkBtn(){
   const p=getPracticePhrase();if(!p)return;
@@ -905,21 +1095,27 @@ function updatePracticeMarkBtn(){
 function togglePracticeMarkLearned(){
   const p=getPracticePhrase();if(!p)return;
   if(learnedSet.has(p.ar)){learnedSet.delete(p.ar);showToast('Unmarked');}
-  else{learnedSet.add(p.ar);logActivity(`Marked as learned: ${p.ar}`);showToast('Marked as learned ✓');}
+  else{learnedSet.add(p.ar);logActivity(`Marked as learned: ${p.ar}`);showToast('Marked as learned ✓');bumpSessionCount();}
   saveStorage();renderPracticeCard();updateGlobalStats();renderQuizMenu();
 }
 function practiceReveal(){
   practiceRevd=true;
   document.getElementById('practice-reveal-btn').style.display='none';
   document.getElementById('practice-meaning').style.display='block';
+  if(practiceSetupDiff==='hard')document.getElementById('practice-ar').style.opacity='1';
 }
 function practiceNav(dir){
+  if(dir===1)bumpSessionCount();
   practiceIdx=((practiceIdx+dir)%practiceOrder.length+practiceOrder.length)%practiceOrder.length;
   renderPracticeCard();
 }
+function bumpSessionCount(){
+  practiceSessionCount=Math.min(practiceSessionCount+1,practiceSessionGoal);
+  updateGoalBar(practiceSessionCount);
+  if(practiceSessionCount>=practiceSessionGoal)setTimeout(()=>showToast(`Goal reached! 🎉 ${practiceSessionGoal} words practiced`),350);
+}
 function practiceShuffle(){
-  for(let i=practiceOrder.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[practiceOrder[i],practiceOrder[j]]=[practiceOrder[j],practiceOrder[i]];}
-  practiceIdx=0;renderPracticeCard();showToast('Shuffled!');
+  shuffleArr(practiceOrder);practiceIdx=0;renderPracticeCard();showToast('Shuffled!');
 }
 
 /* QUIZ */
