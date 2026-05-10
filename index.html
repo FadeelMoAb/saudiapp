@@ -622,6 +622,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
         <span class="setup-opt" id="sopt-diff-medium" onclick="setSetupOpt('diff','medium',this)">Medium</span>
         <span class="setup-opt" id="sopt-diff-hard" onclick="setSetupOpt('diff','hard',this)">Hard</span>
       </div>
+      <div id="setup-diff-note" style="font-size:12px;color:var(--muted);margin-top:.35rem;line-height:1.5"></div>
     </div>
 
     <div class="setup-section">
@@ -999,11 +1000,18 @@ function renderSetupTopicOpts(){
     `<span class="setup-opt${practiceSetupTopic==='all'?' sel':''}" onclick="setSetupTopic('all',this)">All</span>`+
     topics.map(t=>`<span class="setup-opt${practiceSetupTopic===t.id?' sel':''}" onclick="setSetupTopic('${t.id}',this)">${t.label}</span>`).join('');
 }
+const DIFF_NOTES={
+  easy:'Arabic word + transliteration shown. Tap to reveal the meaning.',
+  medium:'Arabic word shown, transliteration hidden. Tap to reveal the meaning.',
+  hard:'Audio plays automatically. Arabic hidden — tap reveal to see it.',
+};
+function renderDiffNote(){const el=document.getElementById('setup-diff-note');if(el)el.textContent=DIFF_NOTES[practiceSetupDiff]||'';}
 function setSetupOpt(group,val,el){
   if(group==='diff')practiceSetupDiff=val;
   else if(group==='prog')practiceSetupProg=val;
   el.closest('.setup-opts').querySelectorAll('.setup-opt').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
+  if(group==='diff')renderDiffNote();
   updateStartBtn();
 }
 function setSetupType(id,el){
@@ -1032,7 +1040,7 @@ function openPracticeSetup(){
   practiceSessionActive=false;
   document.getElementById('practice-setup').style.display='';
   document.getElementById('practice-session').style.display='none';
-  renderSetupTypeOpts();renderSetupTopicOpts();updateStartBtn();
+  renderSetupTypeOpts();renderSetupTopicOpts();renderDiffNote();updateStartBtn();
 }
 function startPracticeSession(){
   const filtered=getFilteredPhrases();if(!filtered.length)return;
