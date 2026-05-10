@@ -21,6 +21,8 @@ export default async function handler(req, res) {
     en: p.english,
     tags: p.tags ? p.tags.split(',').map(t => t.trim()).filter(t => t) : [],
     type: p.type || 'phrase',
+    sentence_ar: p.sentence_ar || null,
+    sentence_en: p.sentence_en || null,
     id: p.id,
   }));
 

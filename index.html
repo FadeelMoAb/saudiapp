@@ -560,10 +560,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
             <path d="M15 7a4 4 0 0 1 0 6"/><path d="M17 4.5a8 8 0 0 1 0 11"/>
           </svg>
         </button>
-        <div class="big-divider"></div>
-        <div class="big-sentence-label">IN A SENTENCE</div>
-        <div class="big-sentence-ar" id="today-sentence-ar"></div>
-        <div class="big-sentence-en" id="today-sentence-en"></div>
+        <div id="today-sentence-wrap">
+          <div class="big-divider"></div>
+          <div class="big-sentence-label">IN A SENTENCE</div>
+          <div class="big-sentence-ar" id="today-sentence-ar"></div>
+          <div class="big-sentence-en" id="today-sentence-en"></div>
+        </div>
       </div>
       <div class="big-card-bottom">
         <div class="big-card-label" id="today-card-label">WORD #1 · GREETING</div>
@@ -844,8 +846,11 @@ function renderToday(){
   document.getElementById('today-pr').textContent=p.pr?p.pr.toUpperCase():'';
   document.getElementById('today-ar').textContent=p.ar;
   document.getElementById('today-en').textContent=p.en;
-  document.getElementById('today-sentence-ar').textContent=p.ar;
-  document.getElementById('today-sentence-en').textContent=`"${p.en}"`;
+  const hasSentence=p.sentence_ar||p.sentence_en;
+  document.getElementById('today-sentence-wrap').style.display=hasSentence?'':'none';
+  document.getElementById('today-sentence-ar').textContent=p.sentence_ar||'';
+  document.getElementById('today-sentence-en').textContent=p.sentence_en?`"${p.sentence_en}"`:'';
+
   const noteEl=document.getElementById('today-note');
   if(p.pr){noteEl.style.display='inline-flex';document.getElementById('today-note-text').textContent='Standard phrase used across Saudi Arabia.';}
   else noteEl.style.display='none';
