@@ -1077,7 +1077,7 @@ function renderPracticeCard(){
   const prEl=document.getElementById('practice-pr');
   prEl.textContent=p.pr?p.pr.toUpperCase():'';
   prEl.style.display=practiceSetupDiff==='medium'||practiceSetupDiff==='hard'?'none':'';
-  document.getElementById('practice-ar').style.opacity=practiceSetupDiff==='hard'?'0':'1';
+  document.getElementById('practice-ar').style.opacity=(practiceSetupDiff==='hard'||practiceSetupMode==='listening')?'0':'1';
   document.getElementById('practice-meaning').style.display='none';
   document.getElementById('practice-meaning').textContent=p.en;
   document.getElementById('practice-reveal-btn').style.display='';
@@ -1102,7 +1102,7 @@ function practiceReveal(){
   practiceRevd=true;
   document.getElementById('practice-reveal-btn').style.display='none';
   document.getElementById('practice-meaning').style.display='block';
-  if(practiceSetupDiff==='hard')document.getElementById('practice-ar').style.opacity='1';
+  if(practiceSetupDiff==='hard'||practiceSetupMode==='listening')document.getElementById('practice-ar').style.opacity='1';
 }
 function practiceNav(dir){
   if(dir===1)bumpSessionCount();
