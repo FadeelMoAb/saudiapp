@@ -616,14 +616,6 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
     <div class="setup-title">Practice Setup</div>
 
     <div class="setup-section">
-      <div class="setup-label">Mode</div>
-      <div class="setup-opts">
-        <span class="setup-opt sel" id="sopt-mode-flashcard" onclick="setSetupOpt('mode','flashcard',this)">Flashcard</span>
-        <span class="setup-opt" id="sopt-mode-listening" onclick="setSetupOpt('mode','listening',this)">Listening</span>
-      </div>
-    </div>
-
-    <div class="setup-section">
       <div class="setup-label">Difficulty</div>
       <div class="setup-opts">
         <span class="setup-opt sel" id="sopt-diff-easy" onclick="setSetupOpt('diff','easy',this)">Easy</span>
@@ -752,6 +744,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
             <div class="quiz-prompt-label" id="quiz-prompt-label"></div>
             <div id="quiz-prompt-ar" class="quiz-prompt-ar" style="display:none"></div>
             <div id="quiz-prompt-en" class="quiz-prompt-en" style="display:none"></div>
+            <button class="practice-audio-btn" id="quiz-audio-btn" style="display:none;width:56px;height:56px;margin:0 auto 1rem" onclick="speakPhrase('quiz-audio-btn',_quizListenAr)">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="4,4 4,16 13,10" fill="currentColor" stroke="none"/><path d="M15 7a4 4 0 0 1 0 6"/></svg>
+            </button>
             <div class="quiz-question" id="quiz-question"></div>
           </div>
           <div class="quiz-options" id="quiz-options"></div>
@@ -833,10 +828,10 @@ let phrases=[],seenSet=new Set(),learnedSet=new Set(),favsSet=new Set(),quizLog=
 let pendingPhrases=[]; // student's own suggestions, locally stored
 let libTab='all',libTypeFilter='all',libTopicFilter='all';
 let practiceIdx=0,practiceOrder=[],practiceRevd=false;
-let practiceSetupMode='flashcard',practiceSetupDiff='easy',practiceSetupProg='all';
+let practiceSetupDiff='easy',practiceSetupProg='all';
 let practiceSetupType='all',practiceSetupTopic='all',practiceSetupGoal=10;
 let practiceSessionActive=false,practiceSessionCount=0,practiceSessionGoal=10;
-let currentQuizMode='ar-en',quizQuestions=[],quizQIdx=0,quizScore=0,quizChecked=false;
+let currentQuizMode='ar-en',quizQuestions=[],quizQIdx=0,quizScore=0,quizChecked=false,_quizListenAr='';
 const QUIZ_LEN=5;
 
 /* STORAGE */
@@ -1005,8 +1000,7 @@ function renderSetupTopicOpts(){
     topics.map(t=>`<span class="setup-opt${practiceSetupTopic===t.id?' sel':''}" onclick="setSetupTopic('${t.id}',this)">${t.label}</span>`).join('');
 }
 function setSetupOpt(group,val,el){
-  if(group==='mode')practiceSetupMode=val;
-  else if(group==='diff')practiceSetupDiff=val;
+  if(group==='diff')practiceSetupDiff=val;
   else if(group==='prog')practiceSetupProg=val;
   el.closest('.setup-opts').querySelectorAll('.setup-opt').forEach(b=>b.classList.remove('sel'));
   el.classList.add('sel');
@@ -1077,14 +1071,12 @@ function renderPracticeCard(){
   const prEl=document.getElementById('practice-pr');
   prEl.textContent=p.pr?p.pr.toUpperCase():'';
   prEl.style.display=practiceSetupDiff==='medium'||practiceSetupDiff==='hard'?'none':'';
-  document.getElementById('practice-ar').style.opacity=(practiceSetupDiff==='hard'||practiceSetupMode==='listening')?'0':'1';
+  document.getElementById('practice-ar').style.opacity=practiceSetupDiff==='hard'?'0':'1';
   document.getElementById('practice-meaning').style.display='none';
   document.getElementById('practice-meaning').textContent=p.en;
   document.getElementById('practice-reveal-btn').style.display='';
   updatePracticeMarkBtn();
-  if(practiceSetupMode==='listening'||practiceSetupDiff==='hard'){
-    setTimeout(()=>speakPhrase('practice-audio-btn',p.ar),300);
-  }
+  if(practiceSetupDiff==='hard')setTimeout(()=>speakPhrase('practice-audio-btn',p.ar),300);
 }
 function updatePracticeMarkBtn(){
   const p=getPracticePhrase();if(!p)return;
@@ -1102,7 +1094,7 @@ function practiceReveal(){
   practiceRevd=true;
   document.getElementById('practice-reveal-btn').style.display='none';
   document.getElementById('practice-meaning').style.display='block';
-  if(practiceSetupDiff==='hard'||practiceSetupMode==='listening')document.getElementById('practice-ar').style.opacity='1';
+  if(practiceSetupDiff==='hard')document.getElementById('practice-ar').style.opacity='1';
 }
 function practiceNav(dir){
   if(dir===1)bumpSessionCount();
@@ -1127,8 +1119,9 @@ function renderQuizMenu(){
   document.getElementById('quiz-pool-count').textContent=`${cnt} phrase${cnt!==1?'s':''}`;
   document.getElementById('quiz-unlock-msg').style.display=enough?'none':'block';
   document.getElementById('quiz-modes-grid').innerHTML=[
-    {mode:'ar-en',title:'Arabic → English',desc:'See the word, pick the meaning'},
-    {mode:'en-ar',title:'English → Arabic',desc:'See the meaning, pick the word'},
+    {mode:'ar-en', title:'Arabic → English', desc:'See the word, pick the meaning'},
+    {mode:'en-ar', title:'English → Arabic', desc:'See the meaning, pick the word'},
+    {mode:'listen',title:'Listening',         desc:'Hear the word, pick the meaning'},
   ].map(m=>`<div class="quiz-mode-card${enough?'':' disabled'}" onclick="${enough?`startQuiz('${m.mode}')`:''}" >
     <div class="quiz-mode-title">${m.title}</div>
     <div class="quiz-mode-desc">${m.desc}</div>
@@ -1167,17 +1160,24 @@ function renderQuizQuestion(){
   document.getElementById('quiz-card-wrap').style.display='';
   const cb=document.getElementById('quiz-check-btn');cb.textContent='Check';cb.disabled=true;
   const fb=document.getElementById('quiz-feedback');fb.style.display='none';fb.className='quiz-feedback';
-  const arEl=document.getElementById('quiz-prompt-ar'),enEl=document.getElementById('quiz-prompt-en');
+  const arEl=document.getElementById('quiz-prompt-ar'),enEl=document.getElementById('quiz-prompt-en'),audioEl=document.getElementById('quiz-audio-btn');
+  arEl.style.display='none';enEl.style.display='none';audioEl.style.display='none';
   if(q.mode==='ar-en'){
-    arEl.style.display='block';arEl.textContent=q.p.ar;enEl.style.display='none';
+    arEl.style.display='block';arEl.textContent=q.p.ar;
     document.getElementById('quiz-prompt-label').textContent='ARABIC';
     document.getElementById('quiz-question').textContent='What does this mean?';
     renderQuizOpts(q.opts.map(o=>o.en),q.p.en,false);
-  }else{
-    enEl.style.display='block';enEl.textContent=`"${q.p.en}"`;arEl.style.display='none';
+  }else if(q.mode==='en-ar'){
+    enEl.style.display='block';enEl.textContent=`"${q.p.en}"`;
     document.getElementById('quiz-prompt-label').textContent='MEANING';
     document.getElementById('quiz-question').textContent='Choose the Saudi word';
     renderQuizOpts(q.opts.map(o=>o.ar),q.p.ar,true);
+  }else{
+    audioEl.style.display='flex';_quizListenAr=q.p.ar;
+    document.getElementById('quiz-prompt-label').textContent='LISTENING';
+    document.getElementById('quiz-question').textContent='What did you hear?';
+    renderQuizOpts(q.opts.map(o=>o.en),q.p.en,false);
+    setTimeout(()=>speakPhrase('quiz-audio-btn',q.p.ar),400);
   }
 }
 function renderQuizOpts(options,correct,isAr){
