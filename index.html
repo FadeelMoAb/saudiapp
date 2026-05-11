@@ -636,12 +636,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
       <div class="setup-card">
 
         <div class="setup-section">
-          <div class="setup-label">Word Type</div>
+          <div class="setup-label">Category</div>
           <div class="setup-opts" id="setup-type-opts"></div>
         </div>
 
         <div class="setup-section" id="setup-topic-section" style="display:none">
-          <div class="setup-label">Topic</div>
+          <div class="setup-label">Subcategory</div>
           <div class="setup-opts" id="setup-topic-opts"></div>
         </div>
 
@@ -1613,9 +1613,9 @@ function renderSColors(){document.getElementById('sColorRow').innerHTML=S_COLORS
 function sPickColor(i){sColorIdx=i;renderSColors();}
 function renderSTagsList(){const allPhrases=[...phrases,...pendingPhrases];document.getElementById('sTagsList').innerHTML=WORD_TYPES.map(type=>{const builtins=(TOPICS_BY_TYPE[type.id]||[]);const customs=sExtraTags.filter(t=>t.typeId===type.id);const allTopics=[...builtins,...customs];const rows=allTopics.map(t=>{const cnt=allPhrases.filter(p=>p.tags.includes(t.id)).length;const editId='edit_'+t.id.replace(/[^a-z0-9]/gi,'_');return`<div class="s-tag-item" id="item_${editId}"><div class="s-tag-dot" style="background:${t.color}"></div><span class="s-tag-name" style="color:${t.color}">${t.label}</span><span class="s-tag-count">${cnt} phrase${cnt!==1?'s':''}</span>${t.builtin?`<span style="font-size:11px;color:var(--faint)">built-in</span>`:`<button class="s-tag-edit" onclick="sStartRename('${t.id}')" title="Rename"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2.5l2 2L4 12H2v-2L9.5 2.5z"/></svg></button><button class="s-tag-del" onclick="sDeleteTag('${t.id}')" title="Delete"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="2" y1="2" x2="12" y2="12"/><line x1="12" y1="2" x2="2" y2="12"/></svg></button>`}</div>`;}).join('');return`<div style="margin-bottom:.75rem"><div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:${type.color};padding:.25rem 0 .4rem;border-bottom:1px solid var(--border);margin-bottom:.35rem">${type.label}</div>${rows||`<div style="font-size:12px;color:var(--faint);padding:.25rem 0">No topics yet</div>`}</div>`;}).join('');}
 function sStartRename(id){const t=sExtraTags.find(x=>x.id===id);if(!t)return;const editId='edit_'+id.replace(/[^a-z0-9]/gi,'_');const item=document.getElementById('item_'+editId);if(!item)return;item.innerHTML=`<div class="s-tag-dot" style="background:${t.color}"></div><div class="s-tag-rename-wrap"><input class="s-tag-rename-in" id="ren_${editId}" value="${t.label}" maxlength="30"><button class="s-tag-rename-ok" onclick="sConfirmRename('${id}')">Save</button></div>`;setTimeout(()=>{const inp=document.getElementById('ren_'+editId);if(inp){inp.focus();inp.select();}},50);}
-function sConfirmRename(id){const editId='edit_'+id.replace(/[^a-z0-9]/gi,'_');const inp=document.getElementById('ren_'+editId);if(!inp)return;const name=inp.value.trim();if(!name)return;const t=sExtraTags.find(x=>x.id===id);if(!t)return;t.label=name;saveCustomTags();renderSTagsList();showToast(`Tag renamed to "${name}"`);}
+function sConfirmRename(id){const editId='edit_'+id.replace(/[^a-z0-9]/gi,'_');const inp=document.getElementById('ren_'+editId);if(!inp)return;const name=inp.value.trim();if(!name)return;const t=sExtraTags.find(x=>x.id===id);if(!t)return;t.label=name;saveCustomTags();renderSTagsList();showToast(`Subcategory renamed to "${name}"`);}
 function addCustomTag(){const name=document.getElementById('sNewTagName').value.trim();document.getElementById('sErrTagName').style.display=name?'none':'block';if(!name)return;const c=S_COLORS[sColorIdx];const id='c_'+name.toLowerCase().replace(/\s+/g,'_')+'_'+Date.now();sExtraTags.push({id,label:name,color:c.color,bg:c.bg,typeId:sNewTagType});saveCustomTags();document.getElementById('sNewTagName').value='';renderSTagsList();renderSColors();showToast(`Tag "${name}" added under ${WORD_TYPES.find(t=>t.id===sNewTagType)?.label||sNewTagType}!`);}
-function sDeleteTag(id){sExtraTags=sExtraTags.filter(t=>t.id!==id);sSelectedTags.delete(id);saveCustomTags();renderSTagsList();showToast('Tag deleted.');}
+function sDeleteTag(id){sExtraTags=sExtraTags.filter(t=>t.id!==id);sSelectedTags.delete(id);saveCustomTags();renderSTagsList();showToast('Subcategory deleted.');}
 
 /* INIT */
 loadStorage();bumpStreak();
@@ -1636,7 +1636,7 @@ if('serviceWorker' in navigator){
 <!-- FAB STACK (Library only) -->
 <div class="fab-stack" id="fab-stack">
   <button class="fab-btn fab-tags" onclick="openTagsModalDirect()">
-    <span class="fab-label">Manage tags</span>
+    <span class="fab-label">Manage subcategories</span>
     <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 7.5L6.5 2.5a1.5 1.5 0 011.06-.44H11a1.5 1.5 0 011.5 1.5v3.44a1.5 1.5 0 01-.44 1.06L7 13.06a1 1 0 01-1.41 0L1.5 8.91a1 1 0 010-1.41z"/><circle cx="9.5" cy="4.5" r=".75" fill="currentColor" stroke="none"/></svg>
   </button>
   <button class="fab-btn fab-add" onclick="openSuggestModal()">
@@ -1652,8 +1652,8 @@ if('serviceWorker' in navigator){
     <div class="s-fgg"><label>Arabic Phrase *</label><input type="text" class="ar-in" id="sInAr" placeholder="اكتب هنا…"><div class="s-err" id="sErrAr">Please enter the Arabic phrase.</div></div>
     <div class="s-fgg"><label>Pronunciation <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px">(optional)</span></label><input type="text" id="sInPr" placeholder="e.g. Kayf ḥālik?"></div>
     <div class="s-fgg"><label>English Meaning *</label><textarea id="sInEn" placeholder="What does it mean? When is it used?"></textarea><div class="s-err" id="sErrEn">Please enter the English meaning.</div></div>
-    <div class="s-fgg"><label>Word Type *</label><div class="s-tag-row" id="sTypeRow"></div></div>
-    <div class="s-fgg" style="margin-bottom:0" id="sTopicGroup"><label>Topic <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px">(optional)</span></label><div class="s-tag-row" id="sTagRow"></div></div>
+    <div class="s-fgg"><label>Category *</label><div class="s-tag-row" id="sTypeRow"></div></div>
+    <div class="s-fgg" style="margin-bottom:0" id="sTopicGroup"><label>Subcategory <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px">(optional)</span></label><div class="s-tag-row" id="sTagRow"></div></div>
     <div class="s-modal-actions"><button class="s-btn-cancel" onclick="closeSuggestModal()">Cancel</button><button class="s-btn-save" id="sSaveBtn" onclick="submitSuggestion()">Save</button></div>
   </div>
 </div>
@@ -1661,14 +1661,14 @@ if('serviceWorker' in navigator){
 <!-- TAGS MODAL -->
 <div class="s-backdrop" id="tagsBackdrop" onclick="if(event.target===this)closeTagsModal()">
   <div class="s-modal">
-    <div class="s-modal-title">Manage tags</div>
+    <div class="s-modal-title">Manage subcategories</div>
     <div class="s-tags-list" id="sTagsList"></div>
     <div style="border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem">
-      <div class="s-fgg" style="margin-bottom:.75rem"><label>Under which type? *</label><div class="s-tag-row" id="sNewTagTypeRow"></div></div>
-      <div class="s-fgg" style="margin-bottom:.75rem"><label>New Tag Name *</label><input type="text" id="sNewTagName" placeholder="e.g. Religion, Travel…" maxlength="30"><div class="s-err" id="sErrTagName">Please enter a tag name.</div></div>
-      <div class="s-fgg" style="margin-bottom:0"><label>Tag Color</label><div class="s-color-row" id="sColorRow"></div></div>
+      <div class="s-fgg" style="margin-bottom:.75rem"><label>Under which category? *</label><div class="s-tag-row" id="sNewTagTypeRow"></div></div>
+      <div class="s-fgg" style="margin-bottom:.75rem"><label>New Subcategory Name *</label><input type="text" id="sNewTagName" placeholder="e.g. Religion, Travel…" maxlength="30"><div class="s-err" id="sErrTagName">Please enter a subcategory name.</div></div>
+      <div class="s-fgg" style="margin-bottom:0"><label>Color</label><div class="s-color-row" id="sColorRow"></div></div>
     </div>
-    <div class="s-modal-actions"><button class="s-btn-cancel" onclick="closeTagsModal()">Close</button><button class="s-btn-save" onclick="addCustomTag()">Add tag</button></div>
+    <div class="s-modal-actions"><button class="s-btn-cancel" onclick="closeTagsModal()">Close</button><button class="s-btn-save" onclick="addCustomTag()">Add subcategory</button></div>
   </div>
 </div>
 </body>

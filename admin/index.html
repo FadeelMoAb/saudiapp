@@ -259,11 +259,11 @@ function renderCard(s){
         <textarea id="en-${s.id}" ${!isPending?'readonly':''}>${escHtml(s.english)}</textarea>
       </div>
       <div class="field-group field-full">
-        <label>Word Type</label>
+        <label>Category</label>
         <div class="tag-row" id="type-${s.id}">${typePillsHTML(s.id,type,isPending)}</div>
       </div>
       ${topics.length?`<div class="field-group field-full">
-        <label>Topic</label>
+        <label>Subcategory</label>
         <div class="tag-row" id="tags-${s.id}">${tagPillsHTML(s.id,tags,type,isPending)}</div>
       </div>`:`<div id="tags-${s.id}" style="display:none"></div>`}
     </div>
