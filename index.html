@@ -160,17 +160,21 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .quiz-menu{text-align:center;padding:1rem 0 1.5rem}
 .quiz-menu h2{font-family:'Lora',serif;font-size:28px;font-weight:500;margin-bottom:.4rem}
 .quiz-menu p{color:var(--muted);font-size:14px;margin-bottom:.5rem}
-.quiz-pool-bar{display:flex;align-items:center;justify-content:center;gap:10px;margin:1rem 0 1.75rem}
+.quiz-pool-bar{display:flex;align-items:center;justify-content:center;gap:10px;margin:.75rem 0 0}
 .quiz-pool-pill{display:inline-flex;align-items:center;gap:6px;background:var(--sage-bg);border:1px solid var(--sage);border-radius:20px;padding:5px 14px;font-size:12.5px;color:var(--sage);font-weight:500}
 .quiz-pool-pill.warn{background:var(--amber-bg);border-color:var(--amber);color:var(--amber)}
-.quiz-unlock-msg{font-size:13px;color:var(--muted);text-align:center;padding:2rem 1rem;background:var(--parch);border:1px solid var(--border);border-radius:var(--rlg);margin-bottom:1.5rem;line-height:1.7}
-.quiz-modes{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.quiz-mode-card{background:var(--parch);border:1px solid var(--border);border-radius:var(--rlg);padding:1.5rem;cursor:pointer;text-align:left;transition:border-color .15s,box-shadow .15s,transform .12s}
-.quiz-mode-card:hover{border-color:var(--amber);box-shadow:0 4px 20px rgba(193,123,63,.12);transform:translateY(-2px)}
-.quiz-mode-card.disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
-.quiz-mode-title{font-size:15px;font-weight:500;margin-bottom:.3rem;color:var(--text)}
-.quiz-mode-desc{font-size:12.5px;color:var(--muted);margin-bottom:1rem;line-height:1.5}
-.quiz-mode-start{font-size:11.5px;font-weight:500;letter-spacing:.4px;color:var(--amber);display:flex;align-items:center;gap:4px}
+.quiz-unlock-msg{font-size:13px;color:var(--muted);text-align:center;padding:1.25rem 1rem;background:var(--parch);border:1px solid var(--border);border-radius:var(--rlg);margin-top:1rem;line-height:1.7}
+.quiz-tri{display:flex;flex-direction:column;align-items:center;gap:20px;padding:2rem 0 1rem}
+.quiz-tri-top{display:flex;flex-direction:column;align-items:center;gap:10px}
+.quiz-tri-bottom{display:flex;gap:36px;justify-content:center}
+.quiz-tri-item{display:flex;flex-direction:column;align-items:center;gap:10px}
+.quiz-circle{width:130px;height:130px;border-radius:50%;background:var(--amber);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .18s,box-shadow .18s;box-shadow:0 4px 24px rgba(193,123,63,.3);padding:0;flex-shrink:0}
+.quiz-circle:hover:not([disabled]){transform:translateY(-5px) scale(1.05);box-shadow:0 10px 36px rgba(193,123,63,.42)}
+.quiz-circle:active:not([disabled]){transform:scale(.93)}
+.quiz-circle[disabled]{opacity:.38;cursor:not-allowed}
+.quiz-circle-emoji{font-size:42px;line-height:1;pointer-events:none}
+.quiz-circle-sym{font-size:19px;font-weight:700;color:#fff;font-family:'DM Sans',sans-serif;pointer-events:none;letter-spacing:1.5px}
+.quiz-circle-label{font-size:12px;color:var(--muted);text-align:center;font-family:'DM Sans',sans-serif;font-weight:500;line-height:1.4}
 #quiz-active{display:none}
 #quiz-active.show{display:block}
 #quiz-menu-view.hide{display:none}
@@ -407,11 +411,12 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
   .quiz-menu{padding:.5rem 0 .75rem;flex-shrink:0}
   .quiz-menu h2{font-size:22px}
   .quiz-menu p{font-size:13px;margin-bottom:0}
-  .quiz-modes{grid-template-columns:1fr;flex:1;gap:8px}
-  .quiz-mode-card{padding:1rem 1.25rem}
-  .quiz-mode-title{font-size:14px}
-  .quiz-mode-desc{font-size:12px;margin-bottom:.5rem}
-  #quiz-menu-view > div:last-child{flex-shrink:0;margin-top:auto;padding-top:.75rem}
+  .quiz-tri{padding:1.25rem 0 .5rem;gap:16px}
+  .quiz-circle{width:110px;height:110px}
+  .quiz-circle-emoji{font-size:34px}
+  .quiz-circle-sym{font-size:16px}
+  .quiz-tri-bottom{gap:24px}
+  #quiz-menu-view > div:last-child{flex-shrink:0;margin-top:auto;padding-top:.5rem}
   /* active quiz */
   #quiz-active{display:none;flex-direction:column;flex:1;min-height:0;overflow:hidden}
   #quiz-active.show{display:flex}
@@ -757,8 +762,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
         <h2>Test what you know</h2>
         <p>Only phrases you've marked as done in Practice appear here.</p>
       </div>
-      <div class="quiz-modes" id="quiz-modes-grid"></div>
-      <div style="margin-top:2rem;text-align:center">
+      <div id="quiz-modes-grid"></div>
+      <div style="text-align:center">
         <div class="quiz-pool-bar">
           <div class="quiz-pool-pill" id="quiz-pool-pill">
             <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,7 5.5,11 12,3"/></svg>
@@ -1204,15 +1209,31 @@ function renderQuizMenu(){
   pill.className='quiz-pool-pill'+(enough?'':' warn');
   document.getElementById('quiz-pool-count').textContent=`${cnt} phrase${cnt!==1?'s':''}`;
   document.getElementById('quiz-unlock-msg').style.display=enough?'none':'block';
-  document.getElementById('quiz-modes-grid').innerHTML=[
-    {mode:'ar-en', title:'Arabic → English', desc:'See the word, pick the meaning'},
-    {mode:'en-ar', title:'English → Arabic', desc:'See the meaning, pick the word'},
-    {mode:'listen',title:'Listening',         desc:'Hear the word, pick the meaning'},
-  ].map(m=>`<div class="quiz-mode-card${enough?'':' disabled'}" onclick="${enough?`startQuiz('${m.mode}')`:''}" >
-    <div class="quiz-mode-title">${m.title}</div>
-    <div class="quiz-mode-desc">${m.desc}</div>
-    <div class="quiz-mode-start">START <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="2" y1="6" x2="10" y2="6"/><polyline points="7,3 10,6 7,9"/></svg></div>
-  </div>`).join('');
+  const dis=enough?'':'disabled';
+  const oc=(mode)=>enough?`onclick="startQuiz('${mode}')"`:'' ;
+  document.getElementById('quiz-modes-grid').innerHTML=`
+    <div class="quiz-tri">
+      <div class="quiz-tri-top">
+        <button class="quiz-circle" ${oc('listen')} ${dis}>
+          <span class="quiz-circle-emoji">👂</span>
+        </button>
+        <span class="quiz-circle-label">Listening</span>
+      </div>
+      <div class="quiz-tri-bottom">
+        <div class="quiz-tri-item">
+          <button class="quiz-circle" ${oc('ar-en')} ${dis}>
+            <span class="quiz-circle-sym">ع → E</span>
+          </button>
+          <span class="quiz-circle-label">Arabic → English</span>
+        </div>
+        <div class="quiz-tri-item">
+          <button class="quiz-circle" ${oc('en-ar')} ${dis}>
+            <span class="quiz-circle-sym">E → ع</span>
+          </button>
+          <span class="quiz-circle-label">English → Arabic</span>
+        </div>
+      </div>
+    </div>`;
 }
 function buildQuizQuestions(mode){
   const pool=getQuizPool();if(!pool.length)return[];
