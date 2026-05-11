@@ -44,6 +44,15 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .page{display:none;position:relative;z-index:1}
 .page.active{display:block}
 
+/* DESKTOP: lock body scroll, give each page its own contained height */
+@media(min-width:601px){
+  html,body{overflow:hidden}
+  #page-quiz.active,#page-library.active,#page-progress.active{height:calc(100vh - 58px);overflow-y:auto}
+  .setup-scroll{padding-top:.75rem;padding-bottom:.75rem}
+  .setup-page-title{padding:.25rem 0 .75rem}
+  .setup-card{gap:.9rem}
+}
+
 /* TODAY */
 #page-today.active{display:flex;flex-direction:column;overflow:hidden}
 @media(min-width:601px){#page-today.active{height:calc(100vh - 58px)}}
