@@ -1167,7 +1167,7 @@ function practiceAddFive(){
   updateGoalBar(practiceSessionCount);
   document.getElementById('practice-done').style.display='none';
   document.getElementById('practice-wrap').style.display='';
-  practiceNav(1);
+  renderPracticeCard();
 }
 function practiceShuffle(){
   shuffleArr(practiceOrder);practiceIdx=0;renderPracticeCard();showToast('Shuffled!');
