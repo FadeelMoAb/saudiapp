@@ -116,6 +116,14 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .practice-mark-btn{display:flex;align-items:center;gap:8px;border:1.5px solid var(--border);border-radius:22px;padding:9px 20px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--parch);color:var(--muted);transition:all .2s;white-space:nowrap}
 .practice-mark-btn:hover{border-color:var(--sage);color:var(--sage);background:var(--sage-bg)}
 .practice-mark-btn.marked{border-color:var(--sage);background:var(--sage-bg);color:var(--sage)}
+.practice-card.hard-mode .practice-tag{order:1}
+.practice-card.hard-mode .practice-audio-btn{order:2;width:72px;height:72px;margin-bottom:.5rem}
+.practice-card.hard-mode .practice-audio-btn svg{width:28px;height:28px}
+.practice-card.hard-mode .practice-reveal-btn{order:3;border:none;background:none;font-size:11px;letter-spacing:.9px;text-transform:uppercase;color:var(--faint);padding:2px 0}
+.practice-card.hard-mode .practice-reveal-btn:hover{background:none;border:none;color:var(--muted)}
+.practice-card.hard-mode .practice-arabic{order:4;margin-top:1.25rem;animation:fadeUp .2s ease}
+.practice-card.hard-mode .practice-transliteration{order:5;animation:fadeUp .2s ease}
+.practice-card.hard-mode .practice-meaning{order:6}
 .practice-mark-btn svg{width:14px;height:14px}
 .practice-session{flex:1;min-height:0;display:flex;flex-direction:column;width:100%}
 .practice-setup{width:100%;max-width:680px;margin:0 auto;padding:0;flex:1;min-height:0;display:flex;flex-direction:column;box-sizing:border-box}
@@ -386,6 +394,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
   .practice-transliteration{font-size:11px;margin-bottom:.75rem}
   .practice-audio-btn{width:40px;height:40px;margin-bottom:.5rem}
   .practice-audio-btn svg{width:15px;height:15px}
+  .practice-card.hard-mode .practice-audio-btn{width:62px;height:62px}
+  .practice-card.hard-mode .practice-audio-btn svg{width:24px;height:24px}
   .practice-reveal-btn{padding:5px 16px;font-size:12px}
   .practice-meaning{font-size:17px;margin-top:.75rem}
   .practice-action-bar{flex-direction:row;gap:10px;flex-shrink:0;margin-top:.75rem}
@@ -1136,8 +1146,19 @@ function renderPracticeCard(){
   document.getElementById('practice-ar').textContent=p.ar;
   const prEl=document.getElementById('practice-pr');
   prEl.textContent=p.pr?p.pr.toUpperCase():'';
-  prEl.style.display=practiceSetupDiff==='medium'||practiceSetupDiff==='hard'?'none':'';
-  document.getElementById('practice-ar').style.opacity=practiceSetupDiff==='hard'?'0':'1';
+  const arEl=document.getElementById('practice-ar');
+  if(practiceSetupDiff==='hard'){
+    card.classList.add('hard-mode');
+    arEl.style.display='none';
+    prEl.style.display='none';
+    document.getElementById('practice-reveal-btn').textContent='Tap to reveal';
+  } else {
+    card.classList.remove('hard-mode');
+    arEl.style.display='';
+    arEl.style.opacity='1';
+    prEl.style.display=practiceSetupDiff==='medium'?'none':'';
+    document.getElementById('practice-reveal-btn').textContent='Tap to reveal meaning';
+  }
   document.getElementById('practice-meaning').style.display='none';
   document.getElementById('practice-meaning').textContent=p.en;
   document.getElementById('practice-reveal-btn').style.display='';
@@ -1160,7 +1181,12 @@ function practiceReveal(){
   practiceRevd=true;
   document.getElementById('practice-reveal-btn').style.display='none';
   document.getElementById('practice-meaning').style.display='block';
-  if(practiceSetupDiff==='hard')document.getElementById('practice-ar').style.opacity='1';
+  if(practiceSetupDiff==='hard'){
+    const arEl=document.getElementById('practice-ar');
+    const prEl=document.getElementById('practice-pr');
+    arEl.style.display='';
+    prEl.style.display='';
+  }
 }
 function practiceNav(dir){
   if(dir===-1 && practiceIdx===0) return;
