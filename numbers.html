@@ -916,6 +916,13 @@ function tmEvaluate(seq, target) {
 
   if (!numToks.length) return {ok:false, msg:'No number selected'};
 
+  // Check order: hour chip must come before any minute chips
+  const firstNumPos   = seq.findIndex(t => t.role === 'number' || t.role === 'hour');
+  const firstMinPos   = seq.findIndex(t => t.role === 'ten' || t.role === 'tashr' || t.role === 'special');
+  if (firstNumPos !== -1 && firstMinPos !== -1 && firstNumPos > firstMinPos) {
+    return {ok:false, msg:'Hour should come first — الساعة → hour → و → minutes'};
+  }
+
   // The FIRST number token is the hour
   const hourVal = numToks[0].val;
 
