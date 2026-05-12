@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Saudibia — Numbers</title>
+<link rel="icon" type="image/svg+xml" href="/Photos/palm-tree%20SVG.svg">
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -22,10 +23,9 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 
 /* ── HEADER ── */
 header{background:rgba(245,239,224,.93);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50;height:58px}
-.hd-brand{display:flex;align-items:center;gap:10px}
-.hd-logo{width:34px;height:34px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-size:16px;color:#fff;font-weight:600;flex-shrink:0}
-.hd-title{font-family:'Lora',serif;font-size:15px;font-weight:600;color:var(--text);line-height:1.1}
-.hd-sub{font-size:10.5px;color:var(--muted);letter-spacing:.4px;text-transform:uppercase}
+.hd-brand{display:flex;align-items:center;gap:9px}
+.hd-logo-img{height:30px;width:auto;filter:invert(52%) sepia(55%) saturate(560%) hue-rotate(350deg) brightness(90%)}
+.hd-title{font-family:'Lora',serif;font-size:24px;font-weight:700;color:var(--text);line-height:1}
 .nav-back{display:flex;align-items:center;gap:6px;text-decoration:none;font-size:13px;color:var(--muted);border:1px solid var(--border);border-radius:20px;padding:6px 14px;transition:all .15s;font-family:'DM Sans',sans-serif}
 .nav-back:hover{color:var(--accent);border-color:var(--accent)}
 
@@ -175,11 +175,8 @@ footer{text-align:center;font-size:11.5px;color:var(--faint);padding:2rem 0 1.5r
 
 <header>
   <div class="hd-brand">
-    <div class="hd-logo">ي</div>
-    <div>
-      <div class="hd-title">Numbers</div>
-      <div class="hd-sub">الأرقام بالعامية السعودية</div>
-    </div>
+    <img src="/Photos/palm-tree%20SVG.svg" class="hd-logo-img" alt="">
+    <div class="hd-title">Saudibia</div>
   </div>
   <a href="index.html" class="nav-back">
     <svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="9,2 4,7 9,12"/></svg>
