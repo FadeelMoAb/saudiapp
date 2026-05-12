@@ -933,7 +933,7 @@ async function fetchSheet(){
   }catch(e){console.warn('Phrases fetch failed',e);if(!phrases.length)showToast('Could not load phrases.');}
 }
 function onLoaded(){
-  initPracticeOrder();renderToday();renderPracticeCard();
+  renderToday();renderPracticeCard();
   renderQuizMenu();renderLibrary();renderProgress();updateGlobalStats();
 }
 
