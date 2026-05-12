@@ -31,14 +31,13 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 
 /* NAVBAR */
 nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:58px}
-.nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none}
-.nav-logo{width:34px;height:34px;border-radius:10px;background:var(--amber);display:flex;align-items:center;justify-content:center;font-family:'Lora',serif;font-size:16px;color:#fff;font-weight:600;flex-shrink:0}
-.nav-title{font-family:'Lora',serif;font-size:15px;font-weight:600;color:var(--text);line-height:1.1}
-.nav-sub{font-size:10.5px;color:var(--muted);letter-spacing:.4px;text-transform:uppercase}
+.nav-brand{display:flex;align-items:center;text-decoration:none}
+.nav-title{font-family:'Lora',serif;font-size:20px;font-weight:600;color:var(--text);line-height:1}
 .nav-tabs{display:flex;gap:2px}
-.nav-tab{border:none;background:none;padding:6px 14px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .18s;white-space:nowrap;position:relative}
-.nav-tab:hover{color:var(--text);background:var(--parch-deep)}
-.nav-tab.active{background:var(--amber);color:#fff;box-shadow:0 2px 8px rgba(193,123,63,.3)}
+.nav-tab{border:none;background:none;padding:6px 14px;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .18s;white-space:nowrap;position:relative}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{background:none;color:var(--amber)}
+.nav-tab.active::after{content:'';position:absolute;bottom:-9px;left:14px;right:14px;height:2px;background:var(--amber);border-radius:1px}
 
 /* PAGES */
 .page{display:none;position:relative;z-index:1}
@@ -146,8 +145,9 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .setup-start-btn{width:100%;background:var(--amber);color:#fff;border:none;border-radius:var(--rxl);padding:14px;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity .15s;box-shadow:0 3px 16px rgba(193,123,63,.3)}
 .setup-start-btn:hover{opacity:.88}
 .setup-start-btn:disabled{opacity:.45;cursor:not-allowed}
-.practice-topbar{display:flex;align-items:center;justify-content:space-between;padding:.55rem 1.5rem;flex-shrink:0}
-.practice-topbar-bar{height:3px;background:var(--border);flex-shrink:0;overflow:hidden}
+.practice-session-head{width:100%;max-width:680px;margin:0 auto;padding:0 1.5rem;box-sizing:border-box;flex-shrink:0}
+.practice-topbar{display:flex;align-items:center;justify-content:space-between;padding:.55rem 0}
+.practice-topbar-bar{height:3px;background:var(--border);overflow:hidden;border-radius:2px}
 .practice-topbar-fill{height:100%;background:var(--amber);transition:width .35s ease}
 .practice-exit-btn{font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;cursor:pointer;padding:0;font-family:'DM Sans',sans-serif}
 .practice-exit-btn:hover{color:var(--text)}
@@ -407,7 +407,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
   .setup-scroll{padding:1rem 1rem 1.5rem}
   .setup-card{padding:1.25rem;gap:1rem}
   .setup-start-btn{padding:12px;font-size:14px}
-  .practice-topbar{padding:.4rem 1rem}
+  .practice-session-head{padding:0 1rem}
 
   /* ── QUIZ ── */
   .quiz-wrap{
@@ -558,11 +558,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 
 <nav>
   <a class="nav-brand" href="#">
-    <div class="nav-logo">🌴</div>
-    <div>
-      <div class="nav-title">Saudibia</div>
-      <div class="nav-sub">Saudi Accent</div>
-    </div>
+    <div class="nav-title">Saudibia</div>
   </a>
   <div class="nav-tabs">
     <button class="nav-tab active"  onclick="goTab('today',this)"    data-tab="today">Today</button>
@@ -722,16 +718,18 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
         <button class="practice-done-btn primary" onclick="practiceRepeat()">Repeat</button>
       </div>
     </div>
-    <div class="practice-topbar" id="practice-topbar" style="display:none">
-      <button class="practice-exit-btn" onclick="backToSetup()">Exit</button>
-      <span class="practice-pos-label"><span id="practice-pos-cur">1</span> / <span id="practice-pos-total">10</span></span>
-      <button class="practice-shuffle-top" onclick="practiceShuffle()">
-        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h2a4 4 0 014 4 4 4 0 004 4h4M2 12h2a4 4 0 004-4 4 4 0 014-4h4M13 3l3 3-3 3M13 9l3 3-3 3"/></svg>
-        Shuffle
-      </button>
-    </div>
-    <div class="practice-topbar-bar" id="practice-topbar-bar" style="display:none">
-      <div class="practice-topbar-fill" id="practice-topbar-fill" style="width:10%"></div>
+    <div class="practice-session-head" id="practice-session-head" style="display:none">
+      <div class="practice-topbar" id="practice-topbar">
+        <button class="practice-exit-btn" onclick="backToSetup()">Exit</button>
+        <span class="practice-pos-label"><span id="practice-pos-cur">1</span> / <span id="practice-pos-total">10</span></span>
+        <button class="practice-shuffle-top" onclick="practiceShuffle()">
+          <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h2a4 4 0 014 4 4 4 0 004 4h4M2 12h2a4 4 0 004-4 4 4 0 014-4h4M13 3l3 3-3 3M13 9l3 3-3 3"/></svg>
+          Shuffle
+        </button>
+      </div>
+      <div class="practice-topbar-bar">
+        <div class="practice-topbar-fill" id="practice-topbar-fill" style="width:10%"></div>
+      </div>
     </div>
     <div class="practice-wrap" id="practice-wrap">
       <div class="practice-card" id="practice-card">
@@ -1118,8 +1116,7 @@ function startPracticeSession(){
   practiceOrder=shuffleArr(filtered.map(p=>phrases.indexOf(p)));
   practiceIdx=0;practiceRevd=false;practiceSessionCount=0;practiceHighWater=0;
   practiceSessionGoal=practiceSetupGoal==='all'?practiceOrder.length:Math.min(practiceSetupGoal,practiceOrder.length);
-  document.getElementById('practice-topbar').style.display='';
-  document.getElementById('practice-topbar-bar').style.display='';
+  document.getElementById('practice-session-head').style.display='';
   document.getElementById('practice-pos-total').textContent=practiceSessionGoal;
   updatePracticeTopbar();
   practiceSessionActive=true;
