@@ -107,7 +107,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .practice-action-bar{width:100%;display:flex;align-items:center;justify-content:space-between;margin-top:1.25rem;gap:10px}
 .practice-nav{display:flex;align-items:center;gap:12px}
 .practice-arrow{width:46px;height:46px;border-radius:50%;border:1px solid var(--border);background:var(--parch);cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;transition:all .15s}
-.practice-arrow:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
+.practice-arrow:hover:not([disabled]){border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
+.practice-arrow[disabled]{opacity:.3;cursor:not-allowed}
 .practice-arrow svg{width:18px;height:18px}
 .practice-shuffle{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:none;cursor:pointer;color:var(--faint);display:flex;align-items:center;justify-content:center;transition:all .15s}
 .practice-shuffle:hover{color:var(--amber);border-color:var(--amber)}
@@ -733,7 +734,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
         </div>
         <div class="practice-action-bar">
           <div class="practice-nav">
-            <button class="practice-arrow" onclick="practiceNav(-1)" title="Previous">
+            <button class="practice-arrow" id="practice-prev-btn" onclick="practiceNav(-1)" title="Previous">
               <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="11,4 6,9 11,14"/></svg>
             </button>
             <button class="practice-shuffle" onclick="practiceShuffle()" title="Shuffle">
@@ -1141,6 +1142,7 @@ function renderPracticeCard(){
   document.getElementById('practice-meaning').textContent=p.en;
   document.getElementById('practice-reveal-btn').style.display='';
   updatePracticeMarkBtn();
+  document.getElementById('practice-prev-btn').disabled = practiceIdx === 0;
 }
 function updatePracticeMarkBtn(){
   const p=getPracticePhrase();if(!p)return;
@@ -1161,6 +1163,7 @@ function practiceReveal(){
   if(practiceSetupDiff==='hard')document.getElementById('practice-ar').style.opacity='1';
 }
 function practiceNav(dir){
+  if(dir===-1 && practiceIdx===0) return;
   if(dir===1)bumpSessionCount();
   practiceIdx=((practiceIdx+dir)%practiceOrder.length+practiceOrder.length)%practiceOrder.length;
   renderPracticeCard();
