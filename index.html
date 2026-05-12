@@ -72,8 +72,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .icon-action.fav-active{color:var(--amber);border-color:var(--amber);background:var(--amber-bg)}
 .icon-action.learned-active{color:var(--sage);border-color:var(--sage);background:var(--sage-bg)}
 .icon-action svg{width:13px;height:13px}
-.big-transliteration{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem}
-.big-arabic{font-size:clamp(42px,8vw,68px);direction:rtl;color:var(--text);line-height:1.3;margin-bottom:1.5rem}
+.big-transliteration{font-size:11px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:1.5rem}
+.big-arabic{font-size:clamp(52px,10vw,88px);direction:rtl;color:var(--text);line-height:1.3;margin-bottom:1rem}
 .big-audio-btn{width:54px;height:54px;border-radius:50%;background:var(--amber);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;box-shadow:0 4px 16px rgba(193,123,63,.35);transition:transform .15s,background .15s}
 .big-audio-btn:hover{transform:scale(1.07)}
 .big-audio-btn.loading{background:var(--border-med)}
@@ -339,7 +339,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
   .big-audio-btn{width:36px;height:36px;margin:0}
   .big-audio-btn svg{width:15px;height:15px}
   .big-transliteration{font-size:10px;margin-bottom:.35rem}
-  .big-arabic{font-size:clamp(30px,9vw,52px);margin-bottom:.75rem}
+  .big-arabic{font-size:clamp(38px,11vw,64px);margin-bottom:.5rem}
   .big-audio-btn{width:44px;height:44px;margin-bottom:.75rem}
   .big-audio-btn svg{width:18px;height:18px}
   .big-meaning{font-size:clamp(14px,4.5vw,20px);margin-bottom:.75rem}
@@ -608,8 +608,8 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
         </div>
       </div>
       <div class="big-card-content">
-        <div class="big-transliteration" id="today-pr"></div>
         <div class="big-arabic" id="today-ar"></div>
+        <div class="big-transliteration" id="today-pr"></div>
         <div class="big-meaning" id="today-en"></div>
         <button class="big-audio-btn" id="today-audio-btn" onclick="speakPhrase('today-audio-btn',getTodayAr())">
           <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
