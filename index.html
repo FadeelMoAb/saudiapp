@@ -146,13 +146,15 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
 .setup-start-btn{width:100%;background:var(--amber);color:#fff;border:none;border-radius:var(--rxl);padding:14px;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:opacity .15s;box-shadow:0 3px 16px rgba(193,123,63,.3)}
 .setup-start-btn:hover{opacity:.88}
 .setup-start-btn:disabled{opacity:.45;cursor:not-allowed}
-.practice-goal-bar-wrap{padding:.6rem 1.5rem .2rem;flex-shrink:0}
-.practice-goal-bar-track{height:3px;background:var(--border);border-radius:4px;overflow:hidden}
-.practice-goal-bar-fill{height:100%;background:var(--amber);border-radius:4px;transition:width .35s ease}
-.practice-goal-meta{display:flex;justify-content:space-between;align-items:center;margin-top:4px}
-.practice-goal-count{font-size:11px;color:var(--muted)}
-.practice-back-btn{font-size:11.5px;color:var(--muted);background:none;border:none;cursor:pointer;padding:0;font-family:'DM Sans',sans-serif}
-.practice-back-btn:hover{color:var(--text);text-decoration:underline}
+.practice-topbar{display:flex;align-items:center;justify-content:space-between;padding:.55rem 1.5rem;flex-shrink:0}
+.practice-topbar-bar{height:3px;background:var(--border);flex-shrink:0;overflow:hidden}
+.practice-topbar-fill{height:100%;background:var(--amber);transition:width .35s ease}
+.practice-exit-btn{font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;cursor:pointer;padding:0;font-family:'DM Sans',sans-serif}
+.practice-exit-btn:hover{color:var(--text)}
+.practice-pos-label{font-size:13px;color:var(--muted);font-family:'DM Sans',sans-serif}
+.practice-shuffle-top{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:0}
+.practice-shuffle-top:hover{color:var(--amber)}
+.practice-shuffle-top svg{width:14px;height:14px}
 .practice-done-wrap{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;gap:1.25rem}
 .practice-done-icon{font-size:48px;line-height:1}
 .practice-done-title{font-family:'Lora',serif;font-size:22px;font-weight:600;color:var(--text)}
@@ -405,7 +407,7 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
   .setup-scroll{padding:1rem 1rem 1.5rem}
   .setup-card{padding:1.25rem;gap:1rem}
   .setup-start-btn{padding:12px;font-size:14px}
-  .practice-goal-bar-wrap{padding:.4rem 1rem .15rem}
+  .practice-topbar{padding:.4rem 1rem}
 
   /* ── QUIZ ── */
   .quiz-wrap{
@@ -720,12 +722,16 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
         <button class="practice-done-btn primary" onclick="practiceRepeat()">Repeat</button>
       </div>
     </div>
-    <div class="practice-goal-bar-wrap" id="practice-goal-bar-wrap" style="display:none">
-      <div class="practice-goal-bar-track"><div class="practice-goal-bar-fill" id="practice-goal-bar-fill" style="width:0%"></div></div>
-      <div class="practice-goal-meta">
-        <button class="practice-back-btn" onclick="backToSetup()">← Setup</button>
-        <span class="practice-goal-count"><span id="practice-goal-done">0</span> / <span id="practice-goal-total">10</span></span>
-      </div>
+    <div class="practice-topbar" id="practice-topbar" style="display:none">
+      <button class="practice-exit-btn" onclick="backToSetup()">Exit</button>
+      <span class="practice-pos-label"><span id="practice-pos-cur">1</span> / <span id="practice-pos-total">10</span></span>
+      <button class="practice-shuffle-top" onclick="practiceShuffle()">
+        <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h2a4 4 0 014 4 4 4 0 004 4h4M2 12h2a4 4 0 004-4 4 4 0 014-4h4M13 3l3 3-3 3M13 9l3 3-3 3"/></svg>
+        Shuffle
+      </button>
+    </div>
+    <div class="practice-topbar-bar" id="practice-topbar-bar" style="display:none">
+      <div class="practice-topbar-fill" id="practice-topbar-fill" style="width:10%"></div>
     </div>
     <div class="practice-wrap" id="practice-wrap">
       <div class="practice-card" id="practice-card">
@@ -746,9 +752,6 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
           <div class="practice-nav">
             <button class="practice-arrow" id="practice-prev-btn" onclick="practiceNav(-1)" title="Previous">
               <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="11,4 6,9 11,14"/></svg>
-            </button>
-            <button class="practice-shuffle" onclick="practiceShuffle()" title="Shuffle">
-              <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h2a4 4 0 014 4 4 4 0 004 4h4M2 12h2a4 4 0 004-4 4 4 0 014-4h4M13 3l3 3-3 3M13 9l3 3-3 3"/></svg>
             </button>
             <button class="practice-arrow" onclick="practiceNav(1)" title="Next">
               <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="7,4 12,9 7,14"/></svg>
@@ -1115,19 +1118,19 @@ function startPracticeSession(){
   practiceOrder=shuffleArr(filtered.map(p=>phrases.indexOf(p)));
   practiceIdx=0;practiceRevd=false;practiceSessionCount=0;practiceHighWater=0;
   practiceSessionGoal=practiceSetupGoal==='all'?practiceOrder.length:Math.min(practiceSetupGoal,practiceOrder.length);
-  const goalBar=document.getElementById('practice-goal-bar-wrap');
-  goalBar.style.display='';
-  document.getElementById('practice-goal-total').textContent=practiceSessionGoal;
-  updateGoalBar(0);
+  document.getElementById('practice-topbar').style.display='';
+  document.getElementById('practice-topbar-bar').style.display='';
+  document.getElementById('practice-pos-total').textContent=practiceSessionGoal;
+  updatePracticeTopbar();
   practiceSessionActive=true;
   document.getElementById('practice-setup').style.display='none';
   document.getElementById('practice-session').style.display='flex';
   renderPracticeCard();
 }
 function backToSetup(){practiceSessionActive=false;openPracticeSetup();}
-function updateGoalBar(done){
-  document.getElementById('practice-goal-done').textContent=done;
-  document.getElementById('practice-goal-bar-fill').style.width=`${Math.min(100,(done/practiceSessionGoal)*100)}%`;
+function updatePracticeTopbar(){
+  document.getElementById('practice-pos-cur').textContent=practiceIdx+1;
+  document.getElementById('practice-topbar-fill').style.width=`${Math.min(100,((practiceIdx+1)/practiceSessionGoal)*100)}%`;
 }
 
 /* PRACTICE */
@@ -1164,6 +1167,7 @@ function renderPracticeCard(){
   document.getElementById('practice-reveal-btn').style.display='';
   updatePracticeMarkBtn();
   document.getElementById('practice-prev-btn').disabled = practiceIdx === 0;
+  updatePracticeTopbar();
 }
 function updatePracticeMarkBtn(){
   const p=getPracticePhrase();if(!p)return;
@@ -1197,7 +1201,6 @@ function practiceNav(dir){
 function bumpSessionCount(){
   if(practiceSessionCount>=practiceSessionGoal)return;
   practiceSessionCount++;
-  updateGoalBar(practiceSessionCount);
   if(practiceSessionCount>=practiceSessionGoal)showPracticeDone();
 }
 function showPracticeDone(){
@@ -1207,7 +1210,6 @@ function showPracticeDone(){
 }
 function practiceRepeat(){
   practiceSessionCount=0;practiceIdx=0;practiceHighWater=0;
-  updateGoalBar(0);
   document.getElementById('practice-done').style.display='none';
   document.getElementById('practice-wrap').style.display='';
   renderPracticeCard();
@@ -1220,8 +1222,8 @@ function practiceAddFive(){
   }
   const add=Math.min(5,remaining);
   practiceSessionGoal+=add;
-  document.getElementById('practice-goal-total').textContent=practiceSessionGoal;
-  updateGoalBar(practiceSessionCount);
+  document.getElementById('practice-pos-total').textContent=practiceSessionGoal;
+  updatePracticeTopbar();
   document.getElementById('practice-done').style.display='none';
   document.getElementById('practice-wrap').style.display='';
   renderPracticeCard();
