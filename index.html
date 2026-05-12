@@ -880,7 +880,7 @@ let libTab='all',libTypeFilter='all',libTopicFilter='all';
 let practiceIdx=0,practiceOrder=[],practiceRevd=false;
 let practiceSetupDiff='easy',practiceSetupProg='all';
 let practiceSetupType='all',practiceSetupTopic='all',practiceSetupGoal=10;
-let practiceSessionActive=false,practiceSessionCount=0,practiceSessionGoal=10;
+let practiceSessionActive=false,practiceSessionCount=0,practiceSessionGoal=10,practiceHighWater=0;
 let currentQuizMode='ar-en',quizQuestions=[],quizQIdx=0,quizScore=0,quizChecked=false,_quizListenAr='';
 const QUIZ_LEN=5;
 
@@ -1103,7 +1103,7 @@ function openPracticeSetup(){
 function startPracticeSession(){
   const filtered=getFilteredPhrases();if(!filtered.length)return;
   practiceOrder=shuffleArr(filtered.map(p=>phrases.indexOf(p)));
-  practiceIdx=0;practiceRevd=false;practiceSessionCount=0;
+  practiceIdx=0;practiceRevd=false;practiceSessionCount=0;practiceHighWater=0;
   practiceSessionGoal=practiceSetupGoal==='all'?practiceOrder.length:Math.min(practiceSetupGoal,practiceOrder.length);
   const goalBar=document.getElementById('practice-goal-bar-wrap');
   goalBar.style.display='';
@@ -1164,7 +1164,7 @@ function practiceReveal(){
 }
 function practiceNav(dir){
   if(dir===-1 && practiceIdx===0) return;
-  if(dir===1)bumpSessionCount();
+  if(dir===1 && practiceIdx>=practiceHighWater){practiceHighWater=practiceIdx+1;bumpSessionCount();}
   practiceIdx=((practiceIdx+dir)%practiceOrder.length+practiceOrder.length)%practiceOrder.length;
   renderPracticeCard();
 }
@@ -1180,7 +1180,7 @@ function showPracticeDone(){
   document.getElementById('practice-wrap').style.display='none';
 }
 function practiceRepeat(){
-  practiceSessionCount=0;practiceIdx=0;
+  practiceSessionCount=0;practiceIdx=0;practiceHighWater=0;
   updateGoalBar(0);
   document.getElementById('practice-done').style.display='none';
   document.getElementById('practice-wrap').style.display='';
