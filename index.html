@@ -318,6 +318,14 @@ nav{position:sticky;top:0;z-index:100;background:rgba(245,239,224,.93);backdrop-
     flex-direction:column;
   }
 
+  /* Quiz: override desktop height rule (higher specificity) */
+  #page-quiz.active{
+    height:calc(100dvh - 58px - 64px - env(safe-area-inset-bottom,0px));
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+
   /* Library + Progress: allow internal scroll */
   #page-library.active,
   #page-progress.active{
