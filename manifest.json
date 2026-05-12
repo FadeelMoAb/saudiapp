@@ -8,8 +8,8 @@
   "background_color": "#F5EFE0",
   "theme_color": "#C17B3F",
   "icons": [
-    {"src": "/Photos/palm-tree%20192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
-    {"src": "/Photos/palm-tree%20512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"},
-    {"src": "/Photos/palm-tree%20180px.png", "sizes": "180x180", "type": "image/png"}
+    {"src": "/Photos/palm-tree%20ORG%20192px.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "/Photos/palm-tree%20ORG%20512px.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"},
+    {"src": "/Photos/palm-tree%20ORG%20180px.png", "sizes": "180x180", "type": "image/png"}
   ]
 }
